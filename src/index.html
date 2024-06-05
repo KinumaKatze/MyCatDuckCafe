@@ -5698,11 +5698,23 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$AddNPC)
+						$elm$html$Html$Events$onClick($author$project$Main$AddNPC),
+						model.hidden ? $elm$html$Html$Attributes$hidden(false) : $elm$html$Html$Attributes$hidden(true)
 					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Call for Bartender')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$AddNPC),
+						model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Tell him to leave')
 					])),
 				A2(
 				$elm$html$Html$img,
