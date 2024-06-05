@@ -10554,13 +10554,13 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$Model = F2(
-	function (width, height) {
-		return {height: height, width: width};
+var $author$project$Main$Model = F3(
+	function (width, height, hidden) {
+		return {height: height, hidden: hidden, width: width};
 	});
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		A2($author$project$Main$Model, 10, 10),
+		A3($author$project$Main$Model, 10, 10, true),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$WindowResized = function (a) {
@@ -10583,49 +10583,75 @@ var $elm$core$List$head = function (list) {
 };
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		var liste = msg.a;
-		var _v1 = _Utils_Tuple2(
-			$elm$core$List$head(liste),
-			$elm$core$List$head(
-				$elm$core$List$reverse(liste)));
-		if (_v1.a.$ === 'Just') {
-			if (_v1.b.$ === 'Just') {
-				var a = _v1.a.a;
-				var b = _v1.b.a;
+		switch (msg.$) {
+			case 'WindowResized':
+				var liste = msg.a;
+				var _v1 = _Utils_Tuple2(
+					$elm$core$List$head(liste),
+					$elm$core$List$head(
+						$elm$core$List$reverse(liste)));
+				if (_v1.a.$ === 'Just') {
+					if (_v1.b.$ === 'Just') {
+						var a = _v1.a.a;
+						var b = _v1.b.a;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{height: b, width: a}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						var a = _v1.a.a;
+						var _v2 = _v1.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{height: 0, width: a}),
+							$elm$core$Platform$Cmd$none);
+					}
+				} else {
+					if (_v1.b.$ === 'Just') {
+						var _v3 = _v1.a;
+						var b = _v1.b.a;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{height: b, width: 0}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						var _v4 = _v1.a;
+						var _v5 = _v1.b;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{height: 0, width: 0}),
+							$elm$core$Platform$Cmd$none);
+					}
+				}
+			case 'AddNPC':
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{height: b, width: a}),
+						{hidden: false}),
 					$elm$core$Platform$Cmd$none);
-			} else {
-				var a = _v1.a.a;
-				var _v2 = _v1.b;
+			default:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{height: 0, width: a}),
+						{hidden: true}),
 					$elm$core$Platform$Cmd$none);
-			}
-		} else {
-			if (_v1.b.$ === 'Just') {
-				var _v3 = _v1.a;
-				var b = _v1.b.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{height: b, width: 0}),
-					$elm$core$Platform$Cmd$none);
-			} else {
-				var _v4 = _v1.a;
-				var _v5 = _v1.b;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{height: 0, width: 0}),
-					$elm$core$Platform$Cmd$none);
-			}
 		}
 	});
+var $author$project$Main$AddNPC = {$: 'AddNPC'};
+var $author$project$Main$RemoveNPC = {$: 'RemoveNPC'};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -10644,6 +10670,36 @@ var $author$project$Main$view = function (model) {
 			]),
 		_List_fromArray(
 			[
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$AddNPC),
+						model.hidden ? $elm$html$Html$Attributes$hidden(false) : $elm$html$Html$Attributes$hidden(true)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Call for Bartender')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$RemoveNPC),
+						model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false)
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Tell him to leave')
+					])),
+				A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$src('bartender.png'),
+						model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false)
+					]),
+				_List_Nil),
 				A2(
 				$elm$html$Html$img,
 				_List_fromArray(
@@ -10665,4 +10721,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"RemoveNPC":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
