@@ -1,10 +1,9 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
-import Browser.Events exposing (onResize)
-import Html exposing (Html, div, text, img)
-import Html.Attributes exposing (checked, coords, for, href, id, name, shape, src, style, title, type_, usemap)
-import Json.Decode as Decode
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import List exposing (..)
 
 
 -- MODEL
@@ -16,30 +15,49 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 0 0, Cmd.none )
+    ( Model 10 10, Cmd.none )
 
 -- UPDATE
 
 type Msg
-    = WindowResized Int Int
+    = WindowResized (List Int)
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        WindowResized width height ->
-            ( { model | width = width, height = height }, Cmd.none )
+        WindowResized liste ->
+                case (head liste, head (reverse liste)) of 
+                    (Just a, Just b) ->
+                        ( { model | width = a, height = b }, Cmd.none )
+                    (Just a, Nothing) -> 
+                        ( { model | width = a, height = 0 }, Cmd.none )
+                    (Nothing, Just b) ->
+                        ( { model | width = 0, height = b }, Cmd.none )
+                    (Nothing, Nothing) ->    
+                        ( { model | width = 0, height = 0 }, Cmd.none )
 
 -- SUBSCRIPTIONS
 
+port windowSize : (List Int -> msg) -> Sub msg
+
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    onResize WindowResized
+    windowSize WindowResized
 
 -- VIEW
 
 view : Model -> Html Msg
 view model =
-    div[][img [src  "Tavern.jpeg", style "width" (String.fromInt model.width), style "height" (String.fromInt model.height)] []]
+     div [ style "width" "100vw", style "height" "100vh", style "overflow" "hidden" ]
+        [ img
+            [ src "Tavern.jpeg"
+            , style "width" <| String.fromInt model.width ++ "px"
+            , style "height" <| String.fromInt model.height ++ "px"
+            , style "object-fit" "cover"
+            ]
+            []
+        ]
+        
 
 -- MAIN
 
