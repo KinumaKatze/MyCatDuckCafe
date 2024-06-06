@@ -10704,7 +10704,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src('Tavern.jpeg'),
+						$elm$html$Html$Attributes$src('Theke.png'),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
