@@ -80,7 +80,7 @@ view model =
         , button [ Html.Events.onClick RemoveNPC , if model.hidden == True then hidden True else hidden False] [ text "Tell him to leave" ]
         , img [ src "bartender.png", if model.hidden == True then hidden True else hidden False] []
         , img
-            [ src "Theke.png"
+            [ src "Theke.gif"
             , style "width" <| String.fromInt model.width ++ "px"
             , style "height" <| String.fromInt model.height ++ "px"
             , style "object-fit" "cover"
