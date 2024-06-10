@@ -10600,21 +10600,37 @@ var $elm$core$Basics$never = function (_v0) {
 	}
 };
 var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$Model = F6(
-	function (width, height, hidden, seat5, person_list, randomString) {
-		return {height: height, hidden: hidden, person_list: person_list, randomString: randomString, seat5: seat5, width: width};
-	});
+var $author$project$Main$Model = function (width) {
+	return function (height) {
+		return function (hidden) {
+			return function (seat1) {
+				return function (seat2) {
+					return function (seat3) {
+						return function (seat4) {
+							return function (seat5) {
+								return function (person_list) {
+									return function (randomString) {
+										return {height: height, hidden: hidden, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, width: width};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
-		A6(
-			$author$project$Main$Model,
-			10,
-			10,
-			true,
-			'Random_Person.png',
+		$author$project$Main$Model(10)(10)(true)(
+			_Utils_Tuple2('Random_Person.png', true))(
+			_Utils_Tuple2('Random_Person.png', true))(
+			_Utils_Tuple2('Random_Person.png', true))(
+			_Utils_Tuple2('Random_Person.png', true))(
+			_Utils_Tuple2('Random_Person.png', true))(
 			_List_fromArray(
-				['Person1.png', 'Person2.png']),
-			$elm$core$Maybe$Nothing),
+				['Person1.png', 'Person2.png']))($elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$WindowResized = function (a) {
@@ -10834,6 +10850,7 @@ var $author$project$Main$update = F2(
 					}
 				}
 			case 'AddNPC':
+				var randomSeat = A2($elm$random$Random$int, 0, 4);
 				var listLength = $elm$core$List$length(model.person_list);
 				var randomIndex = A2($elm$random$Random$int, 0, listLength - 1);
 				return _Utils_Tuple2(
@@ -10856,21 +10873,19 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{seat5: a}),
+							{
+								seat5: _Utils_Tuple2(a, true)
+							}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{seat5: 'Random_Person.png'}),
+							{
+								seat5: _Utils_Tuple2('Random_Person.png', false)
+							}),
 						$elm$core$Platform$Cmd$none);
 				}
-			case 'GenerateRandomString':
-				var listLength = $elm$core$List$length(model.person_list);
-				var randomIndex = A2($elm$random$Random$int, 0, listLength - 1);
-				return _Utils_Tuple2(
-					model,
-					A2($elm$random$Random$generate, $author$project$Main$GotRandomString, randomIndex));
 			default:
 				var index = msg.a;
 				var randomStr = A2($elm_community$list_extra$List$Extra$getAt, index, model.person_list);
@@ -10884,6 +10899,10 @@ var $author$project$Main$update = F2(
 var $author$project$Main$AddNPC = {$: 'AddNPC'};
 var $author$project$Main$NPCClicked = {$: 'NPCClicked'};
 var $author$project$Main$RemoveNPC = {$: 'RemoveNPC'};
+var $author$project$Main$first = function (tuple) {
+	var firstElement = tuple.a;
+	return firstElement;
+};
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -10949,7 +10968,8 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$img,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(model.seat5),
+								$elm$html$Html$Attributes$src(
+								$author$project$Main$first(model.seat5)),
 								model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
@@ -10994,4 +11014,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"RemoveNPC":[],"NPCClicked":[],"GenerateRandomString":[],"GotRandomString":["Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"RemoveNPC":[],"NPCClicked":[],"GotRandomString":["Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));

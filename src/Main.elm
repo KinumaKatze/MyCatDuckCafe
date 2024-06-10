@@ -10,26 +10,38 @@ import Json.Decode as Decode
 import List exposing (..)
 import Random
 import List.Extra exposing (getAt)
+import Tuple
+import Basics exposing (..)
 
 
 
 
 -- MODEL
 
-
 type alias Model =
     { width : Int
     , height : Int
-    , hidden : Bool
-    , seat5 : String -- Person die in Seat5 Sitzen soll 
+    , hidden : Bool 
+    , seat1 : (String, Bool)
+    , seat2 : (String, Bool)
+    , seat3 : (String, Bool)
+    , seat4 : (String, Bool)
+    , seat5 : (String, Bool)
     , person_list : List String --Liste an möglichen Gästen
     , randomString : Maybe String --Next Guest
     }
 
+first : (a, b) -> a
+first tuple =
+    case tuple of
+        (firstElement, _) ->
+            firstElement
+
+
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    (Model 10 10 True "Random_Person.png" ["Person1.png","Person2.png"] Nothing, Cmd.none )
+    (Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ["Person1.png","Person2.png"] Nothing, Cmd.none )
 
 
 -- UPDATE
@@ -41,7 +53,6 @@ type Msg
     | AddNPC
     | RemoveNPC
     | NPCClicked
-    | GenerateRandomString 
     | GotRandomString Int
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -62,8 +73,9 @@ update msg model =
             let
                 listLength = List.length model.person_list
                 randomIndex = Random.int 0 (listLength - 1)
+                randomSeat = Random.int 0 4
             in
-            ( {model | hidden = False}, Random.generate GotRandomString randomIndex) --Um Random NPC zu erhalten 
+            ( {model | hidden = False}, Random.generate GotRandomString randomIndex)
         RemoveNPC ->
             ( {model | hidden = True}, Cmd.none )
         NPCClicked ->
@@ -74,16 +86,11 @@ update msg model =
 
             case model.randomString of 
                 Just a -> 
-                    ( {model | seat5 = a}, Cmd.none )
+                    ( {model | seat5 = (a, True)}, Cmd.none )
                 Nothing ->
-                    ( {model | seat5 = "Random_Person.png"}, Cmd.none )
+                    ( {model | seat5 =  ("Random_Person.png", False) }, Cmd.none )
 
-        GenerateRandomString ->
-            let
-                listLength = List.length model.person_list
-                randomIndex = Random.int 0 (listLength - 1)
-            in
-            ( model, Random.generate GotRandomString randomIndex )
+        
 
         GotRandomString index ->
             let
@@ -122,15 +129,15 @@ view model =
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0,16 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0,3 scaling)
             , style "position" "absolute"
-            , style "bottom" "11.2%"  -- 10% vom unteren Rand
-            , style "right" "0.5%"  -- 10% vom rechten Rand
+            , style "bottom" "11.2%"  -- 11.2% vom unteren Rand
+            , style "right" "0.5%"  -- 0.5% vom rechten Rand
             , style "background" "none"
             , style "border" "none"
             , style "padding" "0"
             , style "cursor" "pointer"
             ] 
             [img 
-                [ src model.seat5
+                [ src (first model.seat5)
                 , if model.hidden == True then hidden True else hidden False
                 , style "width" "100%"
                 , style "height" "100%"
