@@ -64,7 +64,7 @@ type Msg
     = WindowResized (List Int)
     | AddNPC
     | PrepNextNPC
-    | NPCClicked
+    | NPCClicked Int
     | GotRandomValues RandomValues
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -104,8 +104,8 @@ update msg model =
                     ( { model | seat1 = ("Random_Person.png", False) }, Cmd.none )
 
 
-        NPCClicked ->   --Echte Person zeigen
-                case model.nextSeat of 
+        NPCClicked seat ->   --Echte Person zeigen
+                case seat of 
                 0 ->
                     case model.randomString of 
                         Just a -> 
@@ -170,7 +170,7 @@ view model =
             ]
             []
         , button --Seat1
-            [ Html.Events.onClick NPCClicked
+            [ Html.Events.onClick (NPCClicked 0)
             , if last (model.seat1) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
@@ -191,7 +191,7 @@ view model =
                 []
             ]
         , button --Seat2
-            [ Html.Events.onClick NPCClicked
+            [ Html.Events.onClick (NPCClicked 1)
             , if last (model.seat2) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
@@ -212,7 +212,7 @@ view model =
                 []
             ]
         , button --Seat3
-            [ Html.Events.onClick NPCClicked
+            [ Html.Events.onClick (NPCClicked 2)
             , if last (model.seat3) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
@@ -233,7 +233,7 @@ view model =
                 []
             ]
         , button --Seat4
-            [ Html.Events.onClick NPCClicked
+            [ Html.Events.onClick (NPCClicked 3)
             , if last (model.seat4) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
@@ -254,7 +254,7 @@ view model =
                 []
             ]
         , button --Seat5
-            [ Html.Events.onClick NPCClicked
+            [ Html.Events.onClick (NPCClicked 4)
             , if last (model.seat5) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)

@@ -10938,8 +10938,8 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$none);
 				}
 			case 'NPCClicked':
-				var _v7 = model.nextSeat;
-				switch (_v7) {
+				var seat = msg.a;
+				switch (seat) {
 					case 0:
 						var _v8 = model.randomString;
 						if (_v8.$ === 'Just') {
@@ -11072,7 +11072,9 @@ var $author$project$Main$update = F2(
 		}
 	});
 var $author$project$Main$AddNPC = {$: 'AddNPC'};
-var $author$project$Main$NPCClicked = {$: 'NPCClicked'};
+var $author$project$Main$NPCClicked = function (a) {
+	return {$: 'NPCClicked', a: a};
+};
 var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
 var $author$project$Main$first = function (tuple) {
 	var firstElement = tuple.a;
@@ -11123,7 +11125,8 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NPCClicked(0)),
 						$author$project$Main$last(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
@@ -11159,7 +11162,8 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NPCClicked(1)),
 						$author$project$Main$last(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
@@ -11195,7 +11199,8 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NPCClicked(2)),
 						$author$project$Main$last(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
@@ -11231,7 +11236,8 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NPCClicked(3)),
 						$author$project$Main$last(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
@@ -11267,7 +11273,8 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$NPCClicked(4)),
 						$author$project$Main$last(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
@@ -11332,4 +11339,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":[],"GotRandomValues":["Main.RandomValues"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Basics.Int"],"GotRandomValues":["Main.RandomValues"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
