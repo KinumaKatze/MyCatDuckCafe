@@ -10608,9 +10608,11 @@ var $author$project$Main$Model = function (width) {
 					return function (seat3) {
 						return function (seat4) {
 							return function (seat5) {
-								return function (person_list) {
-									return function (randomString) {
-										return {height: height, hidden: hidden, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, width: width};
+								return function (nextSeat) {
+									return function (person_list) {
+										return function (randomString) {
+											return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, width: width};
+										};
 									};
 								};
 							};
@@ -10628,7 +10630,7 @@ var $author$project$Main$init = function (_v0) {
 			_Utils_Tuple2('Random_Person.png', true))(
 			_Utils_Tuple2('Random_Person.png', true))(
 			_Utils_Tuple2('Random_Person.png', true))(
-			_Utils_Tuple2('Random_Person.png', true))(
+			_Utils_Tuple2('Random_Person.png', true))(0)(
 			_List_fromArray(
 				['Person1.png', 'Person2.png']))($elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
@@ -10642,8 +10644,8 @@ var $author$project$Main$windowSize = _Platform_incomingPort(
 var $author$project$Main$subscriptions = function (_v0) {
 	return $author$project$Main$windowSize($author$project$Main$WindowResized);
 };
-var $author$project$Main$GotRandomString = function (a) {
-	return {$: 'GotRandomString', a: a};
+var $author$project$Main$GotRandomValues = function (a) {
+	return {$: 'GotRandomValues', a: a};
 };
 var $elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
@@ -10751,19 +10753,9 @@ var $elm$random$Random$generate = F2(
 			$elm$random$Random$Generate(
 				A2($elm$random$Random$map, tagger, generator)));
 	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $elm_community$list_extra$List$Extra$getAt = F2(
-	function (idx, xs) {
-		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
-			A2($elm$core$List$drop, idx, xs));
+var $author$project$Main$RandomValues = F2(
+	function (randomIndex, randomSeat) {
+		return {randomIndex: randomIndex, randomSeat: randomSeat};
 	});
 var $elm$core$Bitwise$xor = _Bitwise_xor;
 var $elm$random$Random$peel = function (_v0) {
@@ -10802,6 +10794,44 @@ var $elm$random$Random$int = F2(
 					return accountForBias(seed0);
 				}
 			});
+	});
+var $elm$random$Random$map2 = F3(
+	function (func, _v0, _v1) {
+		var genA = _v0.a;
+		var genB = _v1.a;
+		return $elm$random$Random$Generator(
+			function (seed0) {
+				var _v2 = genA(seed0);
+				var a = _v2.a;
+				var seed1 = _v2.b;
+				var _v3 = genB(seed1);
+				var b = _v3.a;
+				var seed2 = _v3.b;
+				return _Utils_Tuple2(
+					A2(func, a, b),
+					seed2);
+			});
+	});
+var $author$project$Main$generateRandomValues = function (listLength) {
+	return A3(
+		$elm$random$Random$map2,
+		$author$project$Main$RandomValues,
+		A2($elm$random$Random$int, 0, listLength - 1),
+		A2($elm$random$Random$int, 0, 4));
+};
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm_community$list_extra$List$Extra$getAt = F2(
+	function (idx, xs) {
+		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
+			A2($elm$core$List$drop, idx, xs));
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -10849,56 +10879,201 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$none);
 					}
 				}
+			case 'PrepNextNPC':
+				var listLength = $elm$core$List$length(model.person_list);
+				var randomValuesGenerator = $author$project$Main$generateRandomValues(listLength);
+				return _Utils_Tuple2(
+					model,
+					A2($elm$random$Random$generate, $author$project$Main$GotRandomValues, randomValuesGenerator));
 			case 'AddNPC':
-				var randomSeat = A2($elm$random$Random$int, 0, 4);
-				var listLength = $elm$core$List$length(model.person_list);
-				var randomIndex = A2($elm$random$Random$int, 0, listLength - 1);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{hidden: false}),
-					A2($elm$random$Random$generate, $author$project$Main$GotRandomString, randomIndex));
-			case 'RemoveNPC':
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{hidden: true}),
-					$elm$core$Platform$Cmd$none);
+				var _v6 = model.nextSeat;
+				switch (_v6) {
+					case 0:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									seat1: _Utils_Tuple2('Random_Person.png', false)
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 1:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									seat2: _Utils_Tuple2('Random_Person.png', false)
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 2:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									seat3: _Utils_Tuple2('Random_Person.png', false)
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 3:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									seat4: _Utils_Tuple2('Random_Person.png', false)
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 4:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									seat5: _Utils_Tuple2('Random_Person.png', false)
+								}),
+							$elm$core$Platform$Cmd$none);
+					default:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									seat1: _Utils_Tuple2('Random_Person.png', false)
+								}),
+							$elm$core$Platform$Cmd$none);
+				}
 			case 'NPCClicked':
-				var listLength = $elm$core$List$length(model.person_list);
-				var randomIndex = A2($elm$random$Random$int, 0, listLength - 1);
-				var _v6 = model.randomString;
-				if (_v6.$ === 'Just') {
-					var a = _v6.a;
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								seat5: _Utils_Tuple2(a, true)
-							}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								seat5: _Utils_Tuple2('Random_Person.png', false)
-							}),
-						$elm$core$Platform$Cmd$none);
+				var _v7 = model.nextSeat;
+				switch (_v7) {
+					case 0:
+						var _v8 = model.randomString;
+						if (_v8.$ === 'Just') {
+							var a = _v8.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat1: _Utils_Tuple2(a, false)
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat1: _Utils_Tuple2('Random_Person.png', true)
+									}),
+								$elm$core$Platform$Cmd$none);
+						}
+					case 1:
+						var _v9 = model.randomString;
+						if (_v9.$ === 'Just') {
+							var a = _v9.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat2: _Utils_Tuple2(a, false)
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat2: _Utils_Tuple2('Random_Person.png', true)
+									}),
+								$elm$core$Platform$Cmd$none);
+						}
+					case 2:
+						var _v10 = model.randomString;
+						if (_v10.$ === 'Just') {
+							var a = _v10.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat3: _Utils_Tuple2(a, false)
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat3: _Utils_Tuple2('Random_Person.png', true)
+									}),
+								$elm$core$Platform$Cmd$none);
+						}
+					case 3:
+						var _v11 = model.randomString;
+						if (_v11.$ === 'Just') {
+							var a = _v11.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat4: _Utils_Tuple2(a, false)
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat4: _Utils_Tuple2('Random_Person.png', true)
+									}),
+								$elm$core$Platform$Cmd$none);
+						}
+					case 4:
+						var _v12 = model.randomString;
+						if (_v12.$ === 'Just') {
+							var a = _v12.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat5: _Utils_Tuple2(a, false)
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat5: _Utils_Tuple2('Random_Person.png', true)
+									}),
+								$elm$core$Platform$Cmd$none);
+						}
+					default:
+						var _v13 = model.randomString;
+						if (_v13.$ === 'Just') {
+							var a = _v13.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat1: _Utils_Tuple2(a, false)
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat1: _Utils_Tuple2('Random_Person.png', true)
+									}),
+								$elm$core$Platform$Cmd$none);
+						}
 				}
 			default:
-				var index = msg.a;
-				var randomStr = A2($elm_community$list_extra$List$Extra$getAt, index, model.person_list);
+				var randomValues = msg.a;
+				var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{randomString: randomStr}),
+						{nextSeat: randomValues.randomSeat, randomString: randomStr}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$AddNPC = {$: 'AddNPC'};
 var $author$project$Main$NPCClicked = {$: 'NPCClicked'};
-var $author$project$Main$RemoveNPC = {$: 'RemoveNPC'};
+var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
 var $author$project$Main$first = function (tuple) {
 	var firstElement = tuple.a;
 	return firstElement;
@@ -10913,6 +11088,10 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 	});
 var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
+var $author$project$Main$last = function (tuple) {
+	var lastElement = tuple.b;
+	return lastElement;
+};
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -10945,7 +11124,151 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
-						model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						$author$project$Main$last(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'width',
+						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'height',
+						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'bottom', '11.2%'),
+						A2($elm$html$Html$Attributes$style, 'left', '2%'),
+						A2($elm$html$Html$Attributes$style, 'background', 'none'),
+						A2($elm$html$Html$Attributes$style, 'border', 'none'),
+						A2($elm$html$Html$Attributes$style, 'padding', '0'),
+						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(
+								$author$project$Main$first(model.seat1)),
+								$author$project$Main$last(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$author$project$Main$last(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'width',
+						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'height',
+						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'bottom', '11.2%'),
+						A2($elm$html$Html$Attributes$style, 'left', '22.5%'),
+						A2($elm$html$Html$Attributes$style, 'background', 'none'),
+						A2($elm$html$Html$Attributes$style, 'border', 'none'),
+						A2($elm$html$Html$Attributes$style, 'padding', '0'),
+						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(
+								$author$project$Main$first(model.seat2)),
+								$author$project$Main$last(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$author$project$Main$last(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'width',
+						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'height',
+						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'bottom', '11.2%'),
+						A2($elm$html$Html$Attributes$style, 'right', '40.5%'),
+						A2($elm$html$Html$Attributes$style, 'background', 'none'),
+						A2($elm$html$Html$Attributes$style, 'border', 'none'),
+						A2($elm$html$Html$Attributes$style, 'padding', '0'),
+						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(
+								$author$project$Main$first(model.seat3)),
+								$author$project$Main$last(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$author$project$Main$last(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'width',
+						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+						A2(
+						$elm$html$Html$Attributes$style,
+						'height',
+						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'bottom', '11.2%'),
+						A2($elm$html$Html$Attributes$style, 'right', '20.5%'),
+						A2($elm$html$Html$Attributes$style, 'background', 'none'),
+						A2($elm$html$Html$Attributes$style, 'border', 'none'),
+						A2($elm$html$Html$Attributes$style, 'padding', '0'),
+						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$src(
+								$author$project$Main$first(model.seat4)),
+								$author$project$Main$last(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$NPCClicked),
+						$author$project$Main$last(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -10970,7 +11293,7 @@ var $author$project$Main$view = function (model) {
 							[
 								$elm$html$Html$Attributes$src(
 								$author$project$Main$first(model.seat5)),
-								model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$author$project$Main$last(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -10980,7 +11303,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$AddNPC),
+						$elm$html$Html$Events$onClick($author$project$Main$PrepNextNPC),
 						model.hidden ? $elm$html$Html$Attributes$hidden(false) : $elm$html$Html$Attributes$hidden(true),
 						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 						A2($elm$html$Html$Attributes$style, 'top', '50px'),
@@ -10988,30 +11311,25 @@ var $author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Call for Bartender')
+						$elm$html$Html$text('PrepNPC')
 					])),
 				A2(
 				$elm$html$Html$button,
 				_List_fromArray(
 					[
-						$elm$html$Html$Events$onClick($author$project$Main$RemoveNPC),
-						model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false)
+						$elm$html$Html$Events$onClick($author$project$Main$AddNPC),
+						model.hidden ? $elm$html$Html$Attributes$hidden(false) : $elm$html$Html$Attributes$hidden(true),
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'top', '50px'),
+						A2($elm$html$Html$Attributes$style, 'left', '400px')
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Tell him to leave')
-					])),
-				A2(
-				$elm$html$Html$img,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$src('bartender.png'),
-						model.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false)
-					]),
-				_List_Nil)
+						$elm$html$Html$text('AddNPC')
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"RemoveNPC":[],"NPCClicked":[],"GotRandomString":["Basics.Int"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":[],"GotRandomValues":["Main.RandomValues"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
