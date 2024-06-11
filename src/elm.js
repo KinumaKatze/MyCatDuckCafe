@@ -10632,7 +10632,7 @@ var $author$project$Main$init = function (_v0) {
 			_Utils_Tuple2('Random_Person.png', true))(
 			_Utils_Tuple2('Random_Person.png', true))(0)(
 			_List_fromArray(
-				['Person1.png', 'Person2.png']))($elm$core$Maybe$Nothing),
+				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))($elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$WindowResized = function (a) {

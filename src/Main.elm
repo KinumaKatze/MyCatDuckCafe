@@ -43,7 +43,7 @@ last tuple =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 ["Person1.png","Person2.png"] Nothing
+    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 {"Person1.png","Person2.png","Person3.png","Person4.png"} Nothing
     , Cmd.none )
 
 
@@ -86,7 +86,7 @@ update msg model =
                 listLength = List.length model.person_list
                 randomValuesGenerator = generateRandomValues listLength
             in
-            ( model, Random.generate GotRandomValues randomValuesGenerator )
+            ( model, Random.generate GotRandomValues randomValuesGenerator)
 
         AddNPC -> -- Silhouhette ins Bild laden
             case model.nextSeat of 
