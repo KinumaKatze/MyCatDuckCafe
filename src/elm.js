@@ -10833,6 +10833,29 @@ var $elm_community$list_extra$List$Extra$getAt = F2(
 		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
 			A2($elm$core$List$drop, idx, xs));
 	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $author$project$Main$removeWord = F2(
+	function (word, liste) {
+		if (word.$ === 'Just') {
+			var a = word.a;
+			return A2(
+				$elm$core$List$filter,
+				$elm$core$Basics$neq(a),
+				liste);
+		} else {
+			return liste;
+		}
+	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -11067,7 +11090,11 @@ var $author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{nextSeat: randomValues.randomSeat, randomString: randomStr}),
+						{
+							nextSeat: randomValues.randomSeat,
+							person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+							randomString: randomStr
+						}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});

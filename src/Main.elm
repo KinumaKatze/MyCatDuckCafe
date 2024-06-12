@@ -25,7 +25,7 @@ type alias Model =
     , seat4 : (String, Bool)
     , seat5 : (String, Bool)
     , nextSeat : Int
-    , person_list : List String -- Liste an möglichen Gästen
+    , person_list : List String -- Liste an möglichen Gäste
     , randomString : Maybe String -- Next Guest
     }
 
@@ -41,9 +41,18 @@ last tuple =
         (_, lastElement) ->
             lastElement
 
+removeWord : Maybe String -> List String -> List String --Entfernt Eintrag aus einer Liste
+removeWord word liste = 
+    case word of 
+        Just a ->
+            List.filter ((/=) a) liste
+        Nothing ->
+            liste
+     
+
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 {"Person1.png","Person2.png","Person3.png","Person4.png"} Nothing
+    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 ["Person1.png","Person2.png","Person3.png","Person4.png"] Nothing
     , Cmd.none )
 
 
@@ -146,7 +155,7 @@ update msg model =
             let
                 randomStr = List.Extra.getAt randomValues.randomIndex model.person_list
             in
-            ( { model | randomString = randomStr, nextSeat = randomValues.randomSeat}, Cmd.none )
+            ( { model | randomString = randomStr, nextSeat = randomValues.randomSeat, person_list = removeWord randomStr model.person_list}, Cmd.none )
 
 
 -- SUBSCRIPTIONS
