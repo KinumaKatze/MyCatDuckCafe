@@ -10610,8 +10610,10 @@ var $author$project$Main$Model = function (width) {
 							return function (seat5) {
 								return function (nextSeat) {
 									return function (person_list) {
-										return function (randomString) {
-											return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, width: width};
+										return function (seat_list) {
+											return function (randomString) {
+												return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, width: width};
+											};
 										};
 									};
 								};
@@ -10632,7 +10634,9 @@ var $author$project$Main$init = function (_v0) {
 			_Utils_Tuple2('Random_Person.png', true))(
 			_Utils_Tuple2('Random_Person.png', true))(0)(
 			_List_fromArray(
-				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))($elm$core$Maybe$Nothing),
+				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
+			_List_fromArray(
+				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$WindowResized = function (a) {
@@ -10812,13 +10816,14 @@ var $elm$random$Random$map2 = F3(
 					seed2);
 			});
 	});
-var $author$project$Main$generateRandomValues = function (listLength) {
-	return A3(
-		$elm$random$Random$map2,
-		$author$project$Main$RandomValues,
-		A2($elm$random$Random$int, 0, listLength - 1),
-		A2($elm$random$Random$int, 0, 4));
-};
+var $author$project$Main$generateRandomValues = F2(
+	function (listPeople, listSeats) {
+		return A3(
+			$elm$random$Random$map2,
+			$author$project$Main$RandomValues,
+			A2($elm$random$Random$int, 0, listPeople - 1),
+			A2($elm$random$Random$int, 0, listSeats - 1));
+	});
 var $elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -10903,8 +10908,9 @@ var $author$project$Main$update = F2(
 					}
 				}
 			case 'PrepNextNPC':
-				var listLength = $elm$core$List$length(model.person_list);
-				var randomValuesGenerator = $author$project$Main$generateRandomValues(listLength);
+				var listSeats = $elm$core$List$length(model.seat_list);
+				var listPeople = $elm$core$List$length(model.person_list);
+				var randomValuesGenerator = A2($author$project$Main$generateRandomValues, listPeople, listSeats);
 				return _Utils_Tuple2(
 					model,
 					A2($elm$random$Random$generate, $author$project$Main$GotRandomValues, randomValuesGenerator));
@@ -11087,15 +11093,44 @@ var $author$project$Main$update = F2(
 			default:
 				var randomValues = msg.a;
 				var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							nextSeat: randomValues.randomSeat,
-							person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-							randomString: randomStr
-						}),
-					$elm$core$Platform$Cmd$none);
+				var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
+				if (randomSeat.$ === 'Just') {
+					var a = randomSeat.a;
+					var _v15 = $elm$core$String$toInt(a);
+					if (_v15.$ === 'Just') {
+						var b = _v15.a;
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									nextSeat: b,
+									person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+									randomString: randomStr,
+									seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
+								}),
+							$elm$core$Platform$Cmd$none);
+					} else {
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									nextSeat: 1,
+									person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+									randomString: randomStr
+								}),
+							$elm$core$Platform$Cmd$none);
+					}
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								nextSeat: 1,
+								person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+								randomString: randomStr
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Main$AddNPC = {$: 'AddNPC'};

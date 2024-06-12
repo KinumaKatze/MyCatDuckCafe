@@ -26,6 +26,7 @@ type alias Model =
     , seat5 : (String, Bool)
     , nextSeat : Int
     , person_list : List String -- Liste an möglichen Gäste
+    , seat_list : List String --Liste an Stühlen
     , randomString : Maybe String -- Next Guest
     }
 
@@ -48,11 +49,10 @@ removeWord word liste =
             List.filter ((/=) a) liste
         Nothing ->
             liste
-     
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 ["Person1.png","Person2.png","Person3.png","Person4.png"] Nothing
+    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 ["Person1.png","Person2.png","Person3.png","Person4.png"] ["0","1","2","3","4"] Nothing
     , Cmd.none )
 
 
@@ -61,11 +61,11 @@ type alias RandomValues =
     , randomSeat : Int
     }
 
-generateRandomValues : Int -> Generator RandomValues
-generateRandomValues listLength =
+generateRandomValues : Int -> Int -> Generator RandomValues
+generateRandomValues listPeople listSeats =
     Random.map2 RandomValues
-        (Random.int 0 (listLength - 1))
-        (Random.int 0 4)
+        (Random.int 0 (listPeople - 1))
+        (Random.int 0 (listSeats - 1))
 
 -- UPDATE
 
@@ -76,7 +76,7 @@ type Msg
     | NPCClicked Int
     | GotRandomValues RandomValues
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> ( Model, Cmd Msg ) --Es darf erst der nächste NPC gepreppt werden, wenn der erste abgearbeitet wurde
 update msg model =
     case msg of
         WindowResized liste ->
@@ -92,8 +92,9 @@ update msg model =
 
         PrepNextNPC -> --Random Sitzplatz und Random person ermitteln
             let
-                listLength = List.length model.person_list
-                randomValuesGenerator = generateRandomValues listLength
+                listPeople = List.length model.person_list
+                listSeats = List.length model.seat_list
+                randomValuesGenerator = generateRandomValues listPeople listSeats
             in
             ( model, Random.generate GotRandomValues randomValuesGenerator)
 
@@ -154,8 +155,18 @@ update msg model =
         GotRandomValues randomValues ->
             let
                 randomStr = List.Extra.getAt randomValues.randomIndex model.person_list
+                randomSeat = List.Extra.getAt randomValues.randomSeat model.seat_list
             in
-            ( { model | randomString = randomStr, nextSeat = randomValues.randomSeat, person_list = removeWord randomStr model.person_list}, Cmd.none )
+                case randomSeat of 
+                    Just a -> 
+                        case String.toInt a of 
+                            Just b ->
+                                ({ model | randomString = randomStr, nextSeat = b, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list}, Cmd.none )
+                            Nothing ->
+                                ({ model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
+                    Nothing ->
+                        ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
+           
 
 
 -- SUBSCRIPTIONS
