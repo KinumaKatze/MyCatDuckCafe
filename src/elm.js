@@ -10612,7 +10612,9 @@ var $author$project$Main$Model = function (width) {
 									return function (person_list) {
 										return function (seat_list) {
 											return function (randomString) {
-												return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, width: width};
+												return function (showModal) {
+													return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, width: width};
+												};
 											};
 										};
 									};
@@ -10636,7 +10638,7 @@ var $author$project$Main$init = function (_v0) {
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
-				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing),
+				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$WindowResized = function (a) {
@@ -11090,7 +11092,7 @@ var $author$project$Main$update = F2(
 								$elm$core$Platform$Cmd$none);
 						}
 				}
-			default:
+			case 'GotRandomValues':
 				var randomValues = msg.a;
 				var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
 				var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
@@ -11131,6 +11133,12 @@ var $author$project$Main$update = F2(
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{showModal: !model.showModal}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$AddNPC = {$: 'AddNPC'};
@@ -11138,6 +11146,7 @@ var $author$project$Main$NPCClicked = function (a) {
 	return {$: 'NPCClicked', a: a};
 };
 var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
+var $author$project$Main$ToggleModal = {$: 'ToggleModal'};
 var $author$project$Main$first = function (tuple) {
 	var firstElement = tuple.a;
 	return firstElement;
@@ -11395,10 +11404,64 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text('AddNPC')
-					]))
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick($author$project$Main$ToggleModal),
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'top', '50px'),
+						A2($elm$html$Html$Attributes$style, 'left', '200px'),
+						A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Open Modal')
+					])),
+				model.showModal ? A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+						A2($elm$html$Html$Attributes$style, 'top', '0'),
+						A2($elm$html$Html$Attributes$style, 'left', '0'),
+						A2($elm$html$Html$Attributes$style, 'width', '100%'),
+						A2($elm$html$Html$Attributes$style, 'height', '100%'),
+						A2($elm$html$Html$Attributes$style, 'backgroundColor', 'rgba(0,0,0,0.5)'),
+						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+						A2($elm$html$Html$Attributes$style, 'alignItems', 'center'),
+						A2($elm$html$Html$Attributes$style, 'justifyContent', 'center'),
+						A2($elm$html$Html$Attributes$style, 'zIndex', '2')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'backgroundColor', 'white'),
+								A2($elm$html$Html$Attributes$style, 'padding', '20px'),
+								A2($elm$html$Html$Attributes$style, 'borderRadius', '10px')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('This is a modal window.'),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Main$ToggleModal)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Close')
+									]))
+							]))
+					])) : $elm$html$Html$text('')
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Basics.Int"],"GotRandomValues":["Main.RandomValues"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Basics.Int"],"GotRandomValues":["Main.RandomValues"],"ToggleModal":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));

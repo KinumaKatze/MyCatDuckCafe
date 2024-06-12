@@ -28,6 +28,7 @@ type alias Model =
     , person_list : List String -- Liste an möglichen Gäste
     , seat_list : List String --Liste an Stühlen
     , randomString : Maybe String -- Next Guest
+    , showModal : Bool
     }
 
 first : (a, b) -> a
@@ -52,7 +53,7 @@ removeWord word liste =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 ["Person1.png","Person2.png","Person3.png","Person4.png"] ["0","1","2","3","4"] Nothing
+    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 ["Person1.png","Person2.png","Person3.png","Person4.png"] ["0","1","2","3","4"] Nothing False
     , Cmd.none )
 
 
@@ -75,6 +76,7 @@ type Msg
     | PrepNextNPC
     | NPCClicked Int
     | GotRandomValues RandomValues
+    | ToggleModal
 
 update : Msg -> Model -> ( Model, Cmd Msg ) --Es darf erst der nächste NPC gepreppt werden, wenn der erste abgearbeitet wurde
 update msg model =
@@ -166,6 +168,9 @@ update msg model =
                                 ({ model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
                     Nothing ->
                         ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
+
+        ToggleModal ->
+            ({ model | showModal = not model.showModal}, Cmd.none)
            
 
 
@@ -306,6 +311,34 @@ view model =
             , style "position" "absolute"
             , style "top" "50px"  -- Anpassung der vertikalen Position
             , style "left" "400px" ] [ text "AddNPC" ] -- Anpassung der horizontalen Position
+        , button [ Html.Events.onClick ToggleModal
+                       , style "position" "absolute"
+                       , style "top" "50px"
+                       , style "left" "200px"
+                       , style "zIndex" "1"
+                       ] [ text "Open Modal" ]
+        , if model.showModal then
+                    div [ style "position" "fixed"
+                        , style "top" "0"
+                        , style "left" "0"
+                        , style "width" "100%"
+                        , style "height" "100%"
+                        , style "backgroundColor" "rgba(0,0,0,0.5)"
+                        , style "display" "flex"
+                        , style "alignItems" "center"
+                        , style "justifyContent" "center"
+                        , style "zIndex" "2"
+                        ]
+                        [ div [ style "backgroundColor" "white"
+                              , style "padding" "20px"
+                              , style "borderRadius" "10px"
+                              ]
+                              [ text "This is a modal window."
+                              , button [ Html.Events.onClick ToggleModal ] [ text "Close" ]
+                              ]
+                        ]
+                  else
+                    text ""
         ]
 
 
