@@ -13,17 +13,29 @@ import Tuple
 import Basics exposing (..)
 
 
--- MODEL
+-- Typ-Deklarationen
+
+type alias Seat = 
+    { name : String 
+    , hidden : Bool
+    , modal : Bool
+    , id : Int
+    }
+
+type alias RandomValues =
+    { randomIndex : Int
+    , randomSeat : Int
+    }
 
 type alias Model =
     { width : Int
     , height : Int
     , hidden : Bool 
-    , seat1 : (String, Bool)
-    , seat2 : (String, Bool)
-    , seat3 : (String, Bool)
-    , seat4 : (String, Bool)
-    , seat5 : (String, Bool)
+    , seat1 : Seat
+    , seat2 : Seat
+    , seat3 : Seat
+    , seat4 : Seat
+    , seat5 : Seat
     , nextSeat : Int
     , person_list : List String -- Liste an möglichen Gäste
     , seat_list : List String --Liste an Stühlen
@@ -31,17 +43,48 @@ type alias Model =
     , showModal : Bool
     }
 
-first : (a, b) -> a
-first tuple =
-    case tuple of
-        (firstElement, _) ->
-            firstElement
+--Initialisierung
 
-last : (a, b) -> b
-last tuple =
-    case tuple of
-        (_, lastElement) ->
-            lastElement
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Model 
+    10 
+    10 
+    True 
+    {name = "Random_Person.png", hidden = True, modal = False, id = 0} 
+    {name = "Random_Person.png", hidden = True, modal = False, id = 1} 
+    {name = "Random_Person.png", hidden = True, modal = False, id = 2} 
+    {name = "Random_Person.png", hidden = True, modal = False, id = 3} 
+    {name = "Random_Person.png", hidden = True, modal = False, id = 4} 
+    0 
+    ["Person1.png","Person2.png","Person3.png","Person4.png"] 
+    ["0","1","2","3","4"] 
+    Nothing False
+    , Cmd.none )
+
+-- Message Typen
+
+type Msg
+    = WindowResized (List Int)
+    | AddNPC
+    | PrepNextNPC
+    | NPCClicked Seat
+    | GotRandomValues RandomValues
+    | ToggleModal
+
+--Hilfsfunktionen
+
+extractName : Seat -> String 
+extractName seat = 
+        seat.name 
+
+extractHidden : Seat -> Bool 
+extractHidden seat = 
+        seat.hidden 
+
+extractModal : Seat -> Bool 
+extractModal seat = 
+        seat.modal 
 
 removeWord : Maybe String -> List String -> List String --Entfernt Eintrag aus einer Liste
 removeWord word liste = 
@@ -51,32 +94,15 @@ removeWord word liste =
         Nothing ->
             liste
 
-init : () -> ( Model, Cmd Msg )
-init _ =
-    ( Model 10 10 True ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) ("Random_Person.png", True) 0 ["Person1.png","Person2.png","Person3.png","Person4.png"] ["0","1","2","3","4"] Nothing False
-    , Cmd.none )
-
-
-type alias RandomValues =
-    { randomIndex : Int
-    , randomSeat : Int
-    }
-
 generateRandomValues : Int -> Int -> Generator RandomValues
 generateRandomValues listPeople listSeats =
     Random.map2 RandomValues
         (Random.int 0 (listPeople - 1))
         (Random.int 0 (listSeats - 1))
 
--- UPDATE
 
-type Msg
-    = WindowResized (List Int)
-    | AddNPC
-    | PrepNextNPC
-    | NPCClicked Int
-    | GotRandomValues RandomValues
-    | ToggleModal
+
+--Update Funktionen
 
 update : Msg -> Model -> ( Model, Cmd Msg ) --Es darf erst der nächste NPC gepreppt werden, wenn der erste abgearbeitet wurde
 update msg model =
@@ -103,57 +129,100 @@ update msg model =
         AddNPC -> -- Silhouhette ins Bild laden
             case model.nextSeat of 
                 0 ->
-                    ( { model | seat1 = ("Random_Person.png", False) }, Cmd.none )
+                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
                 1 ->
-                    ( { model | seat2 = ("Random_Person.png", False) }, Cmd.none )
+                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id} }, Cmd.none )
                 2 ->
-                    ( { model | seat3 = ("Random_Person.png", False) }, Cmd.none )
+                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id} }, Cmd.none )
                 3 ->
-                    ( { model | seat4 = ("Random_Person.png", False) }, Cmd.none )
+                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id} }, Cmd.none )
                 4 ->
-                    ( { model | seat5 = ("Random_Person.png", False) }, Cmd.none )
+                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id} }, Cmd.none )
                 _ -> 
-                    ( { model | seat1 = ("Random_Person.png", False) }, Cmd.none )
+                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
 
 
         NPCClicked seat ->   --Echte Person zeigen
-                case seat of 
-                0 ->
-                    case model.randomString of 
-                        Just a -> 
-                            ( { model | seat1 = (a, False) }, Cmd.none )
-                        Nothing ->
-                            ( { model | seat1 = ("Random_Person.png", True) }, Cmd.none )
-                1 ->
-                    case model.randomString of 
-                        Just a -> 
-                            ( { model | seat2 = (a, False) }, Cmd.none )
-                        Nothing ->
-                            ( { model | seat2 = ("Random_Person.png", True) }, Cmd.none )
-                2 ->
-                    case model.randomString of 
-                        Just a -> 
-                            ( { model | seat3 = (a, False) }, Cmd.none )
-                        Nothing ->
-                            ( { model | seat3 = ("Random_Person.png", True) }, Cmd.none )
-                3 ->
-                    case model.randomString of 
-                        Just a -> 
-                            ( { model | seat4 = (a, False) }, Cmd.none )
-                        Nothing ->
-                            ( { model | seat4 = ("Random_Person.png", True) }, Cmd.none )
-                4 ->
-                    case model.randomString of 
-                        Just a -> 
-                            ( { model | seat5 = (a, False) }, Cmd.none )
-                        Nothing ->
-                            ( { model | seat5 = ("Random_Person.png", True) }, Cmd.none )
-                _ -> 
-                    case model.randomString of 
-                        Just a -> 
-                            ( { model | seat1 = (a, False) }, Cmd.none )
-                        Nothing ->
-                            ( { model | seat1 = ("Random_Person.png", True) }, Cmd.none )
+
+                if seat.name == "Random_Person.png" then 
+                    case seat.id of 
+                        0 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat1 = {name = a, hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
+                        1 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat2 = {name = a, hidden = False, modal = False, id = model.seat2.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id} }, Cmd.none )
+                        2 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat3 = {name = a, hidden = False, modal = False, id = model.seat3.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id} }, Cmd.none )
+                        3 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat4 = {name = a, hidden = False, modal = False, id = model.seat4.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id} }, Cmd.none )
+                        4 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat5 = {name = a, hidden = False, modal = False, id = model.seat5.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id} }, Cmd.none )
+                        _ -> 
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat1 = {name = a, hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
+
+                    else 
+
+                         case seat.id of 
+                        0 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat1 = {name = model.seat1.name, hidden = model.seat1.hidden, modal = False, id = model.seat1.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
+                        1 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat2 = {name = model.seat2.name, hidden = model.seat2.hidden, modal = False, id = model.seat2.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id} }, Cmd.none )
+                        2 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat3 = {name = model.seat3.name, hidden = model.seat3.hidden, modal = False, id = model.seat3.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id} }, Cmd.none )
+                        3 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat4 = {name = model.seat4.name, hidden = model.seat4.hidden, modal = False, id = model.seat4.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id} }, Cmd.none )
+                        4 ->
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat5 = {name = model.seat5.name, hidden = model.seat5.hidden, modal = False, id = model.seat5.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id} }, Cmd.none )
+                        _ -> 
+                            case model.randomString of 
+                                Just a -> 
+                                    ( { model | seat1 = {name = model.seat1.name, hidden = model.seat1.hidden, modal = False, id = model.seat1.id} }, Cmd.none )
+                                Nothing ->
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id} }, Cmd.none )
+
         GotRandomValues randomValues ->
             let
                 randomStr = List.Extra.getAt randomValues.randomIndex model.person_list
@@ -195,8 +264,8 @@ view model =
             ]
             []
         , button --Seat1
-            [ Html.Events.onClick (NPCClicked 0)
-            , if last (model.seat1) == True then hidden True else hidden False
+            [ Html.Events.onClick (NPCClicked model.seat1)
+            , if extractHidden model.seat1 == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
             , style "position" "absolute"
@@ -208,16 +277,16 @@ view model =
             , style "cursor" "pointer"
             ] 
             [ img 
-                [ src (first model.seat1)
-                , if last (model.seat1) == True then hidden True else hidden False
+                [ src (extractName model.seat1)
+                , if extractHidden model.seat1 == True then hidden True else hidden False
                 , style "width" "100%"
                 , style "height" "100%"
                 ] 
                 []
             ]
         , button --Seat2
-            [ Html.Events.onClick (NPCClicked 1)
-            , if last (model.seat2) == True then hidden True else hidden False
+            [ Html.Events.onClick (NPCClicked model.seat2)
+            , if (extractHidden model.seat2) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
             , style "position" "absolute"
@@ -229,16 +298,16 @@ view model =
             , style "cursor" "pointer"
             ] 
             [ img 
-                [ src (first model.seat2)
-                , if last (model.seat2) == True then hidden True else hidden False
+                [ src (extractName model.seat2)
+                , if (extractHidden model.seat2) == True then hidden True else hidden False
                 , style "width" "100%"
                 , style "height" "100%"
                 ] 
                 []
             ]
         , button --Seat3
-            [ Html.Events.onClick (NPCClicked 2)
-            , if last (model.seat3) == True then hidden True else hidden False
+            [ Html.Events.onClick (NPCClicked model.seat3)
+            , if (extractHidden model.seat3) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
             , style "position" "absolute"
@@ -250,16 +319,16 @@ view model =
             , style "cursor" "pointer"
             ] 
             [ img 
-                [ src (first model.seat3)
-                , if last (model.seat3) == True then hidden True else hidden False
+                [ src (extractName model.seat3)
+                , if (extractHidden model.seat3) == True then hidden True else hidden False
                 , style "width" "100%"
                 , style "height" "100%"
                 ] 
                 []
             ]
         , button --Seat4
-            [ Html.Events.onClick (NPCClicked 3)
-            , if last (model.seat4) == True then hidden True else hidden False
+            [ Html.Events.onClick (NPCClicked model.seat4)
+            , if (extractHidden model.seat4) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
             , style "position" "absolute"
@@ -271,16 +340,16 @@ view model =
             , style "cursor" "pointer"
             ] 
             [ img 
-                [ src (first model.seat4)
-                , if last (model.seat4) == True then hidden True else hidden False
+                [ src (extractName model.seat4)
+                , if (extractHidden model.seat4) == True then hidden True else hidden False
                 , style "width" "100%"
                 , style "height" "100%"
                 ] 
                 []
             ]
         , button --Seat5
-            [ Html.Events.onClick (NPCClicked 4)
-            , if last (model.seat5) == True then hidden True else hidden False
+            [ Html.Events.onClick (NPCClicked model.seat5)
+            , if (extractHidden model.seat5) == True then hidden True else hidden False
             , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
             , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
             , style "position" "absolute"
@@ -292,8 +361,8 @@ view model =
             , style "cursor" "pointer"
             ] 
             [ img 
-                [ src (first model.seat5)
-                , if last (model.seat5) == True then hidden True else hidden False
+                [ src (extractName model.seat5)
+                , if (extractHidden model.seat5) == True then hidden True else hidden False
                 , style "width" "100%"
                 , style "height" "100%"
                 ] 
@@ -301,13 +370,11 @@ view model =
             ]
         , button 
             [ Html.Events.onClick PrepNextNPC
-            , if model.hidden == True then hidden False else hidden True
             , style "position" "absolute"
             , style "top" "50px"  -- Anpassung der vertikalen Position
             , style "left" "50px" ] [ text "PrepNPC" ] -- Anpassung der horizontalen Position
         , button 
             [ Html.Events.onClick AddNPC
-            , if model.hidden == True then hidden False else hidden True
             , style "position" "absolute"
             , style "top" "50px"  -- Anpassung der vertikalen Position
             , style "left" "400px" ] [ text "AddNPC" ] -- Anpassung der horizontalen Position

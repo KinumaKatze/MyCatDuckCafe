@@ -10630,11 +10630,11 @@ var $author$project$Main$Model = function (width) {
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$Main$Model(10)(10)(true)(
-			_Utils_Tuple2('Random_Person.png', true))(
-			_Utils_Tuple2('Random_Person.png', true))(
-			_Utils_Tuple2('Random_Person.png', true))(
-			_Utils_Tuple2('Random_Person.png', true))(
-			_Utils_Tuple2('Random_Person.png', true))(0)(
+			{hidden: true, id: 0, modal: false, name: 'Random_Person.png'})(
+			{hidden: true, id: 1, modal: false, name: 'Random_Person.png'})(
+			{hidden: true, id: 2, modal: false, name: 'Random_Person.png'})(
+			{hidden: true, id: 3, modal: false, name: 'Random_Person.png'})(
+			{hidden: true, id: 4, modal: false, name: 'Random_Person.png'})(0)(
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
@@ -10924,7 +10924,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat1: _Utils_Tuple2('Random_Person.png', false)
+									seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 1:
@@ -10932,7 +10932,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat2: _Utils_Tuple2('Random_Person.png', false)
+									seat2: {hidden: false, id: model.seat2.id, modal: false, name: 'Random_Person.png'}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 2:
@@ -10940,7 +10940,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat3: _Utils_Tuple2('Random_Person.png', false)
+									seat3: {hidden: false, id: model.seat3.id, modal: false, name: 'Random_Person.png'}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 3:
@@ -10948,7 +10948,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat4: _Utils_Tuple2('Random_Person.png', false)
+									seat4: {hidden: false, id: model.seat4.id, modal: false, name: 'Random_Person.png'}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 4:
@@ -10956,7 +10956,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat5: _Utils_Tuple2('Random_Person.png', false)
+									seat5: {hidden: false, id: model.seat5.id, modal: false, name: 'Random_Person.png'}
 								}),
 							$elm$core$Platform$Cmd$none);
 					default:
@@ -10964,133 +10964,260 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat1: _Utils_Tuple2('Random_Person.png', false)
+									seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
 								}),
 							$elm$core$Platform$Cmd$none);
 				}
 			case 'NPCClicked':
 				var seat = msg.a;
-				switch (seat) {
-					case 0:
-						var _v8 = model.randomString;
-						if (_v8.$ === 'Just') {
-							var a = _v8.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat1: _Utils_Tuple2(a, false)
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat1: _Utils_Tuple2('Random_Person.png', true)
-									}),
-								$elm$core$Platform$Cmd$none);
-						}
-					case 1:
-						var _v9 = model.randomString;
-						if (_v9.$ === 'Just') {
-							var a = _v9.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat2: _Utils_Tuple2(a, false)
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat2: _Utils_Tuple2('Random_Person.png', true)
-									}),
-								$elm$core$Platform$Cmd$none);
-						}
-					case 2:
-						var _v10 = model.randomString;
-						if (_v10.$ === 'Just') {
-							var a = _v10.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat3: _Utils_Tuple2(a, false)
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat3: _Utils_Tuple2('Random_Person.png', true)
-									}),
-								$elm$core$Platform$Cmd$none);
-						}
-					case 3:
-						var _v11 = model.randomString;
-						if (_v11.$ === 'Just') {
-							var a = _v11.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat4: _Utils_Tuple2(a, false)
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat4: _Utils_Tuple2('Random_Person.png', true)
-									}),
-								$elm$core$Platform$Cmd$none);
-						}
-					case 4:
-						var _v12 = model.randomString;
-						if (_v12.$ === 'Just') {
-							var a = _v12.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat5: _Utils_Tuple2(a, false)
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat5: _Utils_Tuple2('Random_Person.png', true)
-									}),
-								$elm$core$Platform$Cmd$none);
-						}
-					default:
-						var _v13 = model.randomString;
-						if (_v13.$ === 'Just') {
-							var a = _v13.a;
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat1: _Utils_Tuple2(a, false)
-									}),
-								$elm$core$Platform$Cmd$none);
-						} else {
-							return _Utils_Tuple2(
-								_Utils_update(
-									model,
-									{
-										seat1: _Utils_Tuple2('Random_Person.png', true)
-									}),
-								$elm$core$Platform$Cmd$none);
-						}
+				if (seat.name === 'Random_Person.png') {
+					var _v7 = seat.id;
+					switch (_v7) {
+						case 0:
+							var _v8 = model.randomString;
+							if (_v8.$ === 'Just') {
+								var a = _v8.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: false, id: model.seat1.id, modal: false, name: a}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 1:
+							var _v9 = model.randomString;
+							if (_v9.$ === 'Just') {
+								var a = _v9.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat2: {hidden: false, id: model.seat2.id, modal: false, name: a}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat2: {hidden: false, id: model.seat2.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 2:
+							var _v10 = model.randomString;
+							if (_v10.$ === 'Just') {
+								var a = _v10.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat3: {hidden: false, id: model.seat3.id, modal: false, name: a}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat3: {hidden: false, id: model.seat3.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 3:
+							var _v11 = model.randomString;
+							if (_v11.$ === 'Just') {
+								var a = _v11.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: {hidden: false, id: model.seat4.id, modal: false, name: a}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: {hidden: false, id: model.seat4.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 4:
+							var _v12 = model.randomString;
+							if (_v12.$ === 'Just') {
+								var a = _v12.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat5: {hidden: false, id: model.seat5.id, modal: false, name: a}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat5: {hidden: false, id: model.seat5.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						default:
+							var _v13 = model.randomString;
+							if (_v13.$ === 'Just') {
+								var a = _v13.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: false, id: model.seat1.id, modal: false, name: a}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+					}
+				} else {
+					var _v14 = seat.id;
+					switch (_v14) {
+						case 0:
+							var _v15 = model.randomString;
+							if (_v15.$ === 'Just') {
+								var a = _v15.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: model.seat1.hidden, id: model.seat1.id, modal: false, name: model.seat1.name}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 1:
+							var _v16 = model.randomString;
+							if (_v16.$ === 'Just') {
+								var a = _v16.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat2: {hidden: model.seat2.hidden, id: model.seat2.id, modal: false, name: model.seat2.name}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat2: {hidden: false, id: model.seat2.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 2:
+							var _v17 = model.randomString;
+							if (_v17.$ === 'Just') {
+								var a = _v17.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat3: {hidden: model.seat3.hidden, id: model.seat3.id, modal: false, name: model.seat3.name}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat3: {hidden: false, id: model.seat3.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 3:
+							var _v18 = model.randomString;
+							if (_v18.$ === 'Just') {
+								var a = _v18.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: {hidden: model.seat4.hidden, id: model.seat4.id, modal: false, name: model.seat4.name}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: {hidden: false, id: model.seat4.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						case 4:
+							var _v19 = model.randomString;
+							if (_v19.$ === 'Just') {
+								var a = _v19.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat5: {hidden: model.seat5.hidden, id: model.seat5.id, modal: false, name: model.seat5.name}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat5: {hidden: false, id: model.seat5.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+						default:
+							var _v20 = model.randomString;
+							if (_v20.$ === 'Just') {
+								var a = _v20.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: model.seat1.hidden, id: model.seat1.id, modal: false, name: model.seat1.name}
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+										}),
+									$elm$core$Platform$Cmd$none);
+							}
+					}
 				}
 			case 'GotRandomValues':
 				var randomValues = msg.a;
@@ -11098,9 +11225,9 @@ var $author$project$Main$update = F2(
 				var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
 				if (randomSeat.$ === 'Just') {
 					var a = randomSeat.a;
-					var _v15 = $elm$core$String$toInt(a);
-					if (_v15.$ === 'Just') {
-						var b = _v15.a;
+					var _v22 = $elm$core$String$toInt(a);
+					if (_v22.$ === 'Just') {
+						var b = _v22.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
@@ -11147,9 +11274,11 @@ var $author$project$Main$NPCClicked = function (a) {
 };
 var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
 var $author$project$Main$ToggleModal = {$: 'ToggleModal'};
-var $author$project$Main$first = function (tuple) {
-	var firstElement = tuple.a;
-	return firstElement;
+var $author$project$Main$extractHidden = function (seat) {
+	return seat.hidden;
+};
+var $author$project$Main$extractName = function (seat) {
+	return seat.name;
 };
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -11161,10 +11290,6 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 	});
 var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
-var $author$project$Main$last = function (tuple) {
-	var lastElement = tuple.b;
-	return lastElement;
-};
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -11197,8 +11322,8 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(0)),
-						$author$project$Main$last(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						$author$project$Main$NPCClicked(model.seat1)),
+						$author$project$Main$extractHidden(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11222,8 +11347,8 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$src(
-								$author$project$Main$first(model.seat1)),
-								$author$project$Main$last(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$author$project$Main$extractName(model.seat1)),
+								$author$project$Main$extractHidden(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11234,8 +11359,8 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(1)),
-						$author$project$Main$last(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						$author$project$Main$NPCClicked(model.seat2)),
+						$author$project$Main$extractHidden(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11259,8 +11384,8 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$src(
-								$author$project$Main$first(model.seat2)),
-								$author$project$Main$last(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$author$project$Main$extractName(model.seat2)),
+								$author$project$Main$extractHidden(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11271,8 +11396,8 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(2)),
-						$author$project$Main$last(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						$author$project$Main$NPCClicked(model.seat3)),
+						$author$project$Main$extractHidden(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11296,8 +11421,8 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$src(
-								$author$project$Main$first(model.seat3)),
-								$author$project$Main$last(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$author$project$Main$extractName(model.seat3)),
+								$author$project$Main$extractHidden(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11308,8 +11433,8 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(3)),
-						$author$project$Main$last(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						$author$project$Main$NPCClicked(model.seat4)),
+						$author$project$Main$extractHidden(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11333,8 +11458,8 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$src(
-								$author$project$Main$first(model.seat4)),
-								$author$project$Main$last(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$author$project$Main$extractName(model.seat4)),
+								$author$project$Main$extractHidden(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11345,8 +11470,8 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(4)),
-						$author$project$Main$last(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						$author$project$Main$NPCClicked(model.seat5)),
+						$author$project$Main$extractHidden(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11370,8 +11495,8 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$src(
-								$author$project$Main$first(model.seat5)),
-								$author$project$Main$last(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$author$project$Main$extractName(model.seat5)),
+								$author$project$Main$extractHidden(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11382,7 +11507,6 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick($author$project$Main$PrepNextNPC),
-						model.hidden ? $elm$html$Html$Attributes$hidden(false) : $elm$html$Html$Attributes$hidden(true),
 						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 						A2($elm$html$Html$Attributes$style, 'top', '50px'),
 						A2($elm$html$Html$Attributes$style, 'left', '50px')
@@ -11396,7 +11520,6 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Events$onClick($author$project$Main$AddNPC),
-						model.hidden ? $elm$html$Html$Attributes$hidden(false) : $elm$html$Html$Attributes$hidden(true),
 						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 						A2($elm$html$Html$Attributes$style, 'top', '50px'),
 						A2($elm$html$Html$Attributes$style, 'left', '400px')
@@ -11464,4 +11587,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Basics.Int"],"GotRandomValues":["Main.RandomValues"],"ToggleModal":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"ToggleModal":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
