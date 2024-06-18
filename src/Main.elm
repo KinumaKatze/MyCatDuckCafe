@@ -46,6 +46,7 @@ type alias Model =
     , seat_list : List String --Liste an Stühlen
     , randomString : Maybe String -- Next Guest
     , showModal : Bool
+    , userInput : String
     }
 
 --Initialisierung
@@ -66,6 +67,7 @@ init _ =
     ["0","1","2","3","4"] 
     Nothing 
     False
+    "..."
     , Cmd.none )
 
 -- Message Typen
@@ -78,6 +80,7 @@ type Msg
     | GotRandomValues RandomValues
     | Tick Posix --Dialogfenster, dadurch wird Dialog nach und nach angezeigt
     | RemoveNPC Seat
+    | GetInput String
 
 --Hilfsfunktionen
 
@@ -276,7 +279,9 @@ update msg model =
                                 ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat5 = {name = "Random_Person.png", hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
                         _ -> 
                                 ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat1 = {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
-           
+        
+        GetInput input ->
+            ({model | userInput = input}, Cmd.none )
 
 -- SUBSCRIPTIONS
 
@@ -795,7 +800,19 @@ view model =
             , style "position" "absolute"
             , style "top" "50px"  -- Anpassung der vertikalen Position
             , style "left" "400px" ] [ text "AddNPC" ] -- Anpassung der horizontalen Position
-        , text model.seat1.spokenText
+        , div 
+            [ style "position" "absolute"
+            , style "top" "50px"  -- Anpassung der vertikalen Position
+            , style "left" "200px"
+            ]
+            [ input
+                [ placeholder "Bitte geben sie an wie lange sie lernen wollen."
+                , value model.userInput
+                , onInput GetInput 
+                ] []
+            , div [] 
+                [ text ("Ich möchte für " ++ model.userInput ++" Minuten lernen") ]
+        ]
         ]
 
 

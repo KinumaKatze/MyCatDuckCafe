@@ -10613,7 +10613,9 @@ var $author$project$Main$Model = function (width) {
 										return function (seat_list) {
 											return function (randomString) {
 												return function (showModal) {
-													return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, width: width};
+													return function (userInput) {
+														return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, userInput: userInput, width: width};
+													};
 												};
 											};
 										};
@@ -10638,7 +10640,7 @@ var $author$project$Main$init = function (_v0) {
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
-				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false),
+				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...'),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Tick = function (a) {
@@ -11436,7 +11438,7 @@ var $author$project$Main$update = F2(
 						}
 					}
 				}
-			default:
+			case 'RemoveNPC':
 				var seat = msg.a;
 				var _v17 = seat.id;
 				switch (_v17) {
@@ -11561,9 +11563,19 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 				}
+			default:
+				var input = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{userInput: input}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Main$AddNPC = {$: 'AddNPC'};
+var $author$project$Main$GetInput = function (a) {
+	return {$: 'GetInput', a: a};
+};
 var $author$project$Main$NPCClicked = function (a) {
 	return {$: 'NPCClicked', a: a};
 };
@@ -11581,6 +11593,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 	});
 var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
@@ -12426,10 +12439,36 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$text('AddNPC')
 					])),
-				$elm$html$Html$text(model.seat1.spokenText)
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2($elm$html$Html$Attributes$style, 'top', '50px'),
+						A2($elm$html$Html$Attributes$style, 'left', '200px')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$input,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$placeholder('Bitte geben sie an wie lange sie lernen wollen.'),
+								$elm$html$Html$Attributes$value(model.userInput),
+								$elm$html$Html$Events$onInput($author$project$Main$GetInput)
+							]),
+						_List_Nil),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Ich möchte für' + (model.userInput + ' Minuten lernen'))
+							]))
+					]))
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
