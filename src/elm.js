@@ -12443,9 +12443,7 @@ var $author$project$Main$view = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'top', '50px'),
-						A2($elm$html$Html$Attributes$style, 'left', '200px')
+						$elm$html$Html$Attributes$class('overlay')
 					]),
 				_List_fromArray(
 					[
@@ -12455,15 +12453,19 @@ var $author$project$Main$view = function (model) {
 							[
 								$elm$html$Html$Attributes$placeholder('Bitte geben sie an wie lange sie lernen wollen.'),
 								$elm$html$Html$Attributes$value(model.userInput),
-								$elm$html$Html$Events$onInput($author$project$Main$GetInput)
+								$elm$html$Html$Events$onInput($author$project$Main$GetInput),
+								$elm$html$Html$Attributes$class('input-field')
 							]),
 						_List_Nil),
 						A2(
 						$elm$html$Html$div,
-						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Ich möchte für' + (model.userInput + ' Minuten lernen'))
+								$elm$html$Html$Attributes$class('display-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Ich möchte für ' + (model.userInput + ' Minuten lernen'))
 							]))
 					]))
 			]));

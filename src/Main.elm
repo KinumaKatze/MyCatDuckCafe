@@ -801,16 +801,13 @@ view model =
             , style "top" "50px"  -- Anpassung der vertikalen Position
             , style "left" "400px" ] [ text "AddNPC" ] -- Anpassung der horizontalen Position
         , div 
-            [ style "position" "absolute"
-            , style "top" "50px"  -- Anpassung der vertikalen Position
-            , style "left" "200px"
-            ]
-            [ input
-                [ placeholder "Bitte geben sie an wie lange sie lernen wollen."
-                , value model.userInput
-                , onInput GetInput 
-                ] []
-            , div [] 
+            [ class "overlay"]
+            [input  [ placeholder "Bitte geben sie an wie lange sie lernen wollen."
+                    , value model.userInput
+                    , onInput GetInput 
+                    , class "input-field"
+                    ] []
+            , div [class "display-text"] 
                 [ text ("Ich möchte für " ++ model.userInput ++" Minuten lernen") ]
         ]
         ]
