@@ -47,6 +47,8 @@ type alias Model =
     , randomString : Maybe String -- Next Guest
     , showModal : Bool
     , userInput : String
+    , timeChoosen : Bool
+    , time : Int
     }
 
 --Initialisierung
@@ -68,6 +70,8 @@ init _ =
     Nothing 
     False
     "..."
+    False
+    0
     , Cmd.none )
 
 -- Message Typen
@@ -81,9 +85,18 @@ type Msg
     | Tick Posix --Dialogfenster, dadurch wird Dialog nach und nach angezeigt
     | RemoveNPC Seat
     | GetInput String
+    | TickMinute Posix
+    | SwitchOverlay
+    | PrepAndAddNPC
 
 --Hilfsfunktionen
-
+checkForInt: String -> Bool
+checkForInt word =
+    case String.toInt word of 
+        Just a -> 
+            True
+        Nothing ->
+            False
 
 removeWord : Maybe String -> List String -> List String --Entfernt Eintrag aus einer Liste
 removeWord word liste = 
@@ -283,6 +296,33 @@ update msg model =
         GetInput input ->
             ({model | userInput = input}, Cmd.none )
 
+        TickMinute _ ->
+            let
+                    newTime = model.time - 1
+            in
+            if model.timeChoosen && newTime /= 0 then
+                ({ model | time = model.time - 1 }, Cmd.none )
+            else if model.timeChoosen && newTime == 0 then
+                ({ model | timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+            else 
+                (model, Cmd.none)
+
+        SwitchOverlay ->
+            if model.timeChoosen then
+                ({ model | timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+            else
+                case String.toInt model.userInput of 
+                    Just a ->
+                        ({ model | timeChoosen = not model.timeChoosen, time = a, userInput = "..." }, Cmd.none )
+                    Nothing ->
+                        (model, Cmd.none )
+
+        PrepAndAddNPC ->
+            let
+                (modelAfterPrep, cmd) = update PrepNextNPC model
+            in
+            update AddNPC modelAfterPrep
+
 -- SUBSCRIPTIONS
 
 port windowSize : (List Int -> msg) -> Sub msg
@@ -290,8 +330,9 @@ port windowSize : (List Int -> msg) -> Sub msg
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-    [Time.every 50 Tick
-    ,windowSize WindowResized
+    [Time.every 50 Tick --Gespräche
+    ,Time.every (60 * 1000) TickMinute --Minuten Timer
+    ,windowSize WindowResized --Bildschirmgröße
     ]
 
 -- VIEW
@@ -800,7 +841,8 @@ view model =
             , style "position" "absolute"
             , style "top" "50px"  -- Anpassung der vertikalen Position
             , style "left" "400px" ] [ text "AddNPC" ] -- Anpassung der horizontalen Position
-        , div 
+        , if model.timeChoosen == False then
+            div 
             [ class "overlay"]
             [input  [ placeholder "Bitte geben sie an wie lange sie lernen wollen."
                     , value model.userInput
@@ -809,7 +851,23 @@ view model =
                     ] []
             , div [class "display-text"] 
                 [ text ("Ich möchte für " ++ model.userInput ++" Minuten lernen") ]
-        ]
+            , button    [ class "confirm-button"
+                        , Html.Events.onClick SwitchOverlay 
+                        , if checkForInt model.userInput then style "background-color" "rgb(0, 255, 0)" else style "background-color" "rgb(255, 0, 0)"
+                        , disabled (not (checkForInt model.userInput))
+                        ] 
+                        [ if checkForInt model.userInput then text "Confirm" else text "Bitte richtig eingeben!" ]
+            ]
+        else
+            div 
+            [ class "overlay"]
+            [ div [class "display-text"] 
+                [ text ("Sie haben noch " ++ String.fromInt model.time ++" Minuten bis zum ersten Besuch") ]
+            , button    [ class "confirm-button"
+                        , Html.Events.onClick SwitchOverlay 
+                        ] 
+                        [ text "Ich brauche eine Pause." ]
+            ]  
         ]
 
 

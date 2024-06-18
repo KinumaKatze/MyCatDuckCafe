@@ -10614,7 +10614,11 @@ var $author$project$Main$Model = function (width) {
 											return function (randomString) {
 												return function (showModal) {
 													return function (userInput) {
-														return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, userInput: userInput, width: width};
+														return function (timeChoosen) {
+															return function (time) {
+																return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, width: width};
+															};
+														};
 													};
 												};
 											};
@@ -10640,11 +10644,14 @@ var $author$project$Main$init = function (_v0) {
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
-				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...'),
+				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...')(false)(0),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Tick = function (a) {
 	return {$: 'Tick', a: a};
+};
+var $author$project$Main$TickMinute = function (a) {
+	return {$: 'TickMinute', a: a};
 };
 var $author$project$Main$WindowResized = function (a) {
 	return {$: 'WindowResized', a: a};
@@ -10840,12 +10847,15 @@ var $author$project$Main$subscriptions = function (model) {
 		_List_fromArray(
 			[
 				A2($elm$time$Time$every, 50, $author$project$Main$Tick),
+				A2($elm$time$Time$every, 60 * 1000, $author$project$Main$TickMinute),
 				$author$project$Main$windowSize($author$project$Main$WindowResized)
 			]));
 };
+var $author$project$Main$AddNPC = {$: 'AddNPC'};
 var $author$project$Main$GotRandomValues = function (a) {
 	return {$: 'GotRandomValues', a: a};
 };
+var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
 var $elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
 };
@@ -11042,244 +11052,68 @@ var $author$project$Main$removeWord = F2(
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		switch (msg.$) {
-			case 'WindowResized':
-				var liste = msg.a;
-				var _v1 = _Utils_Tuple2(
-					$elm$core$List$head(liste),
-					$elm$core$List$head(
-						$elm$core$List$reverse(liste)));
-				if (_v1.a.$ === 'Just') {
-					if (_v1.b.$ === 'Just') {
-						var a = _v1.a.a;
-						var b = _v1.b.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{height: b, width: a}),
-							$elm$core$Platform$Cmd$none);
+		update:
+		while (true) {
+			switch (msg.$) {
+				case 'WindowResized':
+					var liste = msg.a;
+					var _v1 = _Utils_Tuple2(
+						$elm$core$List$head(liste),
+						$elm$core$List$head(
+							$elm$core$List$reverse(liste)));
+					if (_v1.a.$ === 'Just') {
+						if (_v1.b.$ === 'Just') {
+							var a = _v1.a.a;
+							var b = _v1.b.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{height: b, width: a}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							var a = _v1.a.a;
+							var _v2 = _v1.b;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{height: 0, width: a}),
+								$elm$core$Platform$Cmd$none);
+						}
 					} else {
-						var a = _v1.a.a;
-						var _v2 = _v1.b;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{height: 0, width: a}),
-							$elm$core$Platform$Cmd$none);
+						if (_v1.b.$ === 'Just') {
+							var _v3 = _v1.a;
+							var b = _v1.b.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{height: b, width: 0}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							var _v4 = _v1.a;
+							var _v5 = _v1.b;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{height: 0, width: 0}),
+								$elm$core$Platform$Cmd$none);
+						}
 					}
-				} else {
-					if (_v1.b.$ === 'Just') {
-						var _v3 = _v1.a;
-						var b = _v1.b.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{height: b, width: 0}),
-							$elm$core$Platform$Cmd$none);
-					} else {
-						var _v4 = _v1.a;
-						var _v5 = _v1.b;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{height: 0, width: 0}),
-							$elm$core$Platform$Cmd$none);
-					}
-				}
-			case 'PrepNextNPC':
-				var listSeats = $elm$core$List$length(model.seat_list);
-				var listPeople = $elm$core$List$length(model.person_list);
-				var randomValuesGenerator = A2($author$project$Main$generateRandomValues, listPeople, listSeats);
-				return _Utils_Tuple2(
-					model,
-					A2($elm$random$Random$generate, $author$project$Main$GotRandomValues, randomValuesGenerator));
-			case 'AddNPC':
-				var _v6 = model.nextSeat;
-				switch (_v6) {
-					case 0:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 1:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 2:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 3:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 4:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
-								}),
-							$elm$core$Platform$Cmd$none);
-					default:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
-								}),
-							$elm$core$Platform$Cmd$none);
-				}
-			case 'NPCClicked':
-				var seat = msg.a;
-				if (seat.name === 'Random_Person.png') {
-					var _v7 = seat.id;
-					switch (_v7) {
-						case 0:
-							var _v8 = model.randomString;
-							if (_v8.$ === 'Just') {
-								var a = _v8.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							} else {
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							}
-						case 1:
-							var _v9 = model.randomString;
-							if (_v9.$ === 'Just') {
-								var a = _v9.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: a, nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							} else {
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							}
-						case 2:
-							var _v10 = model.randomString;
-							if (_v10.$ === 'Just') {
-								var a = _v10.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: a, nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							} else {
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							}
-						case 3:
-							var _v11 = model.randomString;
-							if (_v11.$ === 'Just') {
-								var a = _v11.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: a, nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							} else {
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							}
-						case 4:
-							var _v12 = model.randomString;
-							if (_v12.$ === 'Just') {
-								var a = _v12.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: a, nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							} else {
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							}
-						default:
-							var _v13 = model.randomString;
-							if (_v13.$ === 'Just') {
-								var a = _v13.a;
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							} else {
-								return _Utils_Tuple2(
-									_Utils_update(
-										model,
-										{
-											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
-										}),
-									$elm$core$Platform$Cmd$none);
-							}
-					}
-				} else {
-					var _v14 = seat.id;
-					switch (_v14) {
+				case 'PrepNextNPC':
+					var listSeats = $elm$core$List$length(model.seat_list);
+					var listPeople = $elm$core$List$length(model.person_list);
+					var randomValuesGenerator = A2($author$project$Main$generateRandomValues, listPeople, listSeats);
+					return _Utils_Tuple2(
+						model,
+						A2($elm$random$Random$generate, $author$project$Main$GotRandomValues, randomValuesGenerator));
+				case 'AddNPC':
+					var _v6 = model.nextSeat;
+					switch (_v6) {
 						case 0:
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
+										seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 1:
@@ -11287,7 +11121,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: 0, modal: !model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: ''}
+										seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 2:
@@ -11295,7 +11129,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: 0, modal: !model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: ''}
+										seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 3:
@@ -11303,7 +11137,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: 0, modal: !model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: ''}
+										seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 4:
@@ -11311,7 +11145,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: 0, modal: !model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: ''}
+										seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
 									}),
 								$elm$core$Platform$Cmd$none);
 						default:
@@ -11319,30 +11153,219 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
+										seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 									}),
 								$elm$core$Platform$Cmd$none);
 					}
-				}
-			case 'GotRandomValues':
-				var randomValues = msg.a;
-				var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
-				var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
-				if (randomSeat.$ === 'Just') {
-					var a = randomSeat.a;
-					var _v16 = $elm$core$String$toInt(a);
-					if (_v16.$ === 'Just') {
-						var b = _v16.a;
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									nextSeat: b,
-									person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-									randomString: randomStr,
-									seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
-								}),
-							$elm$core$Platform$Cmd$none);
+				case 'NPCClicked':
+					var seat = msg.a;
+					if (seat.name === 'Random_Person.png') {
+						var _v7 = seat.id;
+						switch (_v7) {
+							case 0:
+								var _v8 = model.randomString;
+								if (_v8.$ === 'Just') {
+									var a = _v8.a;
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								} else {
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								}
+							case 1:
+								var _v9 = model.randomString;
+								if (_v9.$ === 'Just') {
+									var a = _v9.a;
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: a, nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								} else {
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								}
+							case 2:
+								var _v10 = model.randomString;
+								if (_v10.$ === 'Just') {
+									var a = _v10.a;
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: a, nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								} else {
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								}
+							case 3:
+								var _v11 = model.randomString;
+								if (_v11.$ === 'Just') {
+									var a = _v11.a;
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: a, nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								} else {
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								}
+							case 4:
+								var _v12 = model.randomString;
+								if (_v12.$ === 'Just') {
+									var a = _v12.a;
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: a, nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								} else {
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								}
+							default:
+								var _v13 = model.randomString;
+								if (_v13.$ === 'Just') {
+									var a = _v13.a;
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								} else {
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
+											}),
+										$elm$core$Platform$Cmd$none);
+								}
+						}
+					} else {
+						var _v14 = seat.id;
+						switch (_v14) {
+							case 0:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 1:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: 0, modal: !model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: ''}
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 2:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: 0, modal: !model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: ''}
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 3:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: 0, modal: !model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: ''}
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 4:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: 0, modal: !model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: ''}
+										}),
+									$elm$core$Platform$Cmd$none);
+							default:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
+										}),
+									$elm$core$Platform$Cmd$none);
+						}
+					}
+				case 'GotRandomValues':
+					var randomValues = msg.a;
+					var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
+					var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
+					if (randomSeat.$ === 'Just') {
+						var a = randomSeat.a;
+						var _v16 = $elm$core$String$toInt(a);
+						if (_v16.$ === 'Just') {
+							var b = _v16.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										nextSeat: b,
+										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+										randomString: randomStr,
+										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
+									}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										nextSeat: 1,
+										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+										randomString: randomStr
+									}),
+								$elm$core$Platform$Cmd$none);
+						}
 					} else {
 						return _Utils_Tuple2(
 							_Utils_update(
@@ -11354,234 +11377,272 @@ var $author$project$Main$update = F2(
 								}),
 							$elm$core$Platform$Cmd$none);
 					}
-				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								nextSeat: 1,
-								person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-								randomString: randomStr
-							}),
-						$elm$core$Platform$Cmd$none);
-				}
-			case 'Tick':
-				var newTime = msg.a;
-				if (model.seat1.modal) {
-					var newIndex = model.seat1.index + 1;
-					var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat1.nextText);
-					return (_Utils_cmp(
-						newIndex,
-						$elm$core$String$length(model.seat1.nextText)) < 1) ? _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: newIndex, modal: model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: newDisplayedText}
-							}),
-						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				} else {
-					if (model.seat2.modal) {
-						var newIndex = model.seat2.index + 1;
-						var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat2.nextText);
+				case 'Tick':
+					var newTime = msg.a;
+					if (model.seat1.modal) {
+						var newIndex = model.seat1.index + 1;
+						var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat1.nextText);
 						return (_Utils_cmp(
 							newIndex,
-							$elm$core$String$length(model.seat2.nextText)) < 1) ? _Utils_Tuple2(
+							$elm$core$String$length(model.seat1.nextText)) < 1) ? _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
-									seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: newIndex, modal: model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: newDisplayedText}
+									seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: newIndex, modal: model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: newDisplayedText}
 								}),
 							$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 					} else {
-						if (model.seat3.modal) {
-							var newIndex = model.seat3.index + 1;
-							var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat3.nextText);
+						if (model.seat2.modal) {
+							var newIndex = model.seat2.index + 1;
+							var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat2.nextText);
 							return (_Utils_cmp(
 								newIndex,
-								$elm$core$String$length(model.seat3.nextText)) < 1) ? _Utils_Tuple2(
+								$elm$core$String$length(model.seat2.nextText)) < 1) ? _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: newIndex, modal: model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: newDisplayedText}
+										seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: newIndex, modal: model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: newDisplayedText}
 									}),
 								$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						} else {
-							if (model.seat4.modal) {
-								var newIndex = model.seat4.index + 1;
-								var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat4.nextText);
+							if (model.seat3.modal) {
+								var newIndex = model.seat3.index + 1;
+								var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat3.nextText);
 								return (_Utils_cmp(
 									newIndex,
-									$elm$core$String$length(model.seat4.nextText)) < 1) ? _Utils_Tuple2(
+									$elm$core$String$length(model.seat3.nextText)) < 1) ? _Utils_Tuple2(
 									_Utils_update(
 										model,
 										{
-											seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: newIndex, modal: model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: newDisplayedText}
+											seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: newIndex, modal: model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: newDisplayedText}
 										}),
 									$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 							} else {
-								if (model.seat5.modal) {
-									var newIndex = model.seat5.index + 1;
-									var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat5.nextText);
+								if (model.seat4.modal) {
+									var newIndex = model.seat4.index + 1;
+									var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat4.nextText);
 									return (_Utils_cmp(
 										newIndex,
-										$elm$core$String$length(model.seat5.nextText)) < 1) ? _Utils_Tuple2(
+										$elm$core$String$length(model.seat4.nextText)) < 1) ? _Utils_Tuple2(
 										_Utils_update(
 											model,
 											{
-												seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: newIndex, modal: model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: newDisplayedText}
+												seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: newIndex, modal: model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: newDisplayedText}
 											}),
 										$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 								} else {
-									return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+									if (model.seat5.modal) {
+										var newIndex = model.seat5.index + 1;
+										var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat5.nextText);
+										return (_Utils_cmp(
+											newIndex,
+											$elm$core$String$length(model.seat5.nextText)) < 1) ? _Utils_Tuple2(
+											_Utils_update(
+												model,
+												{
+													seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: newIndex, modal: model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: newDisplayedText}
+												}),
+											$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+									} else {
+										return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+									}
 								}
 							}
 						}
 					}
-				}
-			case 'RemoveNPC':
-				var seat = msg.a;
-				var _v17 = seat.id;
-				switch (_v17) {
-					case 0:
+				case 'RemoveNPC':
+					var seat = msg.a;
+					var _v17 = seat.id;
+					switch (_v17) {
+						case 0:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										person_list: A2(
+											$elm$core$List$append,
+											model.person_list,
+											_List_fromArray(
+												[seat.name])),
+										seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat_list: A2(
+											$elm$core$List$append,
+											model.seat_list,
+											_List_fromArray(
+												[
+													$elm$core$String$fromInt(seat.id)
+												]))
+									}),
+								$elm$core$Platform$Cmd$none);
+						case 1:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										person_list: A2(
+											$elm$core$List$append,
+											model.person_list,
+											_List_fromArray(
+												[seat.name])),
+										seat2: {hidden: true, id: 1, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat_list: A2(
+											$elm$core$List$append,
+											model.seat_list,
+											_List_fromArray(
+												[
+													$elm$core$String$fromInt(seat.id)
+												]))
+									}),
+								$elm$core$Platform$Cmd$none);
+						case 2:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										person_list: A2(
+											$elm$core$List$append,
+											model.person_list,
+											_List_fromArray(
+												[seat.name])),
+										seat3: {hidden: true, id: 2, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat_list: A2(
+											$elm$core$List$append,
+											model.seat_list,
+											_List_fromArray(
+												[
+													$elm$core$String$fromInt(seat.id)
+												]))
+									}),
+								$elm$core$Platform$Cmd$none);
+						case 3:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										person_list: A2(
+											$elm$core$List$append,
+											model.person_list,
+											_List_fromArray(
+												[seat.name])),
+										seat4: {hidden: true, id: 3, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat_list: A2(
+											$elm$core$List$append,
+											model.seat_list,
+											_List_fromArray(
+												[
+													$elm$core$String$fromInt(seat.id)
+												]))
+									}),
+								$elm$core$Platform$Cmd$none);
+						case 4:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										person_list: A2(
+											$elm$core$List$append,
+											model.person_list,
+											_List_fromArray(
+												[seat.name])),
+										seat5: {hidden: true, id: 4, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat_list: A2(
+											$elm$core$List$append,
+											model.seat_list,
+											_List_fromArray(
+												[
+													$elm$core$String$fromInt(seat.id)
+												]))
+									}),
+								$elm$core$Platform$Cmd$none);
+						default:
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										person_list: A2(
+											$elm$core$List$append,
+											model.person_list,
+											_List_fromArray(
+												[seat.name])),
+										seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat_list: A2(
+											$elm$core$List$append,
+											model.seat_list,
+											_List_fromArray(
+												[
+													$elm$core$String$fromInt(seat.id)
+												]))
+									}),
+								$elm$core$Platform$Cmd$none);
+					}
+				case 'GetInput':
+					var input = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{userInput: input}),
+						$elm$core$Platform$Cmd$none);
+				case 'TickMinute':
+					var newTime = model.time - 1;
+					return (model.timeChoosen && (!(!newTime))) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{time: model.time - 1}),
+						$elm$core$Platform$Cmd$none) : ((model.timeChoosen && (!newTime)) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{timeChoosen: !model.timeChoosen, userInput: '...'}),
+						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
+				case 'SwitchOverlay':
+					if (model.timeChoosen) {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{
-									person_list: A2(
-										$elm$core$List$append,
-										model.person_list,
-										_List_fromArray(
-											[seat.name])),
-									seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
-									seat_list: A2(
-										$elm$core$List$append,
-										model.seat_list,
-										_List_fromArray(
-											[
-												$elm$core$String$fromInt(seat.id)
-											]))
-								}),
+								{timeChoosen: !model.timeChoosen, userInput: '...'}),
 							$elm$core$Platform$Cmd$none);
-					case 1:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									person_list: A2(
-										$elm$core$List$append,
-										model.person_list,
-										_List_fromArray(
-											[seat.name])),
-									seat2: {hidden: true, id: 1, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
-									seat_list: A2(
-										$elm$core$List$append,
-										model.seat_list,
-										_List_fromArray(
-											[
-												$elm$core$String$fromInt(seat.id)
-											]))
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 2:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									person_list: A2(
-										$elm$core$List$append,
-										model.person_list,
-										_List_fromArray(
-											[seat.name])),
-									seat3: {hidden: true, id: 2, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
-									seat_list: A2(
-										$elm$core$List$append,
-										model.seat_list,
-										_List_fromArray(
-											[
-												$elm$core$String$fromInt(seat.id)
-											]))
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 3:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									person_list: A2(
-										$elm$core$List$append,
-										model.person_list,
-										_List_fromArray(
-											[seat.name])),
-									seat4: {hidden: true, id: 3, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
-									seat_list: A2(
-										$elm$core$List$append,
-										model.seat_list,
-										_List_fromArray(
-											[
-												$elm$core$String$fromInt(seat.id)
-											]))
-								}),
-							$elm$core$Platform$Cmd$none);
-					case 4:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									person_list: A2(
-										$elm$core$List$append,
-										model.person_list,
-										_List_fromArray(
-											[seat.name])),
-									seat5: {hidden: true, id: 4, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
-									seat_list: A2(
-										$elm$core$List$append,
-										model.seat_list,
-										_List_fromArray(
-											[
-												$elm$core$String$fromInt(seat.id)
-											]))
-								}),
-							$elm$core$Platform$Cmd$none);
-					default:
-						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									person_list: A2(
-										$elm$core$List$append,
-										model.person_list,
-										_List_fromArray(
-											[seat.name])),
-									seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
-									seat_list: A2(
-										$elm$core$List$append,
-										model.seat_list,
-										_List_fromArray(
-											[
-												$elm$core$String$fromInt(seat.id)
-											]))
-								}),
-							$elm$core$Platform$Cmd$none);
-				}
-			default:
-				var input = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{userInput: input}),
-					$elm$core$Platform$Cmd$none);
+					} else {
+						var _v18 = $elm$core$String$toInt(model.userInput);
+						if (_v18.$ === 'Just') {
+							var a = _v18.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{time: a, timeChoosen: !model.timeChoosen, userInput: '...'}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						}
+					}
+				default:
+					var _v19 = A2($author$project$Main$update, $author$project$Main$PrepNextNPC, model);
+					var modelAfterPrep = _v19.a;
+					var cmd = _v19.b;
+					var $temp$msg = $author$project$Main$AddNPC,
+						$temp$model = modelAfterPrep;
+					msg = $temp$msg;
+					model = $temp$model;
+					continue update;
+			}
 		}
 	});
-var $author$project$Main$AddNPC = {$: 'AddNPC'};
 var $author$project$Main$GetInput = function (a) {
 	return {$: 'GetInput', a: a};
 };
 var $author$project$Main$NPCClicked = function (a) {
 	return {$: 'NPCClicked', a: a};
 };
-var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
 var $author$project$Main$RemoveNPC = function (a) {
 	return {$: 'RemoveNPC', a: a};
+};
+var $author$project$Main$SwitchOverlay = {$: 'SwitchOverlay'};
+var $author$project$Main$checkForInt = function (word) {
+	var _v0 = $elm$core$String$toInt(word);
+	if (_v0.$ === 'Just') {
+		var a = _v0.a;
+		return true;
+	} else {
+		return false;
+	}
 };
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -11591,6 +11652,7 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			key,
 			$elm$json$Json$Encode$bool(bool));
 	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
@@ -12439,7 +12501,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$text('AddNPC')
 					])),
-				A2(
+				(!model.timeChoosen) ? A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -12466,6 +12528,50 @@ var $author$project$Main$view = function (model) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Ich möchte für ' + (model.userInput + ' Minuten lernen'))
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('confirm-button'),
+								$elm$html$Html$Events$onClick($author$project$Main$SwitchOverlay),
+								$author$project$Main$checkForInt(model.userInput) ? A2($elm$html$Html$Attributes$style, 'background-color', 'rgb(0, 255, 0)') : A2($elm$html$Html$Attributes$style, 'background-color', 'rgb(255, 0, 0)'),
+								$elm$html$Html$Attributes$disabled(
+								!$author$project$Main$checkForInt(model.userInput))
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$checkForInt(model.userInput) ? $elm$html$Html$text('Confirm') : $elm$html$Html$text('Bitte richtig eingeben!')
+							]))
+					])) : A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('overlay')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('display-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(
+								'Sie haben noch ' + ($elm$core$String$fromInt(model.time) + ' Minuten bis zum ersten Besuch'))
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('confirm-button'),
+								$elm$html$Html$Events$onClick($author$project$Main$SwitchOverlay)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Ich brauche eine Pause.')
 							]))
 					]))
 			]));
@@ -12473,4 +12579,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"TickMinute":["Time.Posix"],"SwitchOverlay":[],"PrepAndAddNPC":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
