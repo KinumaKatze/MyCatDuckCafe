@@ -78,7 +78,6 @@ init _ =
 
 type Msg
     = WindowResized (List Int)
-    | AddNPC
     | PrepNextNPC
     | NPCClicked Seat
     | GotRandomValues RandomValues
@@ -87,7 +86,6 @@ type Msg
     | GetInput String
     | TickMinute Posix
     | SwitchOverlay
-    | PrepAndAddNPC
 
 --Hilfsfunktionen
 checkForInt: String -> Bool
@@ -137,21 +135,6 @@ update msg model =
                 randomValuesGenerator = generateRandomValues listPeople listSeats
             in
             ( model, Random.generate GotRandomValues randomValuesGenerator)
-
-        AddNPC -> -- Silhouhette ins Bild laden
-            case model.nextSeat of 
-                0 ->
-                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index} }, Cmd.none )
-                1 ->
-                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = model.seat2.spokenText, index = model.seat2.index} }, Cmd.none )
-                2 ->
-                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = model.seat3.spokenText, index = model.seat3.index} }, Cmd.none )
-                3 ->
-                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = model.seat4.spokenText, index = model.seat4.index} }, Cmd.none )
-                4 ->
-                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = model.seat5.spokenText, index = model.seat5.index} }, Cmd.none )
-                _ -> 
-                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index} }, Cmd.none )
 
 
         NPCClicked seat ->   --Echte Person zeigen
@@ -224,22 +207,22 @@ update msg model =
                     case randomSeat of 
                         Just a -> 
                             if a == "0" then
-                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list}, Cmd.none )
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
                             else if a == "1" then
-                                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = model.seat2.spokenText, index = model.seat2.index}, randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = model.seat2.spokenText, index = model.seat2.index}, randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "2" then
-                                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = model.seat3.spokenText, index = model.seat3.index}, randomString = randomStr, nextSeat = 2, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = model.seat3.spokenText, index = model.seat3.index}, randomString = randomStr, nextSeat = 2, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "3" then
-                                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = model.seat4.spokenText, index = model.seat4.index}, randomString = randomStr, nextSeat = 3, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = model.seat4.spokenText, index = model.seat4.index}, randomString = randomStr, nextSeat = 3, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "4" then
-                                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = model.seat5.spokenText, index = model.seat5.index}, randomString = randomStr, nextSeat = 4, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = model.seat5.spokenText, index = model.seat5.index}, randomString = randomStr, nextSeat = 4, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else
-                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                         Nothing ->
-                            ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
+                            ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
                 Nothing ->
-                    ( { model | randomString = randomStr, nextSeat = 1}, Cmd.none )
-           
+                    ( { model | randomString = randomStr, nextSeat = 1, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
+                    
         Tick newTime ->
             if model.seat1.modal == True then
                 let
@@ -314,25 +297,19 @@ update msg model =
             if model.timeChoosen && newTime /= 0 then
                 ({ model | time = model.time - 1 }, Cmd.none )
             else if model.timeChoosen && newTime == 0 then
-                ({ model | timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                update PrepNextNPC model
             else 
                 (model, Cmd.none)
 
         SwitchOverlay ->
             if model.timeChoosen then
-                ({ model | timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                update PrepNextNPC model
             else
                 case String.toInt model.userInput of 
                     Just a ->
                         ({ model | timeChoosen = not model.timeChoosen, time = a, userInput = "..." }, Cmd.none )
                     Nothing ->
                         (model, Cmd.none )
-
-        PrepAndAddNPC ->
-            let
-                (modelAfterPrep, cmd) = update PrepNextNPC model
-            in
-            update AddNPC modelAfterPrep
 
 -- SUBSCRIPTIONS
 
@@ -842,16 +819,6 @@ view model =
                 ]
             else
                 text ""
-        , button 
-            [ Html.Events.onClick PrepNextNPC
-            , style "position" "absolute"
-            , style "top" "50px"  -- Anpassung der vertikalen Position
-            , style "left" "50px" ] [ text "PrepNPC" ] -- Anpassung der horizontalen Position
-        , button 
-            [ Html.Events.onClick AddNPC
-            , style "position" "absolute"
-            , style "top" "50px"  -- Anpassung der vertikalen Position
-            , style "left" "400px" ] [ text "AddNPC" ] -- Anpassung der horizontalen Position
         , if model.timeChoosen == False then
             div 
             [ class "overlay"]
