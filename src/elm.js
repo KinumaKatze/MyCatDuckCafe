@@ -10630,25 +10630,216 @@ var $author$project$Main$Model = function (width) {
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$Main$Model(10)(10)(true)(
-			{hidden: true, id: 0, modal: false, name: 'Random_Person.png'})(
-			{hidden: true, id: 1, modal: false, name: 'Random_Person.png'})(
-			{hidden: true, id: 2, modal: false, name: 'Random_Person.png'})(
-			{hidden: true, id: 3, modal: false, name: 'Random_Person.png'})(
-			{hidden: true, id: 4, modal: false, name: 'Random_Person.png'})(0)(
+			{hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
+			{hidden: true, id: 1, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
+			{hidden: true, id: 2, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
+			{hidden: true, id: 3, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
+			{hidden: true, id: 4, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(0)(
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
 				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false),
 		$elm$core$Platform$Cmd$none);
 };
+var $author$project$Main$Tick = function (a) {
+	return {$: 'Tick', a: a};
+};
 var $author$project$Main$WindowResized = function (a) {
 	return {$: 'WindowResized', a: a};
 };
+var $elm$core$Platform$Sub$batch = _Platform_batch;
+var $elm$time$Time$Every = F2(
+	function (a, b) {
+		return {$: 'Every', a: a, b: b};
+	});
+var $elm$time$Time$State = F2(
+	function (taggers, processes) {
+		return {processes: processes, taggers: taggers};
+	});
+var $elm$time$Time$init = $elm$core$Task$succeed(
+	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
+var $elm$time$Time$addMySub = F2(
+	function (_v0, state) {
+		var interval = _v0.a;
+		var tagger = _v0.b;
+		var _v1 = A2($elm$core$Dict$get, interval, state);
+		if (_v1.$ === 'Nothing') {
+			return A3(
+				$elm$core$Dict$insert,
+				interval,
+				_List_fromArray(
+					[tagger]),
+				state);
+		} else {
+			var taggers = _v1.a;
+			return A3(
+				$elm$core$Dict$insert,
+				interval,
+				A2($elm$core$List$cons, tagger, taggers),
+				state);
+		}
+	});
+var $elm$core$Process$kill = _Scheduler_kill;
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var $elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $elm$time$Time$setInterval = _Time_setInterval;
+var $elm$core$Process$spawn = _Scheduler_spawn;
+var $elm$time$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		if (!intervals.b) {
+			return $elm$core$Task$succeed(processes);
+		} else {
+			var interval = intervals.a;
+			var rest = intervals.b;
+			var spawnTimer = $elm$core$Process$spawn(
+				A2(
+					$elm$time$Time$setInterval,
+					interval,
+					A2($elm$core$Platform$sendToSelf, router, interval)));
+			var spawnRest = function (id) {
+				return A3(
+					$elm$time$Time$spawnHelp,
+					router,
+					rest,
+					A3($elm$core$Dict$insert, interval, id, processes));
+			};
+			return A2($elm$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var $elm$time$Time$onEffects = F3(
+	function (router, subs, _v0) {
+		var processes = _v0.processes;
+		var rightStep = F3(
+			function (_v6, id, _v7) {
+				var spawns = _v7.a;
+				var existing = _v7.b;
+				var kills = _v7.c;
+				return _Utils_Tuple3(
+					spawns,
+					existing,
+					A2(
+						$elm$core$Task$andThen,
+						function (_v5) {
+							return kills;
+						},
+						$elm$core$Process$kill(id)));
+			});
+		var newTaggers = A3($elm$core$List$foldl, $elm$time$Time$addMySub, $elm$core$Dict$empty, subs);
+		var leftStep = F3(
+			function (interval, taggers, _v4) {
+				var spawns = _v4.a;
+				var existing = _v4.b;
+				var kills = _v4.c;
+				return _Utils_Tuple3(
+					A2($elm$core$List$cons, interval, spawns),
+					existing,
+					kills);
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _v3) {
+				var spawns = _v3.a;
+				var existing = _v3.b;
+				var kills = _v3.c;
+				return _Utils_Tuple3(
+					spawns,
+					A3($elm$core$Dict$insert, interval, id, existing),
+					kills);
+			});
+		var _v1 = A6(
+			$elm$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			processes,
+			_Utils_Tuple3(
+				_List_Nil,
+				$elm$core$Dict$empty,
+				$elm$core$Task$succeed(_Utils_Tuple0)));
+		var spawnList = _v1.a;
+		var existingDict = _v1.b;
+		var killTask = _v1.c;
+		return A2(
+			$elm$core$Task$andThen,
+			function (newProcesses) {
+				return $elm$core$Task$succeed(
+					A2($elm$time$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				$elm$core$Task$andThen,
+				function (_v2) {
+					return A3($elm$time$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
+	});
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
+var $elm$time$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _v0 = A2($elm$core$Dict$get, interval, state.taggers);
+		if (_v0.$ === 'Nothing') {
+			return $elm$core$Task$succeed(state);
+		} else {
+			var taggers = _v0.a;
+			var tellTaggers = function (time) {
+				return $elm$core$Task$sequence(
+					A2(
+						$elm$core$List$map,
+						function (tagger) {
+							return A2(
+								$elm$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						taggers));
+			};
+			return A2(
+				$elm$core$Task$andThen,
+				function (_v1) {
+					return $elm$core$Task$succeed(state);
+				},
+				A2($elm$core$Task$andThen, tellTaggers, $elm$time$Time$now));
+		}
+	});
+var $elm$time$Time$subMap = F2(
+	function (f, _v0) {
+		var interval = _v0.a;
+		var tagger = _v0.b;
+		return A2(
+			$elm$time$Time$Every,
+			interval,
+			A2($elm$core$Basics$composeL, f, tagger));
+	});
+_Platform_effectManagers['Time'] = _Platform_createManager($elm$time$Time$init, $elm$time$Time$onEffects, $elm$time$Time$onSelfMsg, 0, $elm$time$Time$subMap);
+var $elm$time$Time$subscription = _Platform_leaf('Time');
+var $elm$time$Time$every = F2(
+	function (interval, tagger) {
+		return $elm$time$Time$subscription(
+			A2($elm$time$Time$Every, interval, tagger));
+	});
 var $author$project$Main$windowSize = _Platform_incomingPort(
 	'windowSize',
 	$elm$json$Json$Decode$list($elm$json$Json$Decode$int));
-var $author$project$Main$subscriptions = function (_v0) {
-	return $author$project$Main$windowSize($author$project$Main$WindowResized);
+var $author$project$Main$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$batch(
+		_List_fromArray(
+			[
+				A2($elm$time$Time$every, 50, $author$project$Main$Tick),
+				$author$project$Main$windowSize($author$project$Main$WindowResized)
+			]));
 };
 var $author$project$Main$GotRandomValues = function (a) {
 	return {$: 'GotRandomValues', a: a};
@@ -10674,22 +10865,6 @@ var $elm$random$Random$initialSeed = function (x) {
 	return $elm$random$Random$next(
 		A2($elm$random$Random$Seed, state2, incr));
 };
-var $elm$time$Time$Name = function (a) {
-	return {$: 'Name', a: a};
-};
-var $elm$time$Time$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $elm$time$Time$Zone = F2(
-	function (a, b) {
-		return {$: 'Zone', a: a, b: b};
-	});
-var $elm$time$Time$customZone = $elm$time$Time$Zone;
-var $elm$time$Time$Posix = function (a) {
-	return {$: 'Posix', a: a};
-};
-var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
-var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
 var $elm$time$Time$posixToMillis = function (_v0) {
 	var millis = _v0.a;
 	return millis;
@@ -10924,7 +11099,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+									seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 1:
@@ -10932,7 +11107,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat2: {hidden: false, id: model.seat2.id, modal: false, name: 'Random_Person.png'}
+									seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 2:
@@ -10940,7 +11115,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat3: {hidden: false, id: model.seat3.id, modal: false, name: 'Random_Person.png'}
+									seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 3:
@@ -10948,7 +11123,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat4: {hidden: false, id: model.seat4.id, modal: false, name: 'Random_Person.png'}
+									seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
 								}),
 							$elm$core$Platform$Cmd$none);
 					case 4:
@@ -10956,7 +11131,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat5: {hidden: false, id: model.seat5.id, modal: false, name: 'Random_Person.png'}
+									seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
 								}),
 							$elm$core$Platform$Cmd$none);
 					default:
@@ -10964,7 +11139,7 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+									seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 								}),
 							$elm$core$Platform$Cmd$none);
 				}
@@ -10981,7 +11156,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: {hidden: false, id: model.seat1.id, modal: false, name: a}
+											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							} else {
@@ -10989,7 +11164,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							}
@@ -11001,7 +11176,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat2: {hidden: false, id: model.seat2.id, modal: false, name: a}
+											seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: a, nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							} else {
@@ -11009,7 +11184,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat2: {hidden: false, id: model.seat2.id, modal: false, name: 'Random_Person.png'}
+											seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							}
@@ -11021,7 +11196,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat3: {hidden: false, id: model.seat3.id, modal: false, name: a}
+											seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: a, nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							} else {
@@ -11029,7 +11204,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat3: {hidden: false, id: model.seat3.id, modal: false, name: 'Random_Person.png'}
+											seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							}
@@ -11041,7 +11216,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat4: {hidden: false, id: model.seat4.id, modal: false, name: a}
+											seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: a, nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							} else {
@@ -11049,7 +11224,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat4: {hidden: false, id: model.seat4.id, modal: false, name: 'Random_Person.png'}
+											seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							}
@@ -11061,7 +11236,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat5: {hidden: false, id: model.seat5.id, modal: false, name: a}
+											seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: a, nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							} else {
@@ -11069,7 +11244,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat5: {hidden: false, id: model.seat5.id, modal: false, name: 'Random_Person.png'}
+											seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							}
@@ -11081,7 +11256,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: {hidden: false, id: model.seat1.id, modal: false, name: a}
+											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							} else {
@@ -11089,7 +11264,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: {hidden: false, id: model.seat1.id, modal: false, name: 'Random_Person.png'}
+											seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
 										}),
 									$elm$core$Platform$Cmd$none);
 							}
@@ -11102,7 +11277,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat1: {hidden: model.seat1.hidden, id: model.seat1.id, modal: !model.seat1.modal, name: model.seat1.name}
+										seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 1:
@@ -11110,7 +11285,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat2: {hidden: model.seat2.hidden, id: model.seat2.id, modal: !model.seat2.modal, name: model.seat2.name}
+										seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: 0, modal: !model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: ''}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 2:
@@ -11118,7 +11293,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat3: {hidden: model.seat3.hidden, id: model.seat3.id, modal: !model.seat3.modal, name: model.seat3.name}
+										seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: 0, modal: !model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: ''}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 3:
@@ -11126,7 +11301,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat4: {hidden: model.seat4.hidden, id: model.seat4.id, modal: !model.seat4.modal, name: model.seat4.name}
+										seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: 0, modal: !model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: ''}
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 4:
@@ -11134,7 +11309,7 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat5: {hidden: model.seat5.hidden, id: model.seat5.id, modal: !model.seat5.modal, name: model.seat5.name}
+										seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: 0, modal: !model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: ''}
 									}),
 								$elm$core$Platform$Cmd$none);
 						default:
@@ -11142,12 +11317,12 @@ var $author$project$Main$update = F2(
 								_Utils_update(
 									model,
 									{
-										seat1: {hidden: model.seat1.hidden, id: model.seat1.id, modal: !model.seat1.modal, name: model.seat1.name}
+										seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
 									}),
 								$elm$core$Platform$Cmd$none);
 					}
 				}
-			default:
+			case 'GotRandomValues':
 				var randomValues = msg.a;
 				var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
 				var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
@@ -11188,6 +11363,204 @@ var $author$project$Main$update = F2(
 							}),
 						$elm$core$Platform$Cmd$none);
 				}
+			case 'Tick':
+				var newTime = msg.a;
+				if (model.seat1.modal) {
+					var newIndex = model.seat1.index + 1;
+					var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat1.nextText);
+					return (_Utils_cmp(
+						newIndex,
+						$elm$core$String$length(model.seat1.nextText)) < 1) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: newIndex, modal: model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: newDisplayedText}
+							}),
+						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				} else {
+					if (model.seat2.modal) {
+						var newIndex = model.seat2.index + 1;
+						var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat2.nextText);
+						return (_Utils_cmp(
+							newIndex,
+							$elm$core$String$length(model.seat2.nextText)) < 1) ? _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: newIndex, modal: model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: newDisplayedText}
+								}),
+							$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					} else {
+						if (model.seat3.modal) {
+							var newIndex = model.seat3.index + 1;
+							var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat3.nextText);
+							return (_Utils_cmp(
+								newIndex,
+								$elm$core$String$length(model.seat3.nextText)) < 1) ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: newIndex, modal: model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: newDisplayedText}
+									}),
+								$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+						} else {
+							if (model.seat4.modal) {
+								var newIndex = model.seat4.index + 1;
+								var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat4.nextText);
+								return (_Utils_cmp(
+									newIndex,
+									$elm$core$String$length(model.seat4.nextText)) < 1) ? _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: newIndex, modal: model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: newDisplayedText}
+										}),
+									$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+							} else {
+								if (model.seat5.modal) {
+									var newIndex = model.seat5.index + 1;
+									var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat5.nextText);
+									return (_Utils_cmp(
+										newIndex,
+										$elm$core$String$length(model.seat5.nextText)) < 1) ? _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: newIndex, modal: model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: newDisplayedText}
+											}),
+										$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+								} else {
+									return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+								}
+							}
+						}
+					}
+				}
+			default:
+				var seat = msg.a;
+				var _v17 = seat.id;
+				switch (_v17) {
+					case 0:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									person_list: A2(
+										$elm$core$List$append,
+										model.person_list,
+										_List_fromArray(
+											[seat.name])),
+									seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+									seat_list: A2(
+										$elm$core$List$append,
+										model.seat_list,
+										_List_fromArray(
+											[
+												$elm$core$String$fromInt(seat.id)
+											]))
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 1:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									person_list: A2(
+										$elm$core$List$append,
+										model.person_list,
+										_List_fromArray(
+											[seat.name])),
+									seat2: {hidden: true, id: 1, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+									seat_list: A2(
+										$elm$core$List$append,
+										model.seat_list,
+										_List_fromArray(
+											[
+												$elm$core$String$fromInt(seat.id)
+											]))
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 2:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									person_list: A2(
+										$elm$core$List$append,
+										model.person_list,
+										_List_fromArray(
+											[seat.name])),
+									seat3: {hidden: true, id: 2, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+									seat_list: A2(
+										$elm$core$List$append,
+										model.seat_list,
+										_List_fromArray(
+											[
+												$elm$core$String$fromInt(seat.id)
+											]))
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 3:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									person_list: A2(
+										$elm$core$List$append,
+										model.person_list,
+										_List_fromArray(
+											[seat.name])),
+									seat4: {hidden: true, id: 3, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+									seat_list: A2(
+										$elm$core$List$append,
+										model.seat_list,
+										_List_fromArray(
+											[
+												$elm$core$String$fromInt(seat.id)
+											]))
+								}),
+							$elm$core$Platform$Cmd$none);
+					case 4:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									person_list: A2(
+										$elm$core$List$append,
+										model.person_list,
+										_List_fromArray(
+											[seat.name])),
+									seat5: {hidden: true, id: 4, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+									seat_list: A2(
+										$elm$core$List$append,
+										model.seat_list,
+										_List_fromArray(
+											[
+												$elm$core$String$fromInt(seat.id)
+											]))
+								}),
+							$elm$core$Platform$Cmd$none);
+					default:
+						return _Utils_Tuple2(
+							_Utils_update(
+								model,
+								{
+									person_list: A2(
+										$elm$core$List$append,
+										model.person_list,
+										_List_fromArray(
+											[seat.name])),
+									seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+									seat_list: A2(
+										$elm$core$List$append,
+										model.seat_list,
+										_List_fromArray(
+											[
+												$elm$core$String$fromInt(seat.id)
+											]))
+								}),
+							$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $author$project$Main$AddNPC = {$: 'AddNPC'};
@@ -11195,11 +11568,8 @@ var $author$project$Main$NPCClicked = function (a) {
 	return {$: 'NPCClicked', a: a};
 };
 var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
-var $author$project$Main$extractHidden = function (seat) {
-	return seat.hidden;
-};
-var $author$project$Main$extractName = function (seat) {
-	return seat.name;
+var $author$project$Main$RemoveNPC = function (a) {
+	return {$: 'RemoveNPC', a: a};
 };
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -11251,7 +11621,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$Events$onClick(
 						$author$project$Main$NPCClicked(model.seat1)),
-						$author$project$Main$extractHidden(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						model.seat1.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11275,9 +11645,8 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$img,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(
-								$author$project$Main$extractName(model.seat1)),
-								$author$project$Main$extractHidden(model.seat1) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$elm$html$Html$Attributes$src(model.seat1.name),
+								model.seat1.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11314,7 +11683,11 @@ var $author$project$Main$view = function (model) {
 								$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-								A2($elm$html$Html$Attributes$style, 'left', '1.4%')
+								A2($elm$html$Html$Attributes$style, 'left', '1.4%'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 							]),
 						_List_fromArray(
 							[
@@ -11330,7 +11703,8 @@ var $author$project$Main$view = function (model) {
 										A2($elm$html$Html$Attributes$style, 'background', 'none'),
 										A2($elm$html$Html$Attributes$style, 'border', 'none'),
 										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'position', 'relative')
 									]),
 								_List_fromArray(
 									[
@@ -11338,12 +11712,63 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$img,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$src(
-												$author$project$Main$extractName(model.seat1)),
+												$elm$html$Html$Attributes$src(model.seat1.name),
 												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%')
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
 											]),
 										_List_Nil)
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'width',
+								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'height',
+								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+								A2($elm$html$Html$Attributes$style, 'left', '1.4%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.seat1.spokenText)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$RemoveNPC(model.seat1)),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'left', '0%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Gehen sie bitte!')
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -11353,7 +11778,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$Events$onClick(
 						$author$project$Main$NPCClicked(model.seat2)),
-						$author$project$Main$extractHidden(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						model.seat2.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11377,9 +11802,8 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$img,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(
-								$author$project$Main$extractName(model.seat2)),
-								$author$project$Main$extractHidden(model.seat2) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$elm$html$Html$Attributes$src(model.seat2.name),
+								model.seat2.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11416,7 +11840,11 @@ var $author$project$Main$view = function (model) {
 								$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-								A2($elm$html$Html$Attributes$style, 'left', '21.5%')
+								A2($elm$html$Html$Attributes$style, 'left', '21.5%'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 							]),
 						_List_fromArray(
 							[
@@ -11432,7 +11860,8 @@ var $author$project$Main$view = function (model) {
 										A2($elm$html$Html$Attributes$style, 'background', 'none'),
 										A2($elm$html$Html$Attributes$style, 'border', 'none'),
 										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'position', 'relative')
 									]),
 								_List_fromArray(
 									[
@@ -11440,12 +11869,63 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$img,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$src(
-												$author$project$Main$extractName(model.seat2)),
+												$elm$html$Html$Attributes$src(model.seat2.name),
 												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%')
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
 											]),
 										_List_Nil)
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'width',
+								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'height',
+								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+								A2($elm$html$Html$Attributes$style, 'left', '21.5%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.seat2.spokenText)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$RemoveNPC(model.seat2)),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'left', '0%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Gehen sie bitte!')
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -11455,7 +11935,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$Events$onClick(
 						$author$project$Main$NPCClicked(model.seat3)),
-						$author$project$Main$extractHidden(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						model.seat3.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11479,9 +11959,8 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$img,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(
-								$author$project$Main$extractName(model.seat3)),
-								$author$project$Main$extractHidden(model.seat3) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$elm$html$Html$Attributes$src(model.seat3.name),
+								model.seat3.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11518,7 +11997,11 @@ var $author$project$Main$view = function (model) {
 								$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-								A2($elm$html$Html$Attributes$style, 'right', '41.5%')
+								A2($elm$html$Html$Attributes$style, 'right', '41.5%'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 							]),
 						_List_fromArray(
 							[
@@ -11534,7 +12017,8 @@ var $author$project$Main$view = function (model) {
 										A2($elm$html$Html$Attributes$style, 'background', 'none'),
 										A2($elm$html$Html$Attributes$style, 'border', 'none'),
 										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'position', 'relative')
 									]),
 								_List_fromArray(
 									[
@@ -11542,12 +12026,63 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$img,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$src(
-												$author$project$Main$extractName(model.seat3)),
+												$elm$html$Html$Attributes$src(model.seat3.name),
 												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%')
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
 											]),
 										_List_Nil)
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'width',
+								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'height',
+								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+								A2($elm$html$Html$Attributes$style, 'right', '41.5%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.seat3.spokenText)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$RemoveNPC(model.seat3)),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'left', '0%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Gehen sie bitte!')
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -11557,7 +12092,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$Events$onClick(
 						$author$project$Main$NPCClicked(model.seat4)),
-						$author$project$Main$extractHidden(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						model.seat4.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11581,9 +12116,8 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$img,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(
-								$author$project$Main$extractName(model.seat4)),
-								$author$project$Main$extractHidden(model.seat4) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$elm$html$Html$Attributes$src(model.seat4.name),
+								model.seat4.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11620,7 +12154,11 @@ var $author$project$Main$view = function (model) {
 								$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-								A2($elm$html$Html$Attributes$style, 'right', '21.5%')
+								A2($elm$html$Html$Attributes$style, 'right', '21.5%'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 							]),
 						_List_fromArray(
 							[
@@ -11636,7 +12174,8 @@ var $author$project$Main$view = function (model) {
 										A2($elm$html$Html$Attributes$style, 'background', 'none'),
 										A2($elm$html$Html$Attributes$style, 'border', 'none'),
 										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'position', 'relative')
 									]),
 								_List_fromArray(
 									[
@@ -11644,12 +12183,63 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$img,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$src(
-												$author$project$Main$extractName(model.seat4)),
+												$elm$html$Html$Attributes$src(model.seat4.name),
 												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%')
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
 											]),
 										_List_Nil)
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'width',
+								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'height',
+								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+								A2($elm$html$Html$Attributes$style, 'right', '21.5%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.seat4.spokenText)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$RemoveNPC(model.seat4)),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'left', '0%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Gehen sie bitte!')
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -11659,7 +12249,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$elm$html$Html$Events$onClick(
 						$author$project$Main$NPCClicked(model.seat5)),
-						$author$project$Main$extractHidden(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+						model.seat5.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 						A2(
 						$elm$html$Html$Attributes$style,
 						'width',
@@ -11683,9 +12273,8 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$img,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(
-								$author$project$Main$extractName(model.seat5)),
-								$author$project$Main$extractHidden(model.seat5) ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+								$elm$html$Html$Attributes$src(model.seat5.name),
+								model.seat5.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 								A2($elm$html$Html$Attributes$style, 'width', '100%'),
 								A2($elm$html$Html$Attributes$style, 'height', '100%')
 							]),
@@ -11722,7 +12311,11 @@ var $author$project$Main$view = function (model) {
 								$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-								A2($elm$html$Html$Attributes$style, 'right', '1.4%')
+								A2($elm$html$Html$Attributes$style, 'right', '1.4%'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 							]),
 						_List_fromArray(
 							[
@@ -11738,7 +12331,8 @@ var $author$project$Main$view = function (model) {
 										A2($elm$html$Html$Attributes$style, 'background', 'none'),
 										A2($elm$html$Html$Attributes$style, 'border', 'none'),
 										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer')
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'position', 'relative')
 									]),
 								_List_fromArray(
 									[
@@ -11746,12 +12340,63 @@ var $author$project$Main$view = function (model) {
 										$elm$html$Html$img,
 										_List_fromArray(
 											[
-												$elm$html$Html$Attributes$src(
-												$author$project$Main$extractName(model.seat5)),
+												$elm$html$Html$Attributes$src(model.seat5.name),
 												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%')
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
 											]),
 										_List_Nil)
+									]))
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'width',
+								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'height',
+								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+								A2($elm$html$Html$Attributes$style, 'right', '1.4%'),
+								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$div,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.seat5.spokenText)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$RemoveNPC(model.seat5)),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'left', '0%')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Gehen sie bitte!')
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -11780,10 +12425,11 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$text('AddNPC')
-					]))
+					])),
+				$elm$html$Html$text(model.seat1.spokenText)
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"AddNPC":[],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
