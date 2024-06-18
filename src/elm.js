@@ -11340,21 +11340,71 @@ var $author$project$Main$update = F2(
 					var randomValues = msg.a;
 					var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
 					var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
-					if (randomSeat.$ === 'Just') {
-						var a = randomSeat.a;
-						var _v16 = $elm$core$String$toInt(a);
-						if (_v16.$ === 'Just') {
-							var b = _v16.a;
-							return _Utils_Tuple2(
+					if (randomStr.$ === 'Just') {
+						var b = randomStr.a;
+						if (randomSeat.$ === 'Just') {
+							var a = randomSeat.a;
+							return (a === '0') ? _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										nextSeat: b,
+										nextSeat: 0,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
 										randomString: randomStr,
+										seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText},
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
 									}),
-								$elm$core$Platform$Cmd$none);
+								$elm$core$Platform$Cmd$none) : ((a === '1') ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										nextSeat: 1,
+										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+										randomString: randomStr,
+										seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText},
+										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
+									}),
+								$elm$core$Platform$Cmd$none) : ((a === '2') ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										nextSeat: 2,
+										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+										randomString: randomStr,
+										seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText},
+										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
+									}),
+								$elm$core$Platform$Cmd$none) : ((a === '3') ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										nextSeat: 3,
+										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+										randomString: randomStr,
+										seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText},
+										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
+									}),
+								$elm$core$Platform$Cmd$none) : ((a === '4') ? _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										nextSeat: 4,
+										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+										randomString: randomStr,
+										seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText},
+										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
+									}),
+								$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{
+										nextSeat: 0,
+										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+										randomString: randomStr,
+										seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText},
+										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list)
+									}),
+								$elm$core$Platform$Cmd$none)))));
 						} else {
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -11370,11 +11420,7 @@ var $author$project$Main$update = F2(
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{
-									nextSeat: 1,
-									person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-									randomString: randomStr
-								}),
+								{nextSeat: 1, randomString: randomStr}),
 							$elm$core$Platform$Cmd$none);
 					}
 				case 'Tick':

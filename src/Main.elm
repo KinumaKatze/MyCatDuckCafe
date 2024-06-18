@@ -219,15 +219,26 @@ update msg model =
                 randomStr = List.Extra.getAt randomValues.randomIndex model.person_list
                 randomSeat = List.Extra.getAt randomValues.randomSeat model.seat_list
             in
-                case randomSeat of 
-                    Just a -> 
-                        case String.toInt a of 
-                            Just b ->
-                                ({ model | randomString = randomStr, nextSeat = b, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list}, Cmd.none )
-                            Nothing ->
-                                ({ model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
-                    Nothing ->
-                        ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
+            case randomStr of 
+                Just b ->
+                    case randomSeat of 
+                        Just a -> 
+                            if a == "0" then
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list}, Cmd.none )
+                            else if a == "1" then
+                                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = model.seat2.spokenText, index = model.seat2.index}, randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                            else if a == "2" then
+                                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = model.seat3.spokenText, index = model.seat3.index}, randomString = randomStr, nextSeat = 2, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                            else if a == "3" then
+                                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = model.seat4.spokenText, index = model.seat4.index}, randomString = randomStr, nextSeat = 3, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                            else if a == "4" then
+                                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = model.seat5.spokenText, index = model.seat5.index}, randomString = randomStr, nextSeat = 4, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                            else
+                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list }, Cmd.none )
+                        Nothing ->
+                            ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list}, Cmd.none )
+                Nothing ->
+                    ( { model | randomString = randomStr, nextSeat = 1}, Cmd.none )
            
         Tick newTime ->
             if model.seat1.modal == True then
