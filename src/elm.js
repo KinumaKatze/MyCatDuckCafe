@@ -10614,10 +10614,14 @@ var $author$project$Main$Model = function (width) {
 											return function (randomString) {
 												return function (showModal) {
 													return function (userInput) {
-														return function (timeChoosen) {
-															return function (time) {
-																return function (daten) {
-																	return {daten: daten, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, width: width};
+														return function (userInput2) {
+															return function (timeChoosen) {
+																return function (time) {
+																	return function (daten) {
+																		return function (arbeiten) {
+																			return {arbeiten: arbeiten, daten: daten, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, userInput2: userInput2, width: width};
+																		};
+																	};
 																};
 															};
 														};
@@ -10646,9 +10650,11 @@ var $author$project$Main$init = function (_v0) {
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
-				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...')(false)(0)(
+				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...')('...')(false)(0)(
 			_List_fromArray(
-				[50, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100])),
+				[10, 20]))(
+			_List_fromArray(
+				['Pause', 'Mathe'])),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Tick = function (a) {
@@ -11595,6 +11601,13 @@ var $author$project$Main$update = F2(
 							model,
 							{userInput: input}),
 						$elm$core$Platform$Cmd$none);
+				case 'GetInput2':
+					var input = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{userInput2: input}),
+						$elm$core$Platform$Cmd$none);
 				case 'TickMinute':
 					var newTime = model.time - 1;
 					if (model.timeChoosen && (!(!newTime))) {
@@ -11617,7 +11630,9 @@ var $author$project$Main$update = F2(
 				default:
 					if (model.timeChoosen) {
 						var $temp$msg = $author$project$Main$PrepNextNPC,
-							$temp$model = model;
+							$temp$model = _Utils_update(
+							model,
+							{time: 0});
 						msg = $temp$msg;
 						model = $temp$model;
 						continue update;
@@ -11639,6 +11654,9 @@ var $author$project$Main$update = F2(
 	});
 var $author$project$Main$GetInput = function (a) {
 	return {$: 'GetInput', a: a};
+};
+var $author$project$Main$GetInput2 = function (a) {
+	return {$: 'GetInput2', a: a};
 };
 var $author$project$Main$NPCClicked = function (a) {
 	return {$: 'NPCClicked', a: a};
@@ -11691,109 +11709,112 @@ var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $author$project$Main$drawBars = function (dataPoints) {
-	var yAxisLabel = A2(
-		$elm$svg$Svg$text_,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$x('10'),
-				$elm$svg$Svg$Attributes$y('10'),
-				$elm$svg$Svg$Attributes$fill('white'),
-				$elm$svg$Svg$Attributes$fontSize('10')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('Y')
-			]));
-	var yAxis = A2(
-		$elm$svg$Svg$line,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$x1('20'),
-				$elm$svg$Svg$Attributes$y1('0'),
-				$elm$svg$Svg$Attributes$x2('20'),
-				$elm$svg$Svg$Attributes$y2('200'),
-				$elm$svg$Svg$Attributes$stroke('white'),
-				$elm$svg$Svg$Attributes$strokeWidth('2')
-			]),
-		_List_Nil);
-	var xAxisLabel = A2(
-		$elm$svg$Svg$text_,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$x('500'),
-				$elm$svg$Svg$Attributes$y('190'),
-				$elm$svg$Svg$Attributes$fill('white'),
-				$elm$svg$Svg$Attributes$fontSize('10')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('X')
-			]));
-	var xAxis = A2(
-		$elm$svg$Svg$line,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$x1('0'),
-				$elm$svg$Svg$Attributes$y1('180'),
-				$elm$svg$Svg$Attributes$x2('500'),
-				$elm$svg$Svg$Attributes$y2('180'),
-				$elm$svg$Svg$Attributes$stroke('white'),
-				$elm$svg$Svg$Attributes$strokeWidth('2')
-			]),
-		_List_Nil);
-	var spaceBetweenBars = 20;
-	var originLabel = A2(
-		$elm$svg$Svg$text_,
-		_List_fromArray(
-			[
-				$elm$svg$Svg$Attributes$x('25'),
-				$elm$svg$Svg$Attributes$y('190'),
-				$elm$svg$Svg$Attributes$fill('white'),
-				$elm$svg$Svg$Attributes$fontSize('10')
-			]),
-		_List_fromArray(
-			[
-				$elm$html$Html$text('0')
-			]));
-	var maxData = A2(
-		$elm$core$Maybe$withDefault,
-		0,
-		$elm$core$List$maximum(dataPoints));
-	var normalize = function (height) {
-		return (height / maxData) * 160;
-	};
-	var initialY = 180;
-	var initialX = 50;
-	var barWidth = 40;
-	var bars = A2(
-		$elm$core$List$indexedMap,
-		F2(
-			function (index, height) {
-				return A2(
-					$elm$svg$Svg$rect,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$x(
-							$elm$core$String$fromFloat(initialX + ((barWidth + spaceBetweenBars) * index))),
-							$elm$svg$Svg$Attributes$y(
-							$elm$core$String$fromFloat(
-								initialY - normalize(height))),
-							$elm$svg$Svg$Attributes$width(
-							$elm$core$String$fromFloat(barWidth)),
-							$elm$svg$Svg$Attributes$height(
-							$elm$core$String$fromFloat(
-								normalize(height))),
-							$elm$svg$Svg$Attributes$fill('white')
-						]),
-					_List_Nil);
-			}),
-		dataPoints);
-	return _Utils_ap(
-		_List_fromArray(
-			[xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel]),
-		bars);
-};
+var $author$project$Main$drawBars = F2(
+	function (dataPoints, model) {
+		var yAxisLabel = A2(
+			$elm$svg$Svg$text_,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$x('10'),
+					$elm$svg$Svg$Attributes$y('10'),
+					$elm$svg$Svg$Attributes$fill('white'),
+					$elm$svg$Svg$Attributes$fontSize('10')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Minuten')
+				]));
+		var xlength = $elm$core$String$fromInt(
+			($elm$core$List$length(model.daten) * 60) + 70);
+		var spaceBetweenBars = 20;
+		var maxData = A2(
+			$elm$core$Maybe$withDefault,
+			0,
+			$elm$core$List$maximum(dataPoints));
+		var initialY = maxData + 40;
+		var originLabel = A2(
+			$elm$svg$Svg$text_,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$x('5'),
+					$elm$svg$Svg$Attributes$y(
+					$elm$core$String$fromFloat(initialY + 10)),
+					$elm$svg$Svg$Attributes$fill('white'),
+					$elm$svg$Svg$Attributes$fontSize('10')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('0')
+				]));
+		var xAxis = A2(
+			$elm$svg$Svg$line,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$x1('0'),
+					$elm$svg$Svg$Attributes$y1(
+					$elm$core$String$fromFloat(initialY)),
+					$elm$svg$Svg$Attributes$x2(xlength),
+					$elm$svg$Svg$Attributes$y2(
+					$elm$core$String$fromFloat(initialY)),
+					$elm$svg$Svg$Attributes$stroke('white'),
+					$elm$svg$Svg$Attributes$strokeWidth('2')
+				]),
+			_List_Nil);
+		var xAxisLabel = A2(
+			$elm$svg$Svg$text_,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$x(xlength),
+					$elm$svg$Svg$Attributes$y(
+					$elm$core$String$fromFloat(initialY)),
+					$elm$svg$Svg$Attributes$fill('white'),
+					$elm$svg$Svg$Attributes$fontSize('10')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text('Arbeit')
+				]));
+		var yAxis = A2(
+			$elm$svg$Svg$line,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$x1('0'),
+					$elm$svg$Svg$Attributes$y1('0'),
+					$elm$svg$Svg$Attributes$x2('0'),
+					$elm$svg$Svg$Attributes$y2(
+					$elm$core$String$fromFloat(initialY)),
+					$elm$svg$Svg$Attributes$stroke('white'),
+					$elm$svg$Svg$Attributes$strokeWidth('2')
+				]),
+			_List_Nil);
+		var initialX = 30;
+		var barWidth = 40;
+		var bars = A2(
+			$elm$core$List$indexedMap,
+			F2(
+				function (index, height) {
+					return A2(
+						$elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$x(
+								$elm$core$String$fromFloat(initialX + ((barWidth + spaceBetweenBars) * index))),
+								$elm$svg$Svg$Attributes$y(
+								$elm$core$String$fromFloat(initialY - height)),
+								$elm$svg$Svg$Attributes$width(
+								$elm$core$String$fromFloat(barWidth)),
+								$elm$svg$Svg$Attributes$height(
+								$elm$core$String$fromFloat(height)),
+								$elm$svg$Svg$Attributes$fill('white')
+							]),
+						_List_Nil);
+				}),
+			dataPoints);
+		return _Utils_ap(
+			_List_fromArray(
+				[xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel]),
+			bars);
+	});
 var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
@@ -12627,6 +12648,16 @@ var $author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('display-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Wie lange möchten sie lernen?')
+							])),
+						A2(
 						$elm$html$Html$input,
 						_List_fromArray(
 							[
@@ -12644,7 +12675,27 @@ var $author$project$Main$view = function (model) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Ich möchte für ' + (model.userInput + ' Minuten lernen'))
+								$elm$html$Html$text('Was möchten sie heute lernen?')
+							])),
+						A2(
+						$elm$html$Html$input,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$placeholder('Bitte geben sie an was sie lernen wollen.'),
+								$elm$html$Html$Attributes$value(model.userInput2),
+								$elm$html$Html$Events$onInput($author$project$Main$GetInput2),
+								$elm$html$Html$Attributes$class('input-field')
+							]),
+						_List_Nil),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('display-text')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Ich möchte für ' + (model.userInput + (' Minuten ' + (model.userInput2 + ' lernen'))))
 							])),
 						A2(
 						$elm$html$Html$button,
@@ -12691,7 +12742,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('Ich brauche eine Pause.')
 							]))
 					])),
-				A2(
+				($elm$core$List$length(model.daten) >= 1) ? A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -12703,15 +12754,23 @@ var $author$project$Main$view = function (model) {
 						$elm$svg$Svg$svg,
 						_List_fromArray(
 							[
-								$elm$svg$Svg$Attributes$width('100%'),
+								$elm$svg$Svg$Attributes$width(
+								$elm$core$String$fromInt(
+									($elm$core$List$length(model.daten) * 60) + 100) + 'px'),
 								$elm$svg$Svg$Attributes$height('100%'),
-								$elm$svg$Svg$Attributes$viewBox('0 0 500 200')
+								$elm$svg$Svg$Attributes$viewBox(
+								'0 0 ' + ($elm$core$String$fromInt(
+									($elm$core$List$length(model.daten) * 60) + 20) + (' ' + $elm$core$String$fromFloat(
+									A2(
+										$elm$core$Maybe$withDefault,
+										0,
+										$elm$core$List$maximum(model.daten)) + 60))))
 							]),
-						$author$project$Main$drawBars(model.daten))
-					]))
+						A2($author$project$Main$drawBars, model.daten, model))
+					])) : $elm$html$Html$text('')
 			]));
 };
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"TickMinute":["Time.Posix"],"SwitchOverlay":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"GetInput2":["String.String"],"TickMinute":["Time.Posix"],"SwitchOverlay":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));

@@ -49,9 +49,11 @@ type alias Model =
     , randomString : Maybe String -- Next Guest
     , showModal : Bool
     , userInput : String
+    , userInput2 : String
     , timeChoosen : Bool
     , time : Int
     , daten : List Float
+    , arbeiten : List String
     }
 
 
@@ -74,9 +76,11 @@ init _ =
     Nothing 
     False
     "..."
+    "..."
     False
     0
-    [ 50, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100]
+    [10, 20]
+    ["Pause", "Mathe"]
     , Cmd.none )
 
 -- Message Typen
@@ -89,6 +93,7 @@ type Msg
     | Tick Posix --Dialogfenster, dadurch wird Dialog nach und nach angezeigt
     | RemoveNPC Seat
     | GetInput String
+    | GetInput2 String
     | TickMinute Posix
     | SwitchOverlay
 
@@ -116,39 +121,38 @@ generateRandomValues listPeople listSeats =
         (Random.int 0 (listPeople - 1))
         (Random.int 0 (listSeats - 1))
 
-drawBars : List Float -> List (Svg msg)
-drawBars dataPoints =
+drawBars : List Float -> Model -> List (Svg msg)
+drawBars dataPoints model =
     let
         barWidth = 40
         spaceBetweenBars = 20
-        initialX = 50
-        initialY = 180
+        initialX = 30
+        xlength = String.fromInt (length model.daten * 60 + 70)
         maxData = List.maximum dataPoints |> Maybe.withDefault 0
-        normalize height = (height / maxData) * 160 -- Skalierung der Balken entsprechend der maximalen Höhe
+        initialY = maxData + 40
         bars = List.indexedMap
             (\index height ->
                 Svg.rect
                     [ x (String.fromFloat (initialX + (barWidth + spaceBetweenBars) * (index |> toFloat)))
-                    , y (String.fromFloat (initialY - normalize height))
+                    , y (String.fromFloat (initialY - height))
                     , Svg.Attributes.width (String.fromFloat barWidth)
-                    , Svg.Attributes.height (String.fromFloat (normalize height))
+                    , Svg.Attributes.height (String.fromFloat (height))
                     , fill "white"
                     ]
                     []
             )
             dataPoints
         xAxis = Svg.line -- X-Achse
-            [ x1 "0", y1 "180", x2 "500", y2 "180", stroke "white", strokeWidth "2" ]
+            [ x1 "0", y1 (String.fromFloat initialY), x2 xlength, y2 (String.fromFloat initialY), stroke "white", strokeWidth "2" ]
             []
         yAxis = Svg.line -- Y-Achse
-            [ x1 "20", y1 "0", x2 "20", y2 "200", stroke "white", strokeWidth "2" ]
+            [ x1 "0", y1 "0", x2 "0", y2 (String.fromFloat initialY), stroke "white", strokeWidth "2" ]
             []
-        xAxisLabel = Svg.text_ [ x "500", y "190", fill "white", fontSize "10" ] [ Html.text "X" ] -- X-Achsen-Beschriftung
-        yAxisLabel = Svg.text_ [ x "10", y "10", fill "white", fontSize "10" ] [ Html.text "Y" ] -- Y-Achsen-Beschriftung
-        originLabel = Svg.text_ [ x "25", y "190", fill "white", fontSize "10" ] [ Html.text "0" ] -- Ursprung (0,0) Beschriftung
+        xAxisLabel = Svg.text_ [ x xlength, y (String.fromFloat initialY), fill "white", fontSize "10" ] [ Html.text "Arbeit" ] -- X-Achsen-Beschriftung
+        yAxisLabel = Svg.text_ [ x "10", y "10", fill "white", fontSize "10" ] [ Html.text "Minuten" ] -- Y-Achsen-Beschriftung
+        originLabel = Svg.text_ [ x "5", y (String.fromFloat (initialY + 10)), fill "white", fontSize "10" ] [ Html.text "0" ] -- Ursprung (0,0) Beschriftung
     in
     [ xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel ] ++ bars
-
 
 
 --Update Funktionen
@@ -333,6 +337,9 @@ update msg model =
         GetInput input ->
             ({model | userInput = input}, Cmd.none )
 
+        GetInput2 input ->
+            ({model | userInput2 = input}, Cmd.none )
+
         TickMinute _ ->
             let
                     newTime = model.time - 1
@@ -346,7 +353,10 @@ update msg model =
 
         SwitchOverlay ->
             if model.timeChoosen then
-                update PrepNextNPC model
+                update PrepNextNPC model --If hier hin, je nachdem ob input2 schon in der Liste ist oder nicht. 
+                    --Wenn nicht: Liste Arbeiten erweitern um den Bergriff und an selber Stelle in daten die Zeit eintragen (Diff input und time)
+                    --Wenn doch: Finde die stelle in der arbeiten Liste und addiere in der selben stelle bei daten den wert der Zeit drauf
+                    -- {model | ...} funktioniert um das model zu verändern vor dem forced update
             else
                 case String.toInt model.userInput of 
                     Just a ->
@@ -865,13 +875,22 @@ view model =
         , if model.timeChoosen == False then
             div 
             [ Html.Attributes.class "overlay"]
-            [input  [ placeholder "Bitte geben sie an wie lange sie lernen wollen."
+            [div [Html.Attributes.class "display-text"] 
+                [ Html.text ("Wie lange möchten sie lernen?") ]
+            ,input  [ placeholder "Bitte geben sie an wie lange sie lernen wollen."
                     , value model.userInput
                     , onInput GetInput 
                     , Html.Attributes.class "input-field"
                     ] []
+            ,div [Html.Attributes.class "display-text"] 
+                [ Html.text ("Was möchten sie heute lernen?") ]
+            ,input  [ placeholder "Bitte geben sie an was sie lernen wollen."
+                    , value model.userInput2
+                    , onInput GetInput2 
+                    , Html.Attributes.class "input-field"
+                    ] []
             , div [Html.Attributes.class "display-text"] 
-                [ Html.text ("Ich möchte für " ++ model.userInput ++" Minuten lernen") ]
+                [ Html.text ("Ich möchte für " ++ model.userInput ++" Minuten " ++ model.userInput2 ++ " lernen") ]
             , button    [ Html.Attributes.class "confirm-button"
                         , Html.Events.onClick SwitchOverlay 
                         , if checkForInt model.userInput then Html.Attributes.style "background-color" "rgb(0, 255, 0)" else Html.Attributes.style "background-color" "rgb(255, 0, 0)"
@@ -889,15 +908,17 @@ view model =
                         ] 
                         [ Html.text "Ich brauche eine Pause." ]
             ]
-        ,div [ Html.Attributes.class "overlay2" ]
-                [ Svg.svg
-                    [ Svg.Attributes.width "100%"
-                    , Svg.Attributes.height "100%"
-                    , viewBox "0 0 500 200"
-                    ]
-                    (drawBars model.daten)
-                ]
-            
+        ,if length model.daten >= 1 then
+            div [ Html.Attributes.class "overlay2" ]
+            [ Svg.svg
+                [ Svg.Attributes.width <| String.fromInt (length model.daten * 60 + 100) ++ "px"
+                , Svg.Attributes.height "100%"
+                , Svg.Attributes.viewBox ("0 0 " ++ String.fromInt (length model.daten * 60 + 20) ++ " " ++ String.fromFloat ((List.maximum model.daten |> Maybe.withDefault 0) + 60))
+                ] 
+                (drawBars model.daten model)
+            ]
+        else 
+            Html.text ""
         ]
 
 
