@@ -10616,7 +10616,9 @@ var $author$project$Main$Model = function (width) {
 													return function (userInput) {
 														return function (timeChoosen) {
 															return function (time) {
-																return {height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, width: width};
+																return function (daten) {
+																	return {daten: daten, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, width: width};
+																};
 															};
 														};
 													};
@@ -10644,7 +10646,9 @@ var $author$project$Main$init = function (_v0) {
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
-				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...')(false)(0),
+				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...')(false)(0)(
+			_List_fromArray(
+				[50, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100])),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Tick = function (a) {
@@ -11113,12 +11117,14 @@ var $author$project$Main$update = F2(
 								var _v7 = model.randomString;
 								if (_v7.$ === 'Just') {
 									var a = _v7.a;
+									var oldseat = model.seat1;
+									var newseat = _Utils_update(
+										oldseat,
+										{hidden: false, modal: false, name: a});
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{
-												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
-											}),
+											{seat1: newseat}),
 										$elm$core$Platform$Cmd$none);
 								} else {
 									return _Utils_Tuple2(
@@ -11659,6 +11665,135 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 			$elm$json$Json$Encode$bool(bool));
 	});
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $elm$svg$Svg$Attributes$fontSize = _VirtualDom_attribute('font-size');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$line = $elm$svg$Svg$trustedNode('line');
+var $elm$core$List$maximum = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(
+			A3($elm$core$List$foldl, $elm$core$Basics$max, x, xs));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
+var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
+var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var $elm$svg$Svg$text_ = $elm$svg$Svg$trustedNode('text');
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
+var $elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
+var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
+var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
+var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
+var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
+var $author$project$Main$drawBars = function (dataPoints) {
+	var yAxisLabel = A2(
+		$elm$svg$Svg$text_,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$x('10'),
+				$elm$svg$Svg$Attributes$y('10'),
+				$elm$svg$Svg$Attributes$fill('white'),
+				$elm$svg$Svg$Attributes$fontSize('10')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Y')
+			]));
+	var yAxis = A2(
+		$elm$svg$Svg$line,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$x1('20'),
+				$elm$svg$Svg$Attributes$y1('0'),
+				$elm$svg$Svg$Attributes$x2('20'),
+				$elm$svg$Svg$Attributes$y2('200'),
+				$elm$svg$Svg$Attributes$stroke('white'),
+				$elm$svg$Svg$Attributes$strokeWidth('2')
+			]),
+		_List_Nil);
+	var xAxisLabel = A2(
+		$elm$svg$Svg$text_,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$x('500'),
+				$elm$svg$Svg$Attributes$y('190'),
+				$elm$svg$Svg$Attributes$fill('white'),
+				$elm$svg$Svg$Attributes$fontSize('10')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text('X')
+			]));
+	var xAxis = A2(
+		$elm$svg$Svg$line,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$x1('0'),
+				$elm$svg$Svg$Attributes$y1('180'),
+				$elm$svg$Svg$Attributes$x2('500'),
+				$elm$svg$Svg$Attributes$y2('180'),
+				$elm$svg$Svg$Attributes$stroke('white'),
+				$elm$svg$Svg$Attributes$strokeWidth('2')
+			]),
+		_List_Nil);
+	var spaceBetweenBars = 20;
+	var originLabel = A2(
+		$elm$svg$Svg$text_,
+		_List_fromArray(
+			[
+				$elm$svg$Svg$Attributes$x('25'),
+				$elm$svg$Svg$Attributes$y('190'),
+				$elm$svg$Svg$Attributes$fill('white'),
+				$elm$svg$Svg$Attributes$fontSize('10')
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text('0')
+			]));
+	var maxData = A2(
+		$elm$core$Maybe$withDefault,
+		0,
+		$elm$core$List$maximum(dataPoints));
+	var normalize = function (height) {
+		return (height / maxData) * 160;
+	};
+	var initialY = 180;
+	var initialX = 50;
+	var barWidth = 40;
+	var bars = A2(
+		$elm$core$List$indexedMap,
+		F2(
+			function (index, height) {
+				return A2(
+					$elm$svg$Svg$rect,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$x(
+							$elm$core$String$fromFloat(initialX + ((barWidth + spaceBetweenBars) * index))),
+							$elm$svg$Svg$Attributes$y(
+							$elm$core$String$fromFloat(
+								initialY - normalize(height))),
+							$elm$svg$Svg$Attributes$width(
+							$elm$core$String$fromFloat(barWidth)),
+							$elm$svg$Svg$Attributes$height(
+							$elm$core$String$fromFloat(
+								normalize(height))),
+							$elm$svg$Svg$Attributes$fill('white')
+						]),
+					_List_Nil);
+			}),
+		dataPoints);
+	return _Utils_ap(
+		_List_fromArray(
+			[xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel]),
+		bars);
+};
 var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
@@ -11668,6 +11803,8 @@ var $elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var $author$project$Main$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -12553,6 +12690,24 @@ var $author$project$Main$view = function (model) {
 							[
 								$elm$html$Html$text('Ich brauche eine Pause.')
 							]))
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('overlay2')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$svg$Svg$svg,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$width('100%'),
+								$elm$svg$Svg$Attributes$height('100%'),
+								$elm$svg$Svg$Attributes$viewBox('0 0 500 200')
+							]),
+						$author$project$Main$drawBars(model.daten))
 					]))
 			]));
 };

@@ -18,7 +18,29 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 300px; /* Feste Breite */
+    height: 150px; /* Feste Höhe */
+    box-sizing: border-box; /* Inklusive Padding */
 }
+
+.overlay2 {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    resize: both;
+    overflow: auto;
+    width: 300px; /* Startbreite */
+    height: 150px; /* Starthöhe */
+    overflow-x: auto; /* Horizontales Scrollen aktivieren */
+    white-space: nowrap; /* Verhindern, dass Zeilenumbrüche umgebrochen werden */
+    max-width: 500px;
+    max-Height: 500px;
+}
+
 
 .confirm-button {
     background-color: #4CAF50; /* Grün */

@@ -14,6 +14,8 @@ import Basics exposing (..)
 import Task
 import Time exposing (..)
 import Process
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
 
 -- Typ-Deklarationen
 
@@ -49,7 +51,9 @@ type alias Model =
     , userInput : String
     , timeChoosen : Bool
     , time : Int
+    , daten : List Float
     }
+
 
 --Initialisierung
 
@@ -72,6 +76,7 @@ init _ =
     "..."
     False
     0
+    [ 50, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100, 80, 120, 160, 100]
     , Cmd.none )
 
 -- Message Typen
@@ -88,6 +93,7 @@ type Msg
     | SwitchOverlay
 
 --Hilfsfunktionen
+
 checkForInt: String -> Bool
 checkForInt word =
     case String.toInt word of 
@@ -109,6 +115,39 @@ generateRandomValues listPeople listSeats =
     Random.map2 RandomValues
         (Random.int 0 (listPeople - 1))
         (Random.int 0 (listSeats - 1))
+
+drawBars : List Float -> List (Svg msg)
+drawBars dataPoints =
+    let
+        barWidth = 40
+        spaceBetweenBars = 20
+        initialX = 50
+        initialY = 180
+        maxData = List.maximum dataPoints |> Maybe.withDefault 0
+        normalize height = (height / maxData) * 160 -- Skalierung der Balken entsprechend der maximalen Höhe
+        bars = List.indexedMap
+            (\index height ->
+                Svg.rect
+                    [ x (String.fromFloat (initialX + (barWidth + spaceBetweenBars) * (index |> toFloat)))
+                    , y (String.fromFloat (initialY - normalize height))
+                    , Svg.Attributes.width (String.fromFloat barWidth)
+                    , Svg.Attributes.height (String.fromFloat (normalize height))
+                    , fill "white"
+                    ]
+                    []
+            )
+            dataPoints
+        xAxis = Svg.line -- X-Achse
+            [ x1 "0", y1 "180", x2 "500", y2 "180", stroke "white", strokeWidth "2" ]
+            []
+        yAxis = Svg.line -- Y-Achse
+            [ x1 "20", y1 "0", x2 "20", y2 "200", stroke "white", strokeWidth "2" ]
+            []
+        xAxisLabel = Svg.text_ [ x "500", y "190", fill "white", fontSize "10" ] [ Html.text "X" ] -- X-Achsen-Beschriftung
+        yAxisLabel = Svg.text_ [ x "10", y "10", fill "white", fontSize "10" ] [ Html.text "Y" ] -- Y-Achsen-Beschriftung
+        originLabel = Svg.text_ [ x "25", y "190", fill "white", fontSize "10" ] [ Html.text "0" ] -- Ursprung (0,0) Beschriftung
+    in
+    [ xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel ] ++ bars
 
 
 
@@ -144,7 +183,11 @@ update msg model =
                         0 ->
                             case model.randomString of 
                                 Just a -> 
-                                    ( { model | seat1 = {name = a, hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index} }, Cmd.none )
+                                    let --Einkürzen, mit dem Code oder Hilfsfunktion definieren 
+                                        oldseat = model.seat1
+                                        newseat = {oldseat | name = a, hidden = False, modal = False}
+                                    in
+                                    ( { model | seat1 = newseat }, Cmd.none )
                                 Nothing ->
                                     ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index} }, Cmd.none )
                         1 ->
@@ -327,525 +370,534 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    div [ style "position" "fixed"
-        , style "top" "0"
-        , style "left" "0"
-        , style "width" "100%"
-        , style "height" "100%"
+    div [ Html.Attributes.style "position" "fixed"
+        , Html.Attributes.style "top" "0"
+        , Html.Attributes.style "left" "0"
+        , Html.Attributes.style "width" "100%"
+        , Html.Attributes.style "height" "100%"
         ]
         [ img
             [ src "Theke.gif"
-            , style "height" <| String.fromInt model.height ++ "px" 
-            , style "width" <| String.fromInt model.width ++ "px" 
+            , Html.Attributes.style "height" <| String.fromInt model.height ++ "px" 
+            , Html.Attributes.style "width" <| String.fromInt model.width ++ "px" 
             ]
             []
         , button --Seat1
             [ Html.Events.onClick (NPCClicked model.seat1)
             , if model.seat1.hidden == True then hidden True else hidden False
-            , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
-            , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
-            , style "position" "absolute"
-            , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-            , style "left" "1.4%"  -- 0.5% vom rechten Rand
-            , style "background" "none"
-            , style "border" "none"
-            , style "padding" "0"
-            , style "cursor" "pointer"
-            , style "zIndex" "1"
+            , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
+            , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
+            , Html.Attributes.style "position" "absolute"
+            , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+            , Html.Attributes.style "left" "1.4%"  -- 0.5% vom rechten Rand
+            , Html.Attributes.style "background" "none"
+            , Html.Attributes.style "border" "none"
+            , Html.Attributes.style "padding" "0"
+            , Html.Attributes.style "cursor" "pointer"
+            , Html.Attributes.style "zIndex" "1"
             ] 
             [ img 
                 [ src (model.seat1.name)
                 , if model.seat1.hidden == True then hidden True else hidden False
-                , style "width" "100%"
-                , style "height" "100%"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
                 ] 
                 []
             ]
         , if model.seat1.modal then --Seat1 Talking Scene
-                div [ style "position" "fixed"
-                , style "top" "0"
-                , style "left" "0"
-                , style "width" "100%"
-                , style "height" "100%"
-                , style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
-                , style "display" "flex"
-                , style "justify-content" "center"
-                , style "align-items" "center"
-                , style "zIndex" "2"
+                div [ Html.Attributes.style "position" "fixed"
+                , Html.Attributes.style "top" "0"
+                , Html.Attributes.style "left" "0"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
+                , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
+                , Html.Attributes.style "display" "flex"
+                , Html.Attributes.style "justify-content" "center"
+                , Html.Attributes.style "align-items" "center"
+                , Html.Attributes.style "zIndex" "2"
             ]
                 [ div
-                    [ style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
-                    , style "position" "absolute"
-                    , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-                    , style "left" "1.4%"  -- 0.5% vom rechten Rand
-                    , style "display" "flex"
-                    , style "justify-content" "center"
-                    , style "align-items" "center"
-                    , style "zIndex" "3"
+                    [ Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
+                    , Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+                    , Html.Attributes.style "left" "1.4%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "justify-content" "center"
+                    , Html.Attributes.style "align-items" "center"
+                    , Html.Attributes.style "zIndex" "3"
                     ]
                     [ button
                         [ Html.Events.onClick (NPCClicked model.seat1)
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "zIndex" "1"
-                        , style "background" "none"
-                        , style "border" "none"
-                        , style "padding" "0"
-                        , style "cursor" "pointer"
-                        , style "position" "relative"
+                        , Html.Attributes.style "width" "100%"
+                        , Html.Attributes.style "height" "100%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "background" "none"
+                        , Html.Attributes.style "border" "none"
+                        , Html.Attributes.style "padding" "0"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "position" "relative"
                         ] 
                         [ img 
                             [ src (model.seat1.name)
-                            , style "width" "100%"
-                            , style "height" "100%"
-                            , style "zIndex" "1"
+                            , Html.Attributes.style "width" "100%"
+                            , Html.Attributes.style "height" "100%"
+                            , Html.Attributes.style "zIndex" "1"
                             ] 
                             []
                         ]
 
                     ]
                     , div 
-                    [ style "position" "absolute"
-                    , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
-                    , style "bottom" "50%"
-                    , style "left" "1.4%"  -- 0.5% vom rechten Rand
-                    , style "color" "white"
-                    , style "background-color" "rgba(0, 0, 0, 0.5)"
-                    , style "padding" "10px"
-                    , style "border-radius" "5px"
-                    , style "zIndex" "1"
-                    , style "display" "flex"
-                    , style "flex-direction" "column"
-                    , style "justify-content" "space-between"
+                    [ Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
+                    , Html.Attributes.style "bottom" "50%"
+                    , Html.Attributes.style "left" "1.4%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "color" "white"
+                    , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"
+                    , Html.Attributes.style "padding" "10px"
+                    , Html.Attributes.style "border-radius" "5px"
+                    , Html.Attributes.style "zIndex" "1"
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "flex-direction" "column"
+                    , Html.Attributes.style "justify-content" "space-between"
                     ]
-                    [ div [] [ text model.seat1.spokenText ]
+                    [ div [] [ Html.text model.seat1.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat1)
-                        , style "width" "50%"
-                        , style "height" "10%"
-                        , style "zIndex" "1"
-                        , style "cursor" "pointer"
-                        , style "top" "90%"
-                        , style "left" "0%"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "left" "0%"
                         ] 
-                        [ text "Gehen sie bitte!" ]
+                        [ Html.text "Gehen sie bitte!" ]
                     ]
                 ]
                   else
-                    text ""
+                    Html.text ""
         , button --Seat2
             [ Html.Events.onClick (NPCClicked model.seat2)
             , if (model.seat2.hidden) == True then hidden True else hidden False
-            , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
-            , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
-            , style "position" "absolute"
-            , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-            , style "left" "21.5%"  -- 0.5% vom rechten Rand
-            , style "background" "none"
-            , style "border" "none"
-            , style "padding" "0"
-            , style "cursor" "pointer"
-            , style "zIndex" "1"
+            , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
+            , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
+            , Html.Attributes.style "position" "absolute"
+            , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+            , Html.Attributes.style "left" "21.5%"  -- 0.5% vom rechten Rand
+            , Html.Attributes.style "background" "none"
+            , Html.Attributes.style "border" "none"
+            , Html.Attributes.style "padding" "0"
+            , Html.Attributes.style "cursor" "pointer"
+            , Html.Attributes.style "zIndex" "1"
             ] 
             [ img 
                 [ src (model.seat2.name)
                 , if (model.seat2.hidden) == True then hidden True else hidden False
-                , style "width" "100%"
-                , style "height" "100%"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
                 ] 
                 []
             ]
        , if model.seat2.modal then --Seat2 Talking Scene
-                div [ style "position" "fixed"
-                , style "top" "0"
-                , style "left" "0"
-                , style "width" "100%"
-                , style "height" "100%"
-                , style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
-                , style "display" "flex"
-                , style "justify-content" "center"
-                , style "align-items" "center"
-                , style "zIndex" "2"
+                div [ Html.Attributes.style "position" "fixed"
+                , Html.Attributes.style "top" "0"
+                , Html.Attributes.style "left" "0"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
+                , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
+                , Html.Attributes.style "display" "flex"
+                , Html.Attributes.style "justify-content" "center"
+                , Html.Attributes.style "align-items" "center"
+                , Html.Attributes.style "zIndex" "2"
             ]
                 [ div
-                    [ style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
-                    , style "position" "absolute"
-                    , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-                    , style "left" "21.5%"  -- 0.5% vom rechten Rand
-                    , style "display" "flex"
-                    , style "justify-content" "center"
-                    , style "align-items" "center"
-                    , style "zIndex" "3"
+                    [ Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
+                    , Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+                    , Html.Attributes.style "left" "21.5%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "justify-content" "center"
+                    , Html.Attributes.style "align-items" "center"
+                    , Html.Attributes.style "zIndex" "3"
                     ]
                     [ button
                         [ Html.Events.onClick (NPCClicked model.seat2)
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "zIndex" "1"
-                        , style "background" "none"
-                        , style "border" "none"
-                        , style "padding" "0"
-                        , style "cursor" "pointer"
-                        , style "position" "relative"
+                        , Html.Attributes.style "width" "100%"
+                        , Html.Attributes.style "height" "100%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "background" "none"
+                        , Html.Attributes.style "border" "none"
+                        , Html.Attributes.style "padding" "0"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "position" "relative"
                         ] 
                         [ img 
                             [ src (model.seat2.name)
-                            , style "width" "100%"
-                            , style "height" "100%"
-                            , style "zIndex" "1"
+                            , Html.Attributes.style "width" "100%"
+                            , Html.Attributes.style "height" "100%"
+                            , Html.Attributes.style "zIndex" "1"
                             ] 
                             []
                         ]
 
                     ]
                     , div 
-                    [ style "position" "absolute"
-                    , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
-                    , style "bottom" "50%"
-                    , style "left" "21.5%"  -- 0.5% vom rechten Rand
-                    , style "color" "white"
-                    , style "background-color" "rgba(0, 0, 0, 0.5)"
-                    , style "padding" "10px"
-                    , style "border-radius" "5px"
-                    , style "zIndex" "1"
-                    , style "display" "flex"
-                    , style "flex-direction" "column"
-                    , style "justify-content" "space-between"
+                    [Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
+                    , Html.Attributes.style "bottom" "50%"
+                    , Html.Attributes.style "left" "21.5%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "color" "white"
+                    , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"
+                    , Html.Attributes.style "padding" "10px"
+                    , Html.Attributes.style "border-radius" "5px"
+                    , Html.Attributes.style "zIndex" "1"
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "flex-direction" "column"
+                    , Html.Attributes.style "justify-content" "space-between"
                     ]
-                    [ div [] [ text model.seat2.spokenText ]
+                    [ div [] [ Html.text model.seat2.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat2)
-                        , style "width" "50%"
-                        , style "height" "10%"
-                        , style "zIndex" "1"
-                        , style "cursor" "pointer"
-                        , style "top" "90%"
-                        , style "left" "0%"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "left" "0%"
                         ] 
-                        [ text "Gehen sie bitte!" ]
+                        [ Html.text "Gehen sie bitte!" ]
                     ]
                 ]
                   else
-                    text ""
+                    Html.text ""
         , button --Seat3
             [ Html.Events.onClick (NPCClicked model.seat3)
             , if (model.seat3.hidden) == True then hidden True else hidden False
-            , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
-            , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
-            , style "position" "absolute"
-            , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-            , style "right" "41.5%"  -- 0.5% vom rechten Rand
-            , style "background" "none"
-            , style "border" "none"
-            , style "padding" "0"
-            , style "cursor" "pointer"
-            , style "zIndex" "1"
+            , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
+            , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
+            , Html.Attributes.style "position" "absolute"
+            , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+            , Html.Attributes.style "right" "41.5%"  -- 0.5% vom rechten Rand
+            , Html.Attributes.style "background" "none"
+            , Html.Attributes.style "border" "none"
+            , Html.Attributes.style "padding" "0"
+            , Html.Attributes.style "cursor" "pointer"
+            , Html.Attributes.style "zIndex" "1"
             ] 
             [ img 
                 [ src (model.seat3.name)
                 , if (model.seat3.hidden) == True then hidden True else hidden False
-                , style "width" "100%"
-                , style "height" "100%"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
                 ] 
                 []
             ]
         , if model.seat3.modal then --Seat3 Talking Scene
-                div [ style "position" "fixed"
-                , style "top" "0"
-                , style "left" "0"
-                , style "width" "100%"
-                , style "height" "100%"
-                , style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
-                , style "display" "flex"
-                , style "justify-content" "center"
-                , style "align-items" "center"
-                , style "zIndex" "2"
+                div [ Html.Attributes.style "position" "fixed"
+                , Html.Attributes.style "top" "0"
+                , Html.Attributes.style "left" "0"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
+                , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
+                , Html.Attributes.style "display" "flex"
+                , Html.Attributes.style "justify-content" "center"
+                , Html.Attributes.style "align-items" "center"
+                , Html.Attributes.style "zIndex" "2"
             ]
                 [ div
-                    [ style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
-                    , style "position" "absolute"
-                    , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-                    , style "right" "41.5%"  -- 0.5% vom rechten Rand
-                    , style "display" "flex"
-                    , style "justify-content" "center"
-                    , style "align-items" "center"
-                    , style "zIndex" "3"
+                    [ Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
+                    , Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+                    , Html.Attributes.style "right" "41.5%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "justify-content" "center"
+                    , Html.Attributes.style "align-items" "center"
+                    , Html.Attributes.style "zIndex" "3"
                     ]
                     [ button
                         [ Html.Events.onClick (NPCClicked model.seat3)
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "zIndex" "1"
-                        , style "background" "none"
-                        , style "border" "none"
-                        , style "padding" "0"
-                        , style "cursor" "pointer"
-                        , style "position" "relative"
+                        , Html.Attributes.style "width" "100%"
+                        , Html.Attributes.style "height" "100%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "background" "none"
+                        , Html.Attributes.style "border" "none"
+                        , Html.Attributes.style "padding" "0"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "position" "relative"
                         ] 
                         [ img 
                             [ src (model.seat3.name)
-                            , style "width" "100%"
-                            , style "height" "100%"
-                            , style "zIndex" "1"
+                            , Html.Attributes.style "width" "100%"
+                            , Html.Attributes.style "height" "100%"
+                            , Html.Attributes.style "zIndex" "1"
                             ] 
                             []
                         ]
 
                     ]
                     , div 
-                    [ style "position" "absolute"
-                    , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
-                    , style "bottom" "50%"
-                    , style "right" "41.5%"  -- 0.5% vom rechten Rand
-                    , style "color" "white"
-                    , style "background-color" "rgba(0, 0, 0, 0.5)"
-                    , style "padding" "10px"
-                    , style "border-radius" "5px"
-                    , style "zIndex" "1"
-                    , style "display" "flex"
-                    , style "flex-direction" "column"
-                    , style "justify-content" "space-between"
+                    [ Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
+                    , Html.Attributes.style "bottom" "50%"
+                    , Html.Attributes.style "right" "41.5%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "color" "white"
+                    , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"
+                    , Html.Attributes.style "padding" "10px"
+                    , Html.Attributes.style "border-radius" "5px"
+                    , Html.Attributes.style "zIndex" "1"
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "flex-direction" "column"
+                    , Html.Attributes.style "justify-content" "space-between"
                     ]
-                    [ div [] [ text model.seat3.spokenText ]
+                    [ div [] [ Html.text model.seat3.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat3)
-                        , style "width" "50%"
-                        , style "height" "10%"
-                        , style "zIndex" "1"
-                        , style "cursor" "pointer"
-                        , style "top" "90%"
-                        , style "left" "0%"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "left" "0%"
                         ] 
-                        [ text "Gehen sie bitte!" ]
+                        [ Html.text "Gehen sie bitte!" ]
                     ]
                 ]
                   else
-                    text ""
+                    Html.text ""
         , button --Seat4
             [ Html.Events.onClick (NPCClicked model.seat4)
             , if (model.seat4.hidden) == True then hidden True else hidden False
-            , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
-            , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
-            , style "position" "absolute"
-            , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-            , style "right" "21.5%"  -- 0.5% vom rechten Rand
-            , style "background" "none"
-            , style "border" "none"
-            , style "padding" "0"
-            , style "cursor" "pointer"
-            , style "zIndex" "1"
+            , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
+            , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
+            , Html.Attributes.style "position" "absolute"
+            , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+            , Html.Attributes.style "right" "21.5%"  -- 0.5% vom rechten Rand
+            , Html.Attributes.style "background" "none"
+            , Html.Attributes.style "border" "none"
+            , Html.Attributes.style "padding" "0"
+            , Html.Attributes.style "cursor" "pointer"
+            , Html.Attributes.style "zIndex" "1"
             ] 
             [ img 
                 [ src (model.seat4.name)
                 , if (model.seat4.hidden) == True then hidden True else hidden False
-                , style "width" "100%"
-                , style "height" "100%"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
                 ] 
                 []
             ]
          , if model.seat4.modal then --Seat4 Talking Scene
-                div [ style "position" "fixed"
-                , style "top" "0"
-                , style "left" "0"
-                , style "width" "100%"
-                , style "height" "100%"
-                , style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
-                , style "display" "flex"
-                , style "justify-content" "center"
-                , style "align-items" "center"
-                , style "zIndex" "2"
+                div [ Html.Attributes.style "position" "fixed"
+                , Html.Attributes.style "top" "0"
+                , Html.Attributes.style "left" "0"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
+                , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
+                , Html.Attributes.style "display" "flex"
+                , Html.Attributes.style "justify-content" "center"
+                , Html.Attributes.style "align-items" "center"
+                , Html.Attributes.style "zIndex" "2"
             ]
                 [ div
-                    [ style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
-                    , style "position" "absolute"
-                    , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-                    , style "right" "21.5%"  -- 0.5% vom rechten Rand
-                    , style "display" "flex"
-                    , style "justify-content" "center"
-                    , style "align-items" "center"
-                    , style "zIndex" "3"
+                    [ Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
+                    , Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+                    , Html.Attributes.style "right" "21.5%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "justify-content" "center"
+                    , Html.Attributes.style "align-items" "center"
+                    , Html.Attributes.style "zIndex" "3"
                     ]
                     [ button
                         [ Html.Events.onClick (NPCClicked model.seat4)
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "zIndex" "1"
-                        , style "background" "none"
-                        , style "border" "none"
-                        , style "padding" "0"
-                        , style "cursor" "pointer"
-                        , style "position" "relative"
+                        , Html.Attributes.style "width" "100%"
+                        , Html.Attributes.style "height" "100%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "background" "none"
+                        , Html.Attributes.style "border" "none"
+                        , Html.Attributes.style "padding" "0"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "position" "relative"
                         ] 
                         [ img 
                             [ src (model.seat4.name)
-                            , style "width" "100%"
-                            , style "height" "100%"
-                            , style "zIndex" "1"
+                            , Html.Attributes.style "width" "100%"
+                            , Html.Attributes.style "height" "100%"
+                            , Html.Attributes.style "zIndex" "1"
                             ] 
                             []
                         ]
 
                     ]
                     , div 
-                    [ style "position" "absolute"
-                    , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
-                    , style "bottom" "50%"
-                    , style "right" "21.5%"  -- 0.5% vom rechten Rand
-                    , style "color" "white"
-                    , style "background-color" "rgba(0, 0, 0, 0.5)"
-                    , style "padding" "10px"
-                    , style "border-radius" "5px"
-                    , style "zIndex" "1"
-                    , style "display" "flex"
-                    , style "flex-direction" "column"
-                    , style "justify-content" "space-between"
+                    [ Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
+                    , Html.Attributes.style "bottom" "50%"
+                    , Html.Attributes.style "right" "21.5%"  -- 0.5% vom rechten Rand
+                    , Html.Attributes.style "color" "white"
+                    , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"
+                    , Html.Attributes.style "padding" "10px"
+                    , Html.Attributes.style "border-radius" "5px"
+                    , Html.Attributes.style "zIndex" "1"
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "flex-direction" "column"
+                    , Html.Attributes.style "justify-content" "space-between"
                     ]
-                    [ div [] [ text model.seat4.spokenText ]
+                    [ div [] [ Html.text model.seat4.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat4)
-                        , style "width" "50%"
-                        , style "height" "10%"
-                        , style "zIndex" "1"
-                        , style "cursor" "pointer"
-                        , style "top" "90%"
-                        , style "left" "0%"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "left" "0%"
                         ] 
-                        [ text "Gehen sie bitte!" ]
+                        [ Html.text "Gehen sie bitte!" ]
                     ]
                 ]
                   else
-                    text ""
+                    Html.text ""
         , button --Seat5
             [ Html.Events.onClick (NPCClicked model.seat5)
             , if (model.seat5.hidden) == True then hidden True else hidden False
-            , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
-            , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
-            , style "position" "absolute"
-            , style "bottom" "13.8%"  -- 11.2% vom unteren Rand
-            , style "right" "1.4%"  -- 0.5% vom rechten Rand
-            , style "background" "none"
-            , style "border" "none"
-            , style "padding" "0"
-            , style "cursor" "pointer"
-            , style "zIndex" "1"
+            , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px" -- Anpassung der Groeße (0.17 scaling)
+            , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px" -- Anpassung der Groeße (0.3 scaling)
+            , Html.Attributes.style "position" "absolute"
+            , Html.Attributes.style "bottom" "13.8%"  -- 11.2% vom unteren Rand
+            , Html.Attributes.style "right" "1.4%"  -- 0.5% vom rechten Rand
+            , Html.Attributes.style "background" "none"
+            , Html.Attributes.style "border" "none"
+            , Html.Attributes.style "padding" "0"
+            , Html.Attributes.style "cursor" "pointer"
+            , Html.Attributes.style "zIndex" "1"
             ] 
             [ img 
                 [ src (model.seat5.name)
                 , if (model.seat5.hidden) == True then hidden True else hidden False
-                , style "width" "100%"
-                , style "height" "100%"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
                 ] 
                 []
             ]
         , if model.seat5.modal then
-            div [ style "position" "fixed"
-                , style "top" "0"
-                , style "left" "0"
-                , style "width" "100%"
-                , style "height" "100%"
-                , style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
-                , style "display" "flex"
-                , style "justify-content" "center"
-                , style "align-items" "center"
-                , style "zIndex" "2"
+            div [ Html.Attributes.style "position" "fixed"
+                , Html.Attributes.style "top" "0"
+                , Html.Attributes.style "left" "0"
+                , Html.Attributes.style "width" "100%"
+                , Html.Attributes.style "height" "100%"
+                , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"  -- Halbtransparentes Overlay
+                , Html.Attributes.style "display" "flex"
+                , Html.Attributes.style "justify-content" "center"
+                , Html.Attributes.style "align-items" "center"
+                , Html.Attributes.style "zIndex" "2"
             ]
                 [ div
-                    [ style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
-                    , style "position" "absolute"
-                    , style "bottom" "13.8%"  -- 13.8% vom unteren Rand
-                    , style "right" "1.4%"  -- 1.4% vom rechten Rand
-                    , style "display" "flex"
-                    , style "justify-content" "center"
-                    , style "align-items" "center"
-                    , style "zIndex" "3"
+                    [ Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3) ++ "px"
+                    , Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "bottom" "13.8%"  -- 13.8% vom unteren Rand
+                    , Html.Attributes.style "right" "1.4%"  -- 1.4% vom rechten Rand
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "justify-content" "center"
+                    , Html.Attributes.style "align-items" "center"
+                    , Html.Attributes.style "zIndex" "3"
                     ]
                     [ button
                         [ Html.Events.onClick (NPCClicked model.seat5)
-                        , style "width" "100%"
-                        , style "height" "100%"
-                        , style "zIndex" "1"
-                        , style "background" "none"
-                        , style "border" "none"
-                        , style "padding" "0"
-                        , style "cursor" "pointer"
-                        , style "position" "relative"
+                        , Html.Attributes.style "width" "100%"
+                        , Html.Attributes.style "height" "100%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "background" "none"
+                        , Html.Attributes.style "border" "none"
+                        , Html.Attributes.style "padding" "0"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "position" "relative"
                         ] 
                         [ img 
                             [ src (model.seat5.name)
-                            , style "width" "100%"
-                            , style "height" "100%"
-                            , style "zIndex" "1"
+                            , Html.Attributes.style "width" "100%"
+                            , Html.Attributes.style "height" "100%"
+                            , Html.Attributes.style "zIndex" "1"
                             ] 
                             []
                         ]
 
                     ]
                     , div 
-                    [ style "position" "absolute"
-                    , style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
-                    , style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
-                    , style "bottom" "50%"
-                    , style "right" "1.4%"
-                    , style "color" "white"
-                    , style "background-color" "rgba(0, 0, 0, 0.5)"
-                    , style "padding" "10px"
-                    , style "border-radius" "5px"
-                    , style "zIndex" "1"
-                    , style "display" "flex"
-                    , style "flex-direction" "column"
-                    , style "justify-content" "space-between"
+                    [ Html.Attributes.style "position" "absolute"
+                    , Html.Attributes.style "width" <| String.fromFloat (toFloat model.width * 0.17) ++ "px"
+                    , Html.Attributes.style "height" <| String.fromFloat (toFloat model.height * 0.3 + 100.0) ++ "px"
+                    , Html.Attributes.style "bottom" "50%"
+                    , Html.Attributes.style "right" "1.4%"
+                    , Html.Attributes.style "color" "white"
+                    , Html.Attributes.style "background-color" "rgba(0, 0, 0, 0.5)"
+                    , Html.Attributes.style "padding" "10px"
+                    , Html.Attributes.style "border-radius" "5px"
+                    , Html.Attributes.style "zIndex" "1"
+                    , Html.Attributes.style "display" "flex"
+                    , Html.Attributes.style "flex-direction" "column"
+                    , Html.Attributes.style "justify-content" "space-between"
                     ]
-                    [ div [] [ text model.seat5.spokenText ]
+                    [ div [] [ Html.text model.seat5.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat5)
-                        , style "width" "50%"
-                        , style "height" "10%"
-                        , style "zIndex" "1"
-                        , style "cursor" "pointer"
-                        , style "top" "90%"
-                        , style "left" "0%"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "left" "0%"
                         ] 
-                        [ text "Gehen sie bitte!" ]
+                        [ Html.text "Gehen sie bitte!" ]
                     ]
                 ]
             else
-                text ""
+                Html.text ""
         , if model.timeChoosen == False then
             div 
-            [ class "overlay"]
+            [ Html.Attributes.class "overlay"]
             [input  [ placeholder "Bitte geben sie an wie lange sie lernen wollen."
                     , value model.userInput
                     , onInput GetInput 
-                    , class "input-field"
+                    , Html.Attributes.class "input-field"
                     ] []
-            , div [class "display-text"] 
-                [ text ("Ich möchte für " ++ model.userInput ++" Minuten lernen") ]
-            , button    [ class "confirm-button"
+            , div [Html.Attributes.class "display-text"] 
+                [ Html.text ("Ich möchte für " ++ model.userInput ++" Minuten lernen") ]
+            , button    [ Html.Attributes.class "confirm-button"
                         , Html.Events.onClick SwitchOverlay 
-                        , if checkForInt model.userInput then style "background-color" "rgb(0, 255, 0)" else style "background-color" "rgb(255, 0, 0)"
+                        , if checkForInt model.userInput then Html.Attributes.style "background-color" "rgb(0, 255, 0)" else Html.Attributes.style "background-color" "rgb(255, 0, 0)"
                         , disabled (not (checkForInt model.userInput))
                         ] 
-                        [ if checkForInt model.userInput then text "Confirm" else text "Bitte richtig eingeben!" ]
+                        [ if checkForInt model.userInput then Html.text "Confirm" else Html.text "Bitte richtig eingeben!" ]
             ]
         else
             div 
-            [ class "overlay"]
-            [ div [class "display-text"] 
-                [ text ("Sie haben noch " ++ String.fromInt model.time ++" Minuten bis zum ersten Besuch") ]
-            , button    [ class "confirm-button"
+            [ Html.Attributes.class "overlay"]
+            [ div [Html.Attributes.class "display-text"] 
+                [ Html.text ("Sie haben noch " ++ String.fromInt model.time ++" Minuten bis zum ersten Besuch") ]
+            , button    [ Html.Attributes.class "confirm-button"
                         , Html.Events.onClick SwitchOverlay 
                         ] 
-                        [ text "Ich brauche eine Pause." ]
-            ]  
+                        [ Html.text "Ich brauche eine Pause." ]
+            ]
+        ,div [ Html.Attributes.class "overlay2" ]
+                [ Svg.svg
+                    [ Svg.Attributes.width "100%"
+                    , Svg.Attributes.height "100%"
+                    , viewBox "0 0 500 200"
+                    ]
+                    (drawBars model.daten)
+                ]
+            
         ]
 
 
