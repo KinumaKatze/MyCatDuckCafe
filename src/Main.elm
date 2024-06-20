@@ -16,6 +16,8 @@ import Time exposing (..)
 import Process
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
+import Array exposing (..)
+
 
 -- Typ-Deklarationen
 
@@ -52,8 +54,8 @@ type alias Model =
     , userInput2 : String
     , timeChoosen : Bool
     , time : Int
-    , daten : List Float
-    , arbeiten : List String
+    , daten : Array Float
+    , arbeiten : Array String
     }
 
 
@@ -79,8 +81,8 @@ init _ =
     "..."
     False
     0
-    [10, 20]
-    ["Pause", "Mathe"]
+    (Array.fromList [0])
+    (Array.fromList ["Pause"])
     , Cmd.none )
 
 -- Message Typen
@@ -121,14 +123,14 @@ generateRandomValues listPeople listSeats =
         (Random.int 0 (listPeople - 1))
         (Random.int 0 (listSeats - 1))
 
-drawBars : List Float -> Model -> List (Svg msg)
-drawBars dataPoints model =
+drawBars : Array Float -> List String -> Model -> List (Svg msg)
+drawBars dataPoints names model =
     let
         barWidth = 40
         spaceBetweenBars = 20
         initialX = 30
-        xlength = String.fromInt (length model.daten * 60 + 70)
-        maxData = List.maximum dataPoints |> Maybe.withDefault 0
+        xlength = (Array.length model.daten * 60 + 70)
+        maxData = List.maximum (Array.toList dataPoints) |> Maybe.withDefault 0
         initialY = maxData + 40
         bars = List.indexedMap
             (\index height ->
@@ -141,19 +143,44 @@ drawBars dataPoints model =
                     ]
                     []
             )
-            dataPoints
-        xAxis = Svg.line -- X-Achse
-            [ x1 "0", y1 (String.fromFloat initialY), x2 xlength, y2 (String.fromFloat initialY), stroke "white", strokeWidth "2" ]
+            (Array.toList(dataPoints))
+        barLabels = List.indexedMap
+            (\index name ->
+                Svg.text_
+                    [ x (String.fromFloat (initialX + (barWidth + spaceBetweenBars) * (index |> toFloat) + (barWidth / 2)))
+                    , y (String.fromFloat (initialY + 20))
+                    , fill "white"
+                    , fontSize "10"
+                    , textAnchor "middle"
+                    ]
+                    [ Html.text name ]
+            )
+            names
+        xAxis = Svg.line
+            [ x1 "0", y1 (String.fromFloat initialY), x2 (String.fromInt xlength), y2 (String.fromFloat initialY), stroke "white", strokeWidth "2" ]
             []
-        yAxis = Svg.line -- Y-Achse
+        yAxis = Svg.line
             [ x1 "0", y1 "0", x2 "0", y2 (String.fromFloat initialY), stroke "white", strokeWidth "2" ]
             []
-        xAxisLabel = Svg.text_ [ x xlength, y (String.fromFloat initialY), fill "white", fontSize "10" ] [ Html.text "Arbeit" ] -- X-Achsen-Beschriftung
-        yAxisLabel = Svg.text_ [ x "10", y "10", fill "white", fontSize "10" ] [ Html.text "Minuten" ] -- Y-Achsen-Beschriftung
-        originLabel = Svg.text_ [ x "5", y (String.fromFloat (initialY + 10)), fill "white", fontSize "10" ] [ Html.text "0" ] -- Ursprung (0,0) Beschriftung
+        xAxisLabel = Svg.text_
+            [ x (String.fromInt xlength), y (String.fromFloat initialY), fill "white", fontSize "10" ]
+            [ Html.text "Arbeit" ]
+        yAxisLabel = Svg.text_
+            [ x "10", y "10", fill "white", fontSize "10" ]
+            [ Html.text "Minuten" ]
+        originLabel = Svg.text_
+            [ x "5", y (String.fromFloat (initialY + 10)), fill "white", fontSize "10" ]
+            [ Html.text "0" ]
     in
-    [ xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel ] ++ bars
+    [ xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel ] ++ bars ++ barLabels
 
+    -- Findet Index eines Elementes eines Arrays 
+findIndex : String -> Array String -> Maybe Int
+findIndex target arr =
+    Array.toList arr
+        |> List.indexedMap (\i x -> if x == target then Just i else Nothing)
+        |> List.filterMap identity
+        |> List.head
 
 --Update Funktionen
 
@@ -322,17 +349,17 @@ update msg model =
         RemoveNPC seat -> 
             case seat.id of 
                         0 ->
-                                ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat1 = {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
                         1 ->
-                                ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat2 = {name = "Random_Person.png", hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = {name = "Random_Person.png", hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
                         2 ->
-                                ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat3 = {name = "Random_Person.png", hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = {name = "Random_Person.png", hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
                         3 ->
-                                ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat4 = {name = "Random_Person.png", hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = {name = "Random_Person.png", hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
                         4 ->
-                                ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat5 = {name = "Random_Person.png", hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = {name = "Random_Person.png", hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
                         _ -> 
-                                ( { model | person_list = append model.person_list [seat.name],seat_list = append model.seat_list [String.fromInt seat.id],seat1 = {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
         
         GetInput input ->
             ({model | userInput = input}, Cmd.none )
@@ -343,24 +370,40 @@ update msg model =
         TickMinute _ ->
             let
                     newTime = model.time - 1
+                    oldTime = get 0 model.daten
             in
             if model.timeChoosen && newTime /= 0 then
                 ({ model | time = model.time - 1 }, Cmd.none )
             else if model.timeChoosen && newTime == 0 then
                 update PrepNextNPC model
             else 
-                (model, Cmd.none)
+                case oldTime of 
+                    Just a ->
+                        ({ model | daten = Array.set 0 (a + 1) model.daten }, Cmd.none )
+                    Nothing ->
+                        (model, Cmd.none)
 
         SwitchOverlay ->
             if model.timeChoosen then
-                update PrepNextNPC model --If hier hin, je nachdem ob input2 schon in der Liste ist oder nicht. 
-                    --Wenn nicht: Liste Arbeiten erweitern um den Bergriff und an selber Stelle in daten die Zeit eintragen (Diff input und time)
-                    --Wenn doch: Finde die stelle in der arbeiten Liste und addiere in der selben stelle bei daten den wert der Zeit drauf
-                    -- {model | ...} funktioniert um das model zu verändern vor dem forced update
+                 let 
+                    raw = String.toInt model.userInput
+                    targetTime =  Maybe.withDefault 0 raw
+                    timeWorked = targetTime - model.time
+                    index = findIndex model.userInput2 model.arbeiten
+                in
+                case index of 
+                    Just b-> 
+                        case get b model.daten of 
+                            Just c->
+                                update PrepNextNPC {model | daten = Array.set b (c + toFloat timeWorked) model.daten }
+                            Nothing ->
+                                (model, Cmd.none)
+                    Nothing ->
+                        update PrepNextNPC {model | arbeiten = Array.append model.arbeiten (Array.fromList [model.userInput2]), daten = Array.append model.daten (Array.fromList[toFloat timeWorked]) }
             else
                 case String.toInt model.userInput of 
                     Just a ->
-                        ({ model | timeChoosen = not model.timeChoosen, time = a, userInput = "..." }, Cmd.none )
+                        ({ model | timeChoosen = not model.timeChoosen, time = a}, Cmd.none )
                     Nothing ->
                         (model, Cmd.none )
 
@@ -908,14 +951,14 @@ view model =
                         ] 
                         [ Html.text "Ich brauche eine Pause." ]
             ]
-        ,if length model.daten >= 1 then
+        ,if Array.length model.daten >= 2 then
             div [ Html.Attributes.class "overlay2" ]
             [ Svg.svg
-                [ Svg.Attributes.width <| String.fromInt (length model.daten * 60 + 100) ++ "px"
+                [ Svg.Attributes.width <| String.fromInt (Array.length model.daten * 60 + 100) ++ "px"
                 , Svg.Attributes.height "100%"
-                , Svg.Attributes.viewBox ("0 0 " ++ String.fromInt (length model.daten * 60 + 20) ++ " " ++ String.fromFloat ((List.maximum model.daten |> Maybe.withDefault 0) + 60))
+                , Svg.Attributes.viewBox ("0 0 " ++ String.fromInt (Array.length model.daten * 60 + 20) ++ " " ++ String.fromFloat ((List.maximum (Array.toList model.daten) |> Maybe.withDefault 0) + 60))
                 ] 
-                (drawBars model.daten model)
+                (drawBars model.daten (Array.toList model.arbeiten) model)
             ]
         else 
             Html.text ""

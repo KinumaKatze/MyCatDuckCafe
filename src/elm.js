@@ -10651,10 +10651,12 @@ var $author$project$Main$init = function (_v0) {
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
 				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...')('...')(false)(0)(
-			_List_fromArray(
-				[10, 20]))(
-			_List_fromArray(
-				['Pause', 'Mathe'])),
+			$elm$core$Array$fromList(
+				_List_fromArray(
+					[0])))(
+			$elm$core$Array$fromList(
+				_List_fromArray(
+					['Pause']))),
 		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Tick = function (a) {
@@ -10865,6 +10867,109 @@ var $author$project$Main$GotRandomValues = function (a) {
 	return {$: 'GotRandomValues', a: a};
 };
 var $author$project$Main$PrepNextNPC = {$: 'PrepNextNPC'};
+var $elm$core$Array$appendHelpTree = F2(
+	function (toAppend, array) {
+		var len = array.a;
+		var tree = array.c;
+		var tail = array.d;
+		var itemsToAppend = $elm$core$Elm$JsArray$length(toAppend);
+		var notAppended = ($elm$core$Array$branchFactor - $elm$core$Elm$JsArray$length(tail)) - itemsToAppend;
+		var appended = A3($elm$core$Elm$JsArray$appendN, $elm$core$Array$branchFactor, tail, toAppend);
+		var newArray = A2($elm$core$Array$unsafeReplaceTail, appended, array);
+		if (notAppended < 0) {
+			var nextTail = A3($elm$core$Elm$JsArray$slice, notAppended, itemsToAppend, toAppend);
+			return A2($elm$core$Array$unsafeReplaceTail, nextTail, newArray);
+		} else {
+			return newArray;
+		}
+	});
+var $elm$core$Array$builderFromArray = function (_v0) {
+	var len = _v0.a;
+	var tree = _v0.c;
+	var tail = _v0.d;
+	var helper = F2(
+		function (node, acc) {
+			if (node.$ === 'SubTree') {
+				var subTree = node.a;
+				return A3($elm$core$Elm$JsArray$foldl, helper, acc, subTree);
+			} else {
+				return A2($elm$core$List$cons, node, acc);
+			}
+		});
+	return {
+		nodeList: A3($elm$core$Elm$JsArray$foldl, helper, _List_Nil, tree),
+		nodeListSize: (len / $elm$core$Array$branchFactor) | 0,
+		tail: tail
+	};
+};
+var $elm$core$Array$append = F2(
+	function (a, _v0) {
+		var aTail = a.d;
+		var bLen = _v0.a;
+		var bTree = _v0.c;
+		var bTail = _v0.d;
+		if (_Utils_cmp(bLen, $elm$core$Array$branchFactor * 4) < 1) {
+			var foldHelper = F2(
+				function (node, array) {
+					if (node.$ === 'SubTree') {
+						var tree = node.a;
+						return A3($elm$core$Elm$JsArray$foldl, foldHelper, array, tree);
+					} else {
+						var leaf = node.a;
+						return A2($elm$core$Array$appendHelpTree, leaf, array);
+					}
+				});
+			return A2(
+				$elm$core$Array$appendHelpTree,
+				bTail,
+				A3($elm$core$Elm$JsArray$foldl, foldHelper, a, bTree));
+		} else {
+			var foldHelper = F2(
+				function (node, builder) {
+					if (node.$ === 'SubTree') {
+						var tree = node.a;
+						return A3($elm$core$Elm$JsArray$foldl, foldHelper, builder, tree);
+					} else {
+						var leaf = node.a;
+						return A2($elm$core$Array$appendHelpBuilder, leaf, builder);
+					}
+				});
+			return A2(
+				$elm$core$Array$builderToArray,
+				true,
+				A2(
+					$elm$core$Array$appendHelpBuilder,
+					bTail,
+					A3(
+						$elm$core$Elm$JsArray$foldl,
+						foldHelper,
+						$elm$core$Array$builderFromArray(a),
+						bTree)));
+		}
+	});
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Main$findIndex = F2(
+	function (target, arr) {
+		return $elm$core$List$head(
+			A2(
+				$elm$core$List$filterMap,
+				$elm$core$Basics$identity,
+				A2(
+					$elm$core$List$indexedMap,
+					F2(
+						function (i, x) {
+							return _Utils_eq(x, target) ? $elm$core$Maybe$Just(i) : $elm$core$Maybe$Nothing;
+						}),
+					$elm$core$Array$toList(arr))));
+	});
 var $elm$random$Random$Generate = function (a) {
 	return {$: 'Generate', a: a};
 };
@@ -11022,15 +11127,6 @@ var $author$project$Main$generateRandomValues = F2(
 			A2($elm$random$Random$int, 0, listPeople - 1),
 			A2($elm$random$Random$int, 0, listSeats - 1));
 	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $elm_community$list_extra$List$Extra$getAt = F2(
 	function (idx, xs) {
 		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
@@ -11058,6 +11154,48 @@ var $author$project$Main$removeWord = F2(
 		} else {
 			return liste;
 		}
+	});
+var $elm$core$Array$setHelp = F4(
+	function (shift, index, value, tree) {
+		var pos = $elm$core$Array$bitMask & (index >>> shift);
+		var _v0 = A2($elm$core$Elm$JsArray$unsafeGet, pos, tree);
+		if (_v0.$ === 'SubTree') {
+			var subTree = _v0.a;
+			var newSub = A4($elm$core$Array$setHelp, shift - $elm$core$Array$shiftStep, index, value, subTree);
+			return A3(
+				$elm$core$Elm$JsArray$unsafeSet,
+				pos,
+				$elm$core$Array$SubTree(newSub),
+				tree);
+		} else {
+			var values = _v0.a;
+			var newLeaf = A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, values);
+			return A3(
+				$elm$core$Elm$JsArray$unsafeSet,
+				pos,
+				$elm$core$Array$Leaf(newLeaf),
+				tree);
+		}
+	});
+var $elm$core$Array$set = F3(
+	function (index, value, array) {
+		var len = array.a;
+		var startShift = array.b;
+		var tree = array.c;
+		var tail = array.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? array : ((_Utils_cmp(
+			index,
+			$elm$core$Array$tailIndex(len)) > -1) ? A4(
+			$elm$core$Array$Array_elm_builtin,
+			len,
+			startShift,
+			tree,
+			A3($elm$core$Elm$JsArray$unsafeSet, $elm$core$Array$bitMask & index, value, tail)) : A4(
+			$elm$core$Array$Array_elm_builtin,
+			len,
+			startShift,
+			A4($elm$core$Array$setHelp, startShift, index, value, tree),
+			tail));
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
@@ -11609,6 +11747,7 @@ var $author$project$Main$update = F2(
 							{userInput2: input}),
 						$elm$core$Platform$Cmd$none);
 				case 'TickMinute':
+					var oldTime = A2($elm$core$Array$get, 0, model.daten);
 					var newTime = model.time - 1;
 					if (model.timeChoosen && (!(!newTime))) {
 						return _Utils_Tuple2(
@@ -11624,26 +11763,73 @@ var $author$project$Main$update = F2(
 							model = $temp$model;
 							continue update;
 						} else {
-							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+							if (oldTime.$ === 'Just') {
+								var a = oldTime.a;
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											daten: A3($elm$core$Array$set, 0, a + 1, model.daten)
+										}),
+									$elm$core$Platform$Cmd$none);
+							} else {
+								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+							}
 						}
 					}
 				default:
 					if (model.timeChoosen) {
-						var $temp$msg = $author$project$Main$PrepNextNPC,
-							$temp$model = _Utils_update(
-							model,
-							{time: 0});
-						msg = $temp$msg;
-						model = $temp$model;
-						continue update;
+						var raw = $elm$core$String$toInt(model.userInput);
+						var targetTime = A2($elm$core$Maybe$withDefault, 0, raw);
+						var timeWorked = targetTime - model.time;
+						var index = A2($author$project$Main$findIndex, model.userInput2, model.arbeiten);
+						if (index.$ === 'Just') {
+							var b = index.a;
+							var _v19 = A2($elm$core$Array$get, b, model.daten);
+							if (_v19.$ === 'Just') {
+								var c = _v19.a;
+								var $temp$msg = $author$project$Main$PrepNextNPC,
+									$temp$model = _Utils_update(
+									model,
+									{
+										daten: A3($elm$core$Array$set, b, c + timeWorked, model.daten)
+									});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							} else {
+								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+							}
+						} else {
+							var $temp$msg = $author$project$Main$PrepNextNPC,
+								$temp$model = _Utils_update(
+								model,
+								{
+									arbeiten: A2(
+										$elm$core$Array$append,
+										model.arbeiten,
+										$elm$core$Array$fromList(
+											_List_fromArray(
+												[model.userInput2]))),
+									daten: A2(
+										$elm$core$Array$append,
+										model.daten,
+										$elm$core$Array$fromList(
+											_List_fromArray(
+												[timeWorked])))
+								});
+							msg = $temp$msg;
+							model = $temp$model;
+							continue update;
+						}
 					} else {
-						var _v17 = $elm$core$String$toInt(model.userInput);
-						if (_v17.$ === 'Just') {
-							var a = _v17.a;
+						var _v20 = $elm$core$String$toInt(model.userInput);
+						if (_v20.$ === 'Just') {
+							var a = _v20.a;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{time: a, timeChoosen: !model.timeChoosen, userInput: '...'}),
+									{time: a, timeChoosen: !model.timeChoosen}),
 								$elm$core$Platform$Cmd$none);
 						} else {
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -11701,6 +11887,7 @@ var $elm$core$List$maximum = function (list) {
 var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
 var $elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
 var $elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var $elm$svg$Svg$Attributes$textAnchor = _VirtualDom_attribute('text-anchor');
 var $elm$svg$Svg$text_ = $elm$svg$Svg$trustedNode('text');
 var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
 var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
@@ -11709,8 +11896,8 @@ var $elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
 var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
 var $elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
 var $elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
-var $author$project$Main$drawBars = F2(
-	function (dataPoints, model) {
+var $author$project$Main$drawBars = F3(
+	function (dataPoints, names, model) {
 		var yAxisLabel = A2(
 			$elm$svg$Svg$text_,
 			_List_fromArray(
@@ -11724,13 +11911,13 @@ var $author$project$Main$drawBars = F2(
 				[
 					$elm$html$Html$text('Minuten')
 				]));
-		var xlength = $elm$core$String$fromInt(
-			($elm$core$List$length(model.daten) * 60) + 70);
+		var xlength = ($elm$core$Array$length(model.daten) * 60) + 70;
 		var spaceBetweenBars = 20;
 		var maxData = A2(
 			$elm$core$Maybe$withDefault,
 			0,
-			$elm$core$List$maximum(dataPoints));
+			$elm$core$List$maximum(
+				$elm$core$Array$toList(dataPoints)));
 		var initialY = maxData + 40;
 		var originLabel = A2(
 			$elm$svg$Svg$text_,
@@ -11753,7 +11940,8 @@ var $author$project$Main$drawBars = F2(
 					$elm$svg$Svg$Attributes$x1('0'),
 					$elm$svg$Svg$Attributes$y1(
 					$elm$core$String$fromFloat(initialY)),
-					$elm$svg$Svg$Attributes$x2(xlength),
+					$elm$svg$Svg$Attributes$x2(
+					$elm$core$String$fromInt(xlength)),
 					$elm$svg$Svg$Attributes$y2(
 					$elm$core$String$fromFloat(initialY)),
 					$elm$svg$Svg$Attributes$stroke('white'),
@@ -11764,7 +11952,8 @@ var $author$project$Main$drawBars = F2(
 			$elm$svg$Svg$text_,
 			_List_fromArray(
 				[
-					$elm$svg$Svg$Attributes$x(xlength),
+					$elm$svg$Svg$Attributes$x(
+					$elm$core$String$fromInt(xlength)),
 					$elm$svg$Svg$Attributes$y(
 					$elm$core$String$fromFloat(initialY)),
 					$elm$svg$Svg$Attributes$fill('white'),
@@ -11809,11 +11998,33 @@ var $author$project$Main$drawBars = F2(
 							]),
 						_List_Nil);
 				}),
-			dataPoints);
+			$elm$core$Array$toList(dataPoints));
+		var barLabels = A2(
+			$elm$core$List$indexedMap,
+			F2(
+				function (index, name) {
+					return A2(
+						$elm$svg$Svg$text_,
+						_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$x(
+								$elm$core$String$fromFloat((initialX + ((barWidth + spaceBetweenBars) * index)) + (barWidth / 2))),
+								$elm$svg$Svg$Attributes$y(
+								$elm$core$String$fromFloat(initialY + 20)),
+								$elm$svg$Svg$Attributes$fill('white'),
+								$elm$svg$Svg$Attributes$fontSize('10'),
+								$elm$svg$Svg$Attributes$textAnchor('middle')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(name)
+							]));
+				}),
+			names);
 		return _Utils_ap(
 			_List_fromArray(
 				[xAxis, yAxis, xAxisLabel, yAxisLabel, originLabel]),
-			bars);
+			_Utils_ap(bars, barLabels));
 	});
 var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
 var $elm$html$Html$img = _VirtualDom_node('img');
@@ -12742,7 +12953,7 @@ var $author$project$Main$view = function (model) {
 								$elm$html$Html$text('Ich brauche eine Pause.')
 							]))
 					])),
-				($elm$core$List$length(model.daten) >= 1) ? A2(
+				($elm$core$Array$length(model.daten) >= 2) ? A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -12756,17 +12967,22 @@ var $author$project$Main$view = function (model) {
 							[
 								$elm$svg$Svg$Attributes$width(
 								$elm$core$String$fromInt(
-									($elm$core$List$length(model.daten) * 60) + 100) + 'px'),
+									($elm$core$Array$length(model.daten) * 60) + 100) + 'px'),
 								$elm$svg$Svg$Attributes$height('100%'),
 								$elm$svg$Svg$Attributes$viewBox(
 								'0 0 ' + ($elm$core$String$fromInt(
-									($elm$core$List$length(model.daten) * 60) + 20) + (' ' + $elm$core$String$fromFloat(
+									($elm$core$Array$length(model.daten) * 60) + 20) + (' ' + $elm$core$String$fromFloat(
 									A2(
 										$elm$core$Maybe$withDefault,
 										0,
-										$elm$core$List$maximum(model.daten)) + 60))))
+										$elm$core$List$maximum(
+											$elm$core$Array$toList(model.daten))) + 60))))
 							]),
-						A2($author$project$Main$drawBars, model.daten, model))
+						A3(
+							$author$project$Main$drawBars,
+							model.daten,
+							$elm$core$Array$toList(model.arbeiten),
+							model))
 					])) : $elm$html$Html$text('')
 			]));
 };
