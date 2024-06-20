@@ -11747,8 +11747,12 @@ var $author$project$Main$update = F2(
 							{userInput2: input}),
 						$elm$core$Platform$Cmd$none);
 				case 'TickMinute':
+					var raw = $elm$core$String$toInt(model.userInput);
+					var targetTime = A2($elm$core$Maybe$withDefault, 0, raw);
+					var timeWorked = targetTime - model.time;
 					var oldTime = A2($elm$core$Array$get, 0, model.daten);
 					var newTime = model.time - 1;
+					var index = A2($author$project$Main$findIndex, model.userInput2, model.arbeiten);
 					if (model.timeChoosen && (!(!newTime))) {
 						return _Utils_Tuple2(
 							_Utils_update(
@@ -11757,11 +11761,45 @@ var $author$project$Main$update = F2(
 							$elm$core$Platform$Cmd$none);
 					} else {
 						if (model.timeChoosen && (!newTime)) {
-							var $temp$msg = $author$project$Main$PrepNextNPC,
-								$temp$model = model;
-							msg = $temp$msg;
-							model = $temp$model;
-							continue update;
+							if (index.$ === 'Just') {
+								var b = index.a;
+								var _v18 = A2($elm$core$Array$get, b, model.daten);
+								if (_v18.$ === 'Just') {
+									var c = _v18.a;
+									var $temp$msg = $author$project$Main$PrepNextNPC,
+										$temp$model = _Utils_update(
+										model,
+										{
+											daten: A3($elm$core$Array$set, b, c + timeWorked, model.daten)
+										});
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								} else {
+									return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+								}
+							} else {
+								var $temp$msg = $author$project$Main$PrepNextNPC,
+									$temp$model = _Utils_update(
+									model,
+									{
+										arbeiten: A2(
+											$elm$core$Array$append,
+											model.arbeiten,
+											$elm$core$Array$fromList(
+												_List_fromArray(
+													[model.userInput2]))),
+										daten: A2(
+											$elm$core$Array$append,
+											model.daten,
+											$elm$core$Array$fromList(
+												_List_fromArray(
+													[timeWorked])))
+									});
+								msg = $temp$msg;
+								model = $temp$model;
+								continue update;
+							}
 						} else {
 							if (oldTime.$ === 'Just') {
 								var a = oldTime.a;
@@ -11785,9 +11823,9 @@ var $author$project$Main$update = F2(
 						var index = A2($author$project$Main$findIndex, model.userInput2, model.arbeiten);
 						if (index.$ === 'Just') {
 							var b = index.a;
-							var _v19 = A2($elm$core$Array$get, b, model.daten);
-							if (_v19.$ === 'Just') {
-								var c = _v19.a;
+							var _v21 = A2($elm$core$Array$get, b, model.daten);
+							if (_v21.$ === 'Just') {
+								var c = _v21.a;
 								var $temp$msg = $author$project$Main$PrepNextNPC,
 									$temp$model = _Utils_update(
 									model,
@@ -11823,9 +11861,9 @@ var $author$project$Main$update = F2(
 							continue update;
 						}
 					} else {
-						var _v20 = $elm$core$String$toInt(model.userInput);
-						if (_v20.$ === 'Just') {
-							var a = _v20.a;
+						var _v22 = $elm$core$String$toInt(model.userInput);
+						if (_v22.$ === 'Just') {
+							var a = _v22.a;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,

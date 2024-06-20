@@ -371,11 +371,23 @@ update msg model =
             let
                     newTime = model.time - 1
                     oldTime = get 0 model.daten
+                    raw = String.toInt model.userInput
+                    targetTime =  Maybe.withDefault 0 raw
+                    timeWorked = targetTime - model.time
+                    index = findIndex model.userInput2 model.arbeiten
             in
             if model.timeChoosen && newTime /= 0 then
                 ({ model | time = model.time - 1 }, Cmd.none )
             else if model.timeChoosen && newTime == 0 then
-                update PrepNextNPC model
+                case index of 
+                    Just b-> 
+                        case get b model.daten of 
+                            Just c->
+                                update PrepNextNPC {model | daten = Array.set b (c + toFloat timeWorked) model.daten }
+                            Nothing ->
+                                (model, Cmd.none)
+                    Nothing ->
+                        update PrepNextNPC {model | arbeiten = Array.append model.arbeiten (Array.fromList [model.userInput2]), daten = Array.append model.daten (Array.fromList[toFloat timeWorked]) }
             else 
                 case oldTime of 
                     Just a ->
