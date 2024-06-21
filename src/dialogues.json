@@ -1,0 +1,46 @@
+{
+    "person1": [
+        [
+            "Hello darling!"
+        ],
+        [
+            "I would like some tea please."
+        ],
+        [
+            "Thank you darling. Good bye!"
+        ]
+    ],
+    "person2": [
+        [
+            "*incomprehensible mumbling*"
+        ],
+        [
+            "One black coffee please."
+        ],
+        [
+            "Bye."
+        ]
+    ],
+    "person3": [
+        [
+            "Meow?"
+        ],
+        [
+            "Meow meow meow!"
+        ],
+        [
+            "Meow meow!"
+        ]
+    ],
+    "person4": [
+        [
+            "He he he. Greetings!"
+        ],
+        [
+            "What do you think i want?"
+        ],
+        [
+            "He he he. See you!"
+        ]
+    ]
+}

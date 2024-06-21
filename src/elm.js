@@ -4956,6 +4956,181 @@ function _Browser_load(url)
 
 
 
+// SEND REQUEST
+
+var _Http_toTask = F3(function(router, toTask, request)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		function done(response) {
+			callback(toTask(request.expect.a(response)));
+		}
+
+		var xhr = new XMLHttpRequest();
+		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
+		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.expect.b, xhr)); });
+		$elm$core$Maybe$isJust(request.tracker) && _Http_track(router, xhr, request.tracker.a);
+
+		try {
+			xhr.open(request.method, request.url, true);
+		} catch (e) {
+			return done($elm$http$Http$BadUrl_(request.url));
+		}
+
+		_Http_configureRequest(xhr, request);
+
+		request.body.a && xhr.setRequestHeader('Content-Type', request.body.a);
+		xhr.send(request.body.b);
+
+		return function() { xhr.c = true; xhr.abort(); };
+	});
+});
+
+
+// CONFIGURE
+
+function _Http_configureRequest(xhr, request)
+{
+	for (var headers = request.headers; headers.b; headers = headers.b) // WHILE_CONS
+	{
+		xhr.setRequestHeader(headers.a.a, headers.a.b);
+	}
+	xhr.timeout = request.timeout.a || 0;
+	xhr.responseType = request.expect.d;
+	xhr.withCredentials = request.allowCookiesFromOtherDomains;
+}
+
+
+// RESPONSES
+
+function _Http_toResponse(toBody, xhr)
+{
+	return A2(
+		200 <= xhr.status && xhr.status < 300 ? $elm$http$Http$GoodStatus_ : $elm$http$Http$BadStatus_,
+		_Http_toMetadata(xhr),
+		toBody(xhr.response)
+	);
+}
+
+
+// METADATA
+
+function _Http_toMetadata(xhr)
+{
+	return {
+		url: xhr.responseURL,
+		statusCode: xhr.status,
+		statusText: xhr.statusText,
+		headers: _Http_parseHeaders(xhr.getAllResponseHeaders())
+	};
+}
+
+
+// HEADERS
+
+function _Http_parseHeaders(rawHeaders)
+{
+	if (!rawHeaders)
+	{
+		return $elm$core$Dict$empty;
+	}
+
+	var headers = $elm$core$Dict$empty;
+	var headerPairs = rawHeaders.split('\r\n');
+	for (var i = headerPairs.length; i--; )
+	{
+		var headerPair = headerPairs[i];
+		var index = headerPair.indexOf(': ');
+		if (index > 0)
+		{
+			var key = headerPair.substring(0, index);
+			var value = headerPair.substring(index + 2);
+
+			headers = A3($elm$core$Dict$update, key, function(oldValue) {
+				return $elm$core$Maybe$Just($elm$core$Maybe$isJust(oldValue)
+					? value + ', ' + oldValue.a
+					: value
+				);
+			}, headers);
+		}
+	}
+	return headers;
+}
+
+
+// EXPECT
+
+var _Http_expect = F3(function(type, toBody, toValue)
+{
+	return {
+		$: 0,
+		d: type,
+		b: toBody,
+		a: toValue
+	};
+});
+
+var _Http_mapExpect = F2(function(func, expect)
+{
+	return {
+		$: 0,
+		d: expect.d,
+		b: expect.b,
+		a: function(x) { return func(expect.a(x)); }
+	};
+});
+
+function _Http_toDataView(arrayBuffer)
+{
+	return new DataView(arrayBuffer);
+}
+
+
+// BODY and PARTS
+
+var _Http_emptyBody = { $: 0 };
+var _Http_pair = F2(function(a, b) { return { $: 0, a: a, b: b }; });
+
+function _Http_toFormData(parts)
+{
+	for (var formData = new FormData(); parts.b; parts = parts.b) // WHILE_CONS
+	{
+		var part = parts.a;
+		formData.append(part.a, part.b);
+	}
+	return formData;
+}
+
+var _Http_bytesToBlob = F2(function(mime, bytes)
+{
+	return new Blob([bytes], { type: mime });
+});
+
+
+// PROGRESS
+
+function _Http_track(router, xhr, tracker)
+{
+	// TODO check out lengthComputable on loadstart event
+
+	xhr.upload.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
+			sent: event.loaded,
+			size: event.total
+		}))));
+	});
+	xhr.addEventListener('progress', function(event) {
+		if (xhr.c) { return; }
+		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
+			received: event.loaded,
+			size: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+		}))));
+	});
+}
+
+
 function _Time_now(millisToPosix)
 {
 	return _Scheduler_binding(function(callback)
@@ -10619,7 +10794,9 @@ var $author$project$Main$Model = function (width) {
 																return function (time) {
 																	return function (daten) {
 																		return function (arbeiten) {
-																			return {arbeiten: arbeiten, daten: daten, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, userInput2: userInput2, width: width};
+																			return function (dialogues) {
+																				return {arbeiten: arbeiten, daten: daten, dialogues: dialogues, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, userInput2: userInput2, width: width};
+																			};
 																		};
 																	};
 																};
@@ -10639,6 +10816,300 @@ var $author$project$Main$Model = function (width) {
 		};
 	};
 };
+var $author$project$Main$Dialogues = F4(
+	function (person1, person2, person3, person4) {
+		return {person1: person1, person2: person2, person3: person3, person4: person4};
+	});
+var $elm$json$Json$Decode$array = _Json_decodeArray;
+var $elm$json$Json$Decode$map4 = _Json_map4;
+var $author$project$Main$dialoguesDecoder = A5(
+	$elm$json$Json$Decode$map4,
+	$author$project$Main$Dialogues,
+	A2(
+		$elm$json$Json$Decode$field,
+		'person1',
+		$elm$json$Json$Decode$array(
+			$elm$json$Json$Decode$array($elm$json$Json$Decode$string))),
+	A2(
+		$elm$json$Json$Decode$field,
+		'person2',
+		$elm$json$Json$Decode$array(
+			$elm$json$Json$Decode$array($elm$json$Json$Decode$string))),
+	A2(
+		$elm$json$Json$Decode$field,
+		'person3',
+		$elm$json$Json$Decode$array(
+			$elm$json$Json$Decode$array($elm$json$Json$Decode$string))),
+	A2(
+		$elm$json$Json$Decode$field,
+		'person4',
+		$elm$json$Json$Decode$array(
+			$elm$json$Json$Decode$array($elm$json$Json$Decode$string))));
+var $elm$http$Http$BadStatus_ = F2(
+	function (a, b) {
+		return {$: 'BadStatus_', a: a, b: b};
+	});
+var $elm$http$Http$BadUrl_ = function (a) {
+	return {$: 'BadUrl_', a: a};
+};
+var $elm$http$Http$GoodStatus_ = F2(
+	function (a, b) {
+		return {$: 'GoodStatus_', a: a, b: b};
+	});
+var $elm$http$Http$NetworkError_ = {$: 'NetworkError_'};
+var $elm$http$Http$Receiving = function (a) {
+	return {$: 'Receiving', a: a};
+};
+var $elm$http$Http$Sending = function (a) {
+	return {$: 'Sending', a: a};
+};
+var $elm$http$Http$Timeout_ = {$: 'Timeout_'};
+var $elm$core$Maybe$isJust = function (maybe) {
+	if (maybe.$ === 'Just') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $elm$http$Http$expectStringResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'',
+			$elm$core$Basics$identity,
+			A2($elm$core$Basics$composeR, toResult, toMsg));
+	});
+var $elm$core$Result$mapError = F2(
+	function (f, result) {
+		if (result.$ === 'Ok') {
+			var v = result.a;
+			return $elm$core$Result$Ok(v);
+		} else {
+			var e = result.a;
+			return $elm$core$Result$Err(
+				f(e));
+		}
+	});
+var $elm$http$Http$BadBody = function (a) {
+	return {$: 'BadBody', a: a};
+};
+var $elm$http$Http$BadStatus = function (a) {
+	return {$: 'BadStatus', a: a};
+};
+var $elm$http$Http$BadUrl = function (a) {
+	return {$: 'BadUrl', a: a};
+};
+var $elm$http$Http$NetworkError = {$: 'NetworkError'};
+var $elm$http$Http$Timeout = {$: 'Timeout'};
+var $elm$http$Http$resolve = F2(
+	function (toResult, response) {
+		switch (response.$) {
+			case 'BadUrl_':
+				var url = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadUrl(url));
+			case 'Timeout_':
+				return $elm$core$Result$Err($elm$http$Http$Timeout);
+			case 'NetworkError_':
+				return $elm$core$Result$Err($elm$http$Http$NetworkError);
+			case 'BadStatus_':
+				var metadata = response.a;
+				return $elm$core$Result$Err(
+					$elm$http$Http$BadStatus(metadata.statusCode));
+			default:
+				var body = response.b;
+				return A2(
+					$elm$core$Result$mapError,
+					$elm$http$Http$BadBody,
+					toResult(body));
+		}
+	});
+var $elm$http$Http$expectJson = F2(
+	function (toMsg, decoder) {
+		return A2(
+			$elm$http$Http$expectStringResponse,
+			toMsg,
+			$elm$http$Http$resolve(
+				function (string) {
+					return A2(
+						$elm$core$Result$mapError,
+						$elm$json$Json$Decode$errorToString,
+						A2($elm$json$Json$Decode$decodeString, decoder, string));
+				}));
+	});
+var $elm$http$Http$emptyBody = _Http_emptyBody;
+var $elm$http$Http$Request = function (a) {
+	return {$: 'Request', a: a};
+};
+var $elm$http$Http$State = F2(
+	function (reqs, subs) {
+		return {reqs: reqs, subs: subs};
+	});
+var $elm$http$Http$init = $elm$core$Task$succeed(
+	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
+var $elm$core$Process$kill = _Scheduler_kill;
+var $elm$core$Process$spawn = _Scheduler_spawn;
+var $elm$http$Http$updateReqs = F3(
+	function (router, cmds, reqs) {
+		updateReqs:
+		while (true) {
+			if (!cmds.b) {
+				return $elm$core$Task$succeed(reqs);
+			} else {
+				var cmd = cmds.a;
+				var otherCmds = cmds.b;
+				if (cmd.$ === 'Cancel') {
+					var tracker = cmd.a;
+					var _v2 = A2($elm$core$Dict$get, tracker, reqs);
+					if (_v2.$ === 'Nothing') {
+						var $temp$router = router,
+							$temp$cmds = otherCmds,
+							$temp$reqs = reqs;
+						router = $temp$router;
+						cmds = $temp$cmds;
+						reqs = $temp$reqs;
+						continue updateReqs;
+					} else {
+						var pid = _v2.a;
+						return A2(
+							$elm$core$Task$andThen,
+							function (_v3) {
+								return A3(
+									$elm$http$Http$updateReqs,
+									router,
+									otherCmds,
+									A2($elm$core$Dict$remove, tracker, reqs));
+							},
+							$elm$core$Process$kill(pid));
+					}
+				} else {
+					var req = cmd.a;
+					return A2(
+						$elm$core$Task$andThen,
+						function (pid) {
+							var _v4 = req.tracker;
+							if (_v4.$ === 'Nothing') {
+								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
+							} else {
+								var tracker = _v4.a;
+								return A3(
+									$elm$http$Http$updateReqs,
+									router,
+									otherCmds,
+									A3($elm$core$Dict$insert, tracker, pid, reqs));
+							}
+						},
+						$elm$core$Process$spawn(
+							A3(
+								_Http_toTask,
+								router,
+								$elm$core$Platform$sendToApp(router),
+								req)));
+				}
+			}
+		}
+	});
+var $elm$http$Http$onEffects = F4(
+	function (router, cmds, subs, state) {
+		return A2(
+			$elm$core$Task$andThen,
+			function (reqs) {
+				return $elm$core$Task$succeed(
+					A2($elm$http$Http$State, reqs, subs));
+			},
+			A3($elm$http$Http$updateReqs, router, cmds, state.reqs));
+	});
+var $elm$http$Http$maybeSend = F4(
+	function (router, desiredTracker, progress, _v0) {
+		var actualTracker = _v0.a;
+		var toMsg = _v0.b;
+		return _Utils_eq(desiredTracker, actualTracker) ? $elm$core$Maybe$Just(
+			A2(
+				$elm$core$Platform$sendToApp,
+				router,
+				toMsg(progress))) : $elm$core$Maybe$Nothing;
+	});
+var $elm$http$Http$onSelfMsg = F3(
+	function (router, _v0, state) {
+		var tracker = _v0.a;
+		var progress = _v0.b;
+		return A2(
+			$elm$core$Task$andThen,
+			function (_v1) {
+				return $elm$core$Task$succeed(state);
+			},
+			$elm$core$Task$sequence(
+				A2(
+					$elm$core$List$filterMap,
+					A3($elm$http$Http$maybeSend, router, tracker, progress),
+					state.subs)));
+	});
+var $elm$http$Http$Cancel = function (a) {
+	return {$: 'Cancel', a: a};
+};
+var $elm$http$Http$cmdMap = F2(
+	function (func, cmd) {
+		if (cmd.$ === 'Cancel') {
+			var tracker = cmd.a;
+			return $elm$http$Http$Cancel(tracker);
+		} else {
+			var r = cmd.a;
+			return $elm$http$Http$Request(
+				{
+					allowCookiesFromOtherDomains: r.allowCookiesFromOtherDomains,
+					body: r.body,
+					expect: A2(_Http_mapExpect, func, r.expect),
+					headers: r.headers,
+					method: r.method,
+					timeout: r.timeout,
+					tracker: r.tracker,
+					url: r.url
+				});
+		}
+	});
+var $elm$http$Http$MySub = F2(
+	function (a, b) {
+		return {$: 'MySub', a: a, b: b};
+	});
+var $elm$http$Http$subMap = F2(
+	function (func, _v0) {
+		var tracker = _v0.a;
+		var toMsg = _v0.b;
+		return A2(
+			$elm$http$Http$MySub,
+			tracker,
+			A2($elm$core$Basics$composeR, toMsg, func));
+	});
+_Platform_effectManagers['Http'] = _Platform_createManager($elm$http$Http$init, $elm$http$Http$onEffects, $elm$http$Http$onSelfMsg, $elm$http$Http$cmdMap, $elm$http$Http$subMap);
+var $elm$http$Http$command = _Platform_leaf('Http');
+var $elm$http$Http$subscription = _Platform_leaf('Http');
+var $elm$http$Http$request = function (r) {
+	return $elm$http$Http$command(
+		$elm$http$Http$Request(
+			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
+};
+var $elm$http$Http$get = function (r) {
+	return $elm$http$Http$request(
+		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
+};
+var $author$project$Main$FetchDialoguesFailure = {$: 'FetchDialoguesFailure'};
+var $author$project$Main$FetchDialoguesSuccess = function (a) {
+	return {$: 'FetchDialoguesSuccess', a: a};
+};
+var $author$project$Main$handleFetchResult = function (result) {
+	if (result.$ === 'Ok') {
+		var dialogues = result.a;
+		return $author$project$Main$FetchDialoguesSuccess(dialogues);
+	} else {
+		return $author$project$Main$FetchDialoguesFailure;
+	}
+};
+var $author$project$Main$fetchDialogues = $elm$http$Http$get(
+	{
+		expect: A2($elm$http$Http$expectJson, $author$project$Main$handleFetchResult, $author$project$Main$dialoguesDecoder),
+		url: 'dialogues.json'
+	});
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$Main$Model(10)(10)(true)(
@@ -10656,8 +11127,8 @@ var $author$project$Main$init = function (_v0) {
 					[0])))(
 			$elm$core$Array$fromList(
 				_List_fromArray(
-					['Pause']))),
-		$elm$core$Platform$Cmd$none);
+					['Pause'])))($elm$core$Maybe$Nothing),
+		$author$project$Main$fetchDialogues);
 };
 var $author$project$Main$Tick = function (a) {
 	return {$: 'Tick', a: a};
@@ -10700,8 +11171,6 @@ var $elm$time$Time$addMySub = F2(
 				state);
 		}
 	});
-var $elm$core$Process$kill = _Scheduler_kill;
-var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
 var $elm$time$Time$Name = function (a) {
 	return {$: 'Name', a: a};
 };
@@ -10714,7 +11183,6 @@ var $elm$time$Time$Zone = F2(
 	});
 var $elm$time$Time$customZone = $elm$time$Time$Zone;
 var $elm$time$Time$setInterval = _Time_setInterval;
-var $elm$core$Process$spawn = _Scheduler_spawn;
 var $elm$time$Time$spawnHelp = F3(
 	function (router, intervals, processes) {
 		if (!intervals.b) {
@@ -11132,6 +11600,80 @@ var $elm_community$list_extra$List$Extra$getAt = F2(
 		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
 			A2($elm$core$List$drop, idx, xs));
 	});
+var $author$project$Main$getNextText = F3(
+	function (model, seat, number) {
+		var _v0 = model.dialogues;
+		if (_v0.$ === 'Just') {
+			var dialoge = _v0.a;
+			var _v1 = seat.name;
+			switch (_v1) {
+				case 'Person1.png':
+					var newArray = dialoge.person1;
+					var _v2 = A2($elm$core$Array$get, number, newArray);
+					if (_v2.$ === 'Just') {
+						var a = _v2.a;
+						var _v3 = A2($elm$core$Array$get, 0, a);
+						if (_v3.$ === 'Just') {
+							var b = _v3.a;
+							return b;
+						} else {
+							return '';
+						}
+					} else {
+						return '';
+					}
+				case 'Person2.png':
+					var newArray = dialoge.person2;
+					var _v4 = A2($elm$core$Array$get, number, newArray);
+					if (_v4.$ === 'Just') {
+						var a = _v4.a;
+						var _v5 = A2($elm$core$Array$get, 0, a);
+						if (_v5.$ === 'Just') {
+							var b = _v5.a;
+							return b;
+						} else {
+							return '';
+						}
+					} else {
+						return '';
+					}
+				case 'Person3.png':
+					var newArray = dialoge.person3;
+					var _v6 = A2($elm$core$Array$get, number, newArray);
+					if (_v6.$ === 'Just') {
+						var a = _v6.a;
+						var _v7 = A2($elm$core$Array$get, 0, a);
+						if (_v7.$ === 'Just') {
+							var b = _v7.a;
+							return b;
+						} else {
+							return '';
+						}
+					} else {
+						return '';
+					}
+				case 'Person4.png':
+					var newArray = dialoge.person4;
+					var _v8 = A2($elm$core$Array$get, number, newArray);
+					if (_v8.$ === 'Just') {
+						var a = _v8.a;
+						var _v9 = A2($elm$core$Array$get, 0, a);
+						if (_v9.$ === 'Just') {
+							var b = _v9.a;
+							return b;
+						} else {
+							return '';
+						}
+					} else {
+						return '';
+					}
+				default:
+					return '';
+			}
+		} else {
+			return '';
+		}
+	});
 var $elm$core$List$filter = F2(
 	function (isGood, list) {
 		return A3(
@@ -11254,6 +11796,22 @@ var $author$project$Main$update = F2(
 						A2($elm$random$Random$generate, $author$project$Main$GotRandomValues, randomValuesGenerator));
 				case 'NPCClicked':
 					var seat = msg.a;
+					var talkPerson = function (c) {
+						return _Utils_update(
+							c,
+							{
+								index: 0,
+								modal: !c.modal,
+								nextText: A3($author$project$Main$getNextText, model, seat, 0),
+								spokenText: ''
+							});
+					};
+					var makeSeat = F2(
+						function (b, a) {
+							return _Utils_update(
+								b,
+								{hidden: false, modal: false, name: a});
+						});
 					if (seat.name === 'Random_Person.png') {
 						var _v6 = seat.id;
 						switch (_v6) {
@@ -11261,21 +11819,19 @@ var $author$project$Main$update = F2(
 								var _v7 = model.randomString;
 								if (_v7.$ === 'Just') {
 									var a = _v7.a;
-									var oldseat = model.seat1;
-									var newseat = _Utils_update(
-										oldseat,
-										{hidden: false, modal: false, name: a});
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{seat1: newseat}),
+											{
+												seat1: A2(makeSeat, model.seat1, a)
+											}),
 										$elm$core$Platform$Cmd$none);
 								} else {
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
 											{
-												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
+												seat1: A2(makeSeat, model.seat1, 'Random_Person.png')
 											}),
 										$elm$core$Platform$Cmd$none);
 								}
@@ -11287,7 +11843,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: a, nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
+												seat2: A2(makeSeat, model.seat2, a)
 											}),
 										$elm$core$Platform$Cmd$none);
 								} else {
@@ -11295,7 +11851,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText}
+												seat2: A2(makeSeat, model.seat2, 'Random_Person.png')
 											}),
 										$elm$core$Platform$Cmd$none);
 								}
@@ -11307,7 +11863,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: a, nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
+												seat3: A2(makeSeat, model.seat3, a)
 											}),
 										$elm$core$Platform$Cmd$none);
 								} else {
@@ -11315,7 +11871,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText}
+												seat3: A2(makeSeat, model.seat3, 'Random_Person.png')
 											}),
 										$elm$core$Platform$Cmd$none);
 								}
@@ -11327,7 +11883,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: a, nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
+												seat4: A2(makeSeat, model.seat4, a)
 											}),
 										$elm$core$Platform$Cmd$none);
 								} else {
@@ -11335,7 +11891,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText}
+												seat4: A2(makeSeat, model.seat4, 'Random_Person.png')
 											}),
 										$elm$core$Platform$Cmd$none);
 								}
@@ -11347,7 +11903,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: a, nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
+												seat5: A2(makeSeat, model.seat5, a)
 											}),
 										$elm$core$Platform$Cmd$none);
 								} else {
@@ -11355,7 +11911,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText}
+												seat5: A2(makeSeat, model.seat5, 'Random_Person.png')
 											}),
 										$elm$core$Platform$Cmd$none);
 								}
@@ -11367,7 +11923,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: a, nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
+												seat1: A2(makeSeat, model.seat1, a)
 											}),
 										$elm$core$Platform$Cmd$none);
 								} else {
@@ -11375,7 +11931,7 @@ var $author$project$Main$update = F2(
 										_Utils_update(
 											model,
 											{
-												seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText}
+												seat1: A2(makeSeat, model.seat1, 'Random_Person.png')
 											}),
 										$elm$core$Platform$Cmd$none);
 								}
@@ -11388,7 +11944,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
+											seat1: talkPerson(model.seat1)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 1:
@@ -11396,7 +11952,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: 0, modal: !model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: ''}
+											seat2: talkPerson(model.seat2)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 2:
@@ -11404,7 +11960,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: 0, modal: !model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: ''}
+											seat3: talkPerson(model.seat3)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 3:
@@ -11412,7 +11968,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: 0, modal: !model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: ''}
+											seat4: talkPerson(model.seat4)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 4:
@@ -11420,7 +11976,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: 0, modal: !model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: ''}
+											seat5: talkPerson(model.seat5)
 										}),
 									$elm$core$Platform$Cmd$none);
 							default:
@@ -11428,13 +11984,18 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: 0, modal: !model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: ''}
+											seat1: talkPerson(model.seat1)
 										}),
 									$elm$core$Platform$Cmd$none);
 						}
 					}
 				case 'GotRandomValues':
 					var randomValues = msg.a;
+					var seatNHM = function (a) {
+						return _Utils_update(
+							a,
+							{hidden: false, modal: false, name: 'Random_Person.png'});
+					};
 					var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
 					var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
 					if (randomStr.$ === 'Just') {
@@ -11448,7 +12009,7 @@ var $author$project$Main$update = F2(
 										nextSeat: 0,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
 										randomString: randomStr,
-										seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText},
+										seat1: seatNHM(model.seat1),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
@@ -11460,7 +12021,7 @@ var $author$project$Main$update = F2(
 										nextSeat: 1,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
 										randomString: randomStr,
-										seat2: {hidden: false, id: model.seat2.id, index: model.seat2.index, modal: false, name: 'Random_Person.png', nextText: model.seat2.nextText, spokenText: model.seat2.spokenText},
+										seat2: seatNHM(model.seat2),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
@@ -11472,7 +12033,7 @@ var $author$project$Main$update = F2(
 										nextSeat: 2,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
 										randomString: randomStr,
-										seat3: {hidden: false, id: model.seat3.id, index: model.seat3.index, modal: false, name: 'Random_Person.png', nextText: model.seat3.nextText, spokenText: model.seat3.spokenText},
+										seat3: seatNHM(model.seat3),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
@@ -11484,7 +12045,7 @@ var $author$project$Main$update = F2(
 										nextSeat: 3,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
 										randomString: randomStr,
-										seat4: {hidden: false, id: model.seat4.id, index: model.seat4.index, modal: false, name: 'Random_Person.png', nextText: model.seat4.nextText, spokenText: model.seat4.spokenText},
+										seat4: seatNHM(model.seat4),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
@@ -11496,7 +12057,7 @@ var $author$project$Main$update = F2(
 										nextSeat: 4,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
 										randomString: randomStr,
-										seat5: {hidden: false, id: model.seat5.id, index: model.seat5.index, modal: false, name: 'Random_Person.png', nextText: model.seat5.nextText, spokenText: model.seat5.spokenText},
+										seat5: seatNHM(model.seat5),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
@@ -11508,7 +12069,7 @@ var $author$project$Main$update = F2(
 										nextSeat: 0,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
 										randomString: randomStr,
-										seat1: {hidden: false, id: model.seat1.id, index: model.seat1.index, modal: false, name: 'Random_Person.png', nextText: model.seat1.nextText, spokenText: model.seat1.spokenText},
+										seat1: seatNHM(model.seat1),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
@@ -11539,65 +12100,90 @@ var $author$project$Main$update = F2(
 					if (model.seat1.modal) {
 						var newIndex = model.seat1.index + 1;
 						var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat1.nextText);
+						var seatSI = function (a) {
+							return _Utils_update(
+								a,
+								{index: newIndex, spokenText: newDisplayedText});
+						};
 						return (_Utils_cmp(
 							newIndex,
 							$elm$core$String$length(model.seat1.nextText)) < 1) ? _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
-									seat1: {hidden: model.seat1.hidden, id: model.seat1.id, index: newIndex, modal: model.seat1.modal, name: model.seat1.name, nextText: model.seat1.nextText, spokenText: newDisplayedText}
+									seat1: seatSI(model.seat1)
 								}),
 							$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 					} else {
 						if (model.seat2.modal) {
 							var newIndex = model.seat2.index + 1;
 							var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat2.nextText);
+							var seatSI = function (a) {
+								return _Utils_update(
+									a,
+									{index: newIndex, spokenText: newDisplayedText});
+							};
 							return (_Utils_cmp(
 								newIndex,
 								$elm$core$String$length(model.seat2.nextText)) < 1) ? _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
-										seat2: {hidden: model.seat2.hidden, id: model.seat2.id, index: newIndex, modal: model.seat2.modal, name: model.seat2.name, nextText: model.seat2.nextText, spokenText: newDisplayedText}
+										seat2: seatSI(model.seat2)
 									}),
 								$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						} else {
 							if (model.seat3.modal) {
 								var newIndex = model.seat3.index + 1;
 								var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat3.nextText);
+								var seatSI = function (a) {
+									return _Utils_update(
+										a,
+										{index: newIndex, spokenText: newDisplayedText});
+								};
 								return (_Utils_cmp(
 									newIndex,
 									$elm$core$String$length(model.seat3.nextText)) < 1) ? _Utils_Tuple2(
 									_Utils_update(
 										model,
 										{
-											seat3: {hidden: model.seat3.hidden, id: model.seat3.id, index: newIndex, modal: model.seat3.modal, name: model.seat3.name, nextText: model.seat3.nextText, spokenText: newDisplayedText}
+											seat3: seatSI(model.seat3)
 										}),
 									$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 							} else {
 								if (model.seat4.modal) {
 									var newIndex = model.seat4.index + 1;
 									var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat4.nextText);
+									var seatSI = function (a) {
+										return _Utils_update(
+											a,
+											{index: newIndex, spokenText: newDisplayedText});
+									};
 									return (_Utils_cmp(
 										newIndex,
 										$elm$core$String$length(model.seat4.nextText)) < 1) ? _Utils_Tuple2(
 										_Utils_update(
 											model,
 											{
-												seat4: {hidden: model.seat4.hidden, id: model.seat4.id, index: newIndex, modal: model.seat4.modal, name: model.seat4.name, nextText: model.seat4.nextText, spokenText: newDisplayedText}
+												seat4: seatSI(model.seat4)
 											}),
 										$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 								} else {
 									if (model.seat5.modal) {
 										var newIndex = model.seat5.index + 1;
 										var newDisplayedText = A3($elm$core$String$slice, 0, newIndex, model.seat5.nextText);
+										var seatSI = function (a) {
+											return _Utils_update(
+												a,
+												{index: newIndex, spokenText: newDisplayedText});
+										};
 										return (_Utils_cmp(
 											newIndex,
 											$elm$core$String$length(model.seat5.nextText)) < 1) ? _Utils_Tuple2(
 											_Utils_update(
 												model,
 												{
-													seat5: {hidden: model.seat5.hidden, id: model.seat5.id, index: newIndex, modal: model.seat5.modal, name: model.seat5.name, nextText: model.seat5.nextText, spokenText: newDisplayedText}
+													seat5: seatSI(model.seat5)
 												}),
 											$elm$core$Platform$Cmd$none) : _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 									} else {
@@ -11609,6 +12195,11 @@ var $author$project$Main$update = F2(
 					}
 				case 'RemoveNPC':
 					var seat = msg.a;
+					var seatClear = function (a) {
+						return _Utils_update(
+							a,
+							{hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''});
+					};
 					var _v16 = seat.id;
 					switch (_v16) {
 						case 0:
@@ -11621,7 +12212,7 @@ var $author$project$Main$update = F2(
 											model.person_list,
 											_List_fromArray(
 												[seat.name])),
-										seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat1: seatClear(model.seat1),
 										seat_list: A2(
 											$elm$core$List$append,
 											model.seat_list,
@@ -11641,7 +12232,7 @@ var $author$project$Main$update = F2(
 											model.person_list,
 											_List_fromArray(
 												[seat.name])),
-										seat2: {hidden: true, id: 1, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat2: seatClear(model.seat2),
 										seat_list: A2(
 											$elm$core$List$append,
 											model.seat_list,
@@ -11661,7 +12252,7 @@ var $author$project$Main$update = F2(
 											model.person_list,
 											_List_fromArray(
 												[seat.name])),
-										seat3: {hidden: true, id: 2, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat3: seatClear(model.seat3),
 										seat_list: A2(
 											$elm$core$List$append,
 											model.seat_list,
@@ -11681,7 +12272,7 @@ var $author$project$Main$update = F2(
 											model.person_list,
 											_List_fromArray(
 												[seat.name])),
-										seat4: {hidden: true, id: 3, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat4: seatClear(model.seat4),
 										seat_list: A2(
 											$elm$core$List$append,
 											model.seat_list,
@@ -11701,7 +12292,7 @@ var $author$project$Main$update = F2(
 											model.person_list,
 											_List_fromArray(
 												[seat.name])),
-										seat5: {hidden: true, id: 4, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat5: seatClear(model.seat5),
 										seat_list: A2(
 											$elm$core$List$append,
 											model.seat_list,
@@ -11721,7 +12312,7 @@ var $author$project$Main$update = F2(
 											model.person_list,
 											_List_fromArray(
 												[seat.name])),
-										seat1: {hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''},
+										seat1: seatClear(model.seat1),
 										seat_list: A2(
 											$elm$core$List$append,
 											model.seat_list,
@@ -11815,7 +12406,7 @@ var $author$project$Main$update = F2(
 							}
 						}
 					}
-				default:
+				case 'SwitchOverlay':
 					if (model.timeChoosen) {
 						var raw = $elm$core$String$toInt(model.userInput);
 						var targetTime = A2($elm$core$Maybe$withDefault, 0, raw);
@@ -11873,6 +12464,17 @@ var $author$project$Main$update = F2(
 							return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 						}
 					}
+				case 'FetchDialoguesSuccess':
+					var dialogues = msg.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								dialogues: $elm$core$Maybe$Just(dialogues)
+							}),
+						$elm$core$Platform$Cmd$none);
+				default:
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			}
 		}
 	});
@@ -13027,4 +13629,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"GetInput2":["String.String"],"TickMinute":["Time.Posix"],"SwitchOverlay":[]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Dialogue":{"args":[],"type":"Array.Array (Array.Array String.String)"},"Main.Dialogues":{"args":[],"type":"{ person1 : Main.Dialogue, person2 : Main.Dialogue, person3 : Main.Dialogue, person4 : Main.Dialogue }"},"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"},"Array.Tree":{"args":["a"],"type":"Elm.JsArray.JsArray (Array.Node a)"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"GetInput2":["String.String"],"TickMinute":["Time.Posix"],"SwitchOverlay":[],"FetchDialoguesSuccess":["Main.Dialogues"],"FetchDialoguesFailure":[]}},"Array.Array":{"args":["a"],"tags":{"Array_elm_builtin":["Basics.Int","Basics.Int","Array.Tree a","Elm.JsArray.JsArray a"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}},"Elm.JsArray.JsArray":{"args":["a"],"tags":{"JsArray":["a"]}},"Array.Node":{"args":["a"],"tags":{"SubTree":["Array.Tree a"],"Leaf":["Elm.JsArray.JsArray a"]}}}}})}});}(this));

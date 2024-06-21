@@ -17,6 +17,8 @@ import Process
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Array exposing (..)
+import Http
+import Json.Decode as Decode
 
 
 -- Typ-Deklarationen
@@ -34,6 +36,16 @@ type alias Seat =
 type alias RandomValues =
     { randomIndex : Int
     , randomSeat : Int
+    }
+
+type alias Dialogue =
+    Array (Array String)
+
+type alias Dialogues =
+    { person1 : Dialogue
+    , person2 : Dialogue
+    , person3 : Dialogue
+    , person4 : Dialogue
     }
 
 type alias Model =
@@ -56,6 +68,7 @@ type alias Model =
     , time : Int
     , daten : Array Float
     , arbeiten : Array String
+    , dialogues : Maybe Dialogues
     }
 
 
@@ -83,7 +96,8 @@ init _ =
     0
     (Array.fromList [0])
     (Array.fromList ["Pause"])
-    , Cmd.none )
+    Nothing
+    , fetchDialogues )
 
 -- Message Typen
 
@@ -98,6 +112,8 @@ type Msg
     | GetInput2 String
     | TickMinute Posix
     | SwitchOverlay
+    | FetchDialoguesSuccess Dialogues
+    | FetchDialoguesFailure
 
 --Hilfsfunktionen
 
@@ -182,6 +198,97 @@ findIndex target arr =
         |> List.filterMap identity
         |> List.head
 
+-- Fetch the dialogues data for both persons
+fetchDialogues : Cmd Msg
+fetchDialogues =
+    Http.get
+        { url = "dialogues.json"
+        , expect = Http.expectJson handleFetchResult dialoguesDecoder
+        }
+
+-- Define a JSON decoder for your dialogues
+dialoguesDecoder : Decode.Decoder Dialogues
+dialoguesDecoder =
+    Decode.map4 Dialogues
+        (Decode.field "person1" (Decode.array (Decode.array Decode.string)))
+        (Decode.field "person2" (Decode.array (Decode.array Decode.string)))
+        (Decode.field "person3" (Decode.array (Decode.array Decode.string)))
+        (Decode.field "person4" (Decode.array (Decode.array Decode.string)))
+
+
+-- Handle the result of the HTTP request
+handleFetchResult : Result Http.Error Dialogues -> Msg
+handleFetchResult result =
+    case result of
+        Ok dialogues ->
+            FetchDialoguesSuccess dialogues
+
+        Err _ ->
+            FetchDialoguesFailure
+
+getNextText : Model -> Seat -> Int -> String
+getNextText model seat number = 
+    case model.dialogues of 
+        Just dialoge ->
+            case seat.name of 
+                "Person1.png" ->
+                    let 
+                        newArray = dialoge.person1
+                    in 
+                    case get number newArray of 
+                        Just a ->
+                            case get 0 a of 
+                                Just b ->
+                                    b
+                                Nothing ->
+                                    ""
+                        Nothing ->
+                            ""
+                "Person2.png" ->
+                    let 
+                        newArray = dialoge.person2
+                    in 
+                    case get number newArray of 
+                        Just a ->
+                            case get 0 a of 
+                                Just b ->
+                                    b
+                                Nothing ->
+                                    ""
+                        Nothing ->
+                            ""
+                "Person3.png" ->
+                    let 
+                        newArray = dialoge.person3
+                    in 
+                    case get number newArray of 
+                        Just a ->
+                            case get 0 a of 
+                                Just b ->
+                                    b
+                                Nothing ->
+                                    ""
+                        Nothing ->
+                            ""
+                "Person4.png" ->
+                    let 
+                        newArray = dialoge.person4
+                    in 
+                    case get number newArray of 
+                        Just a ->
+                            case get 0 a of 
+                                Just b ->
+                                    b
+                                Nothing ->
+                                    ""
+                        Nothing ->
+                            ""
+                _ ->
+                   ""
+        Nothing ->
+            ""
+
+    
 --Update Funktionen
 
 update : Msg -> Model -> ( Model, Cmd Msg ) --Es darf erst der nächste NPC gepreppt werden, wenn der erste abgearbeitet wurde
@@ -208,90 +315,98 @@ update msg model =
 
 
         NPCClicked seat ->   --Echte Person zeigen
+            let 
+                makeSeat : Seat -> String -> Seat
+                makeSeat b a =
+                    {b | name = a, hidden = False, modal = False}
 
+                talkPerson : Seat -> Seat
+                talkPerson c =
+                    {c | modal = not c.modal, spokenText = "", index = 0, nextText = getNextText model seat 0}
+            in
                 if seat.name == "Random_Person.png" then --Person wird zum enthülle angeklickt
                     case seat.id of 
                         0 ->
                             case model.randomString of 
                                 Just a -> 
-                                    let --Einkürzen, mit dem Code oder Hilfsfunktion definieren 
-                                        oldseat = model.seat1
-                                        newseat = {oldseat | name = a, hidden = False, modal = False}
-                                    in
-                                    ( { model | seat1 = newseat }, Cmd.none )
+                                    ( { model | seat1 = makeSeat model.seat1 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index} }, Cmd.none )
+                                    ( { model | seat1 = makeSeat model.seat1 "Random_Person.png" }, Cmd.none )
                         1 ->
                             case model.randomString of 
                                 Just a -> 
-                                    ( { model | seat2 = {name = a, hidden = False, modal = False, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = model.seat2.spokenText, index = model.seat2.index} }, Cmd.none )
+                                    ( { model | seat2 = makeSeat model.seat2 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = model.seat2.spokenText, index = model.seat2.index} }, Cmd.none )
+                                    ( { model | seat2 = makeSeat model.seat2 "Random_Person.png" }, Cmd.none )
                         2 ->
                             case model.randomString of 
                                 Just a -> 
-                                    ( { model | seat3 = {name = a, hidden = False, modal = False, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = model.seat3.spokenText, index = model.seat3.index} }, Cmd.none )
+                                    ( { model | seat3 = makeSeat model.seat3 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = model.seat3.spokenText, index = model.seat3.index} }, Cmd.none )
+                                    ( { model | seat3 = makeSeat model.seat3 "Random_Person.png" }, Cmd.none )
                         3 ->
                             case model.randomString of 
                                 Just a -> 
-                                    ( { model | seat4 = {name = a, hidden = False, modal = False, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = model.seat4.spokenText, index = model.seat4.index} }, Cmd.none )
+                                    ( { model | seat4 = makeSeat model.seat4 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = model.seat4.spokenText, index = model.seat4.index} }, Cmd.none )
+                                    ( { model | seat4 = makeSeat model.seat4 "Random_Person.png" }, Cmd.none )
                         4 ->
                             case model.randomString of 
                                 Just a -> 
-                                    ( { model | seat5 = {name = a, hidden = False, modal = False, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = model.seat5.spokenText, index = model.seat5.index} }, Cmd.none )
+                                    ( { model | seat5 = makeSeat model.seat5 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = model.seat5.spokenText, index = model.seat5.index} }, Cmd.none )
+                                    ( { model | seat5 = makeSeat model.seat5 "Random_Person.png" }, Cmd.none )
                         _ -> 
                             case model.randomString of 
                                 Just a -> 
-                                    ( { model | seat1 = {name = a, hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index} }, Cmd.none )
+                                    ( { model | seat1 = makeSeat model.seat1 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index} }, Cmd.none )
+                                    ( { model | seat1 = makeSeat model.seat1 "Random_Person.png" }, Cmd.none )
 
                     else --Person wird zum sprechen angeklickt
 
                          case seat.id of 
                         0 ->
-                                ( { model | seat1 = {name = model.seat1.name, hidden = model.seat1.hidden, modal = not model.seat1.modal, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | seat1 = talkPerson model.seat1}, Cmd.none )
                         1 ->
-                                ( { model | seat2 = {name = model.seat2.name, hidden = model.seat2.hidden, modal = not model.seat2.modal, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | seat2 = talkPerson model.seat2}, Cmd.none )
                         2 ->
-                                ( { model | seat3 = {name = model.seat3.name, hidden = model.seat3.hidden, modal = not model.seat3.modal, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | seat3 = talkPerson model.seat3}, Cmd.none )
                                 
                         3 ->
-                                ( { model | seat4 = {name = model.seat4.name, hidden = model.seat4.hidden, modal = not model.seat4.modal, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | seat4 = talkPerson model.seat4}, Cmd.none )
                                 
                         4 ->
-                                ( { model | seat5 = {name = model.seat5.name, hidden = model.seat5.hidden, modal = not model.seat5.modal, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | seat5 = talkPerson model.seat5}, Cmd.none )
                                 
                         _ -> 
-                                ( { model | seat1 = {name = model.seat1.name, hidden = model.seat1.hidden, modal = not model.seat1.modal, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | seat1 = talkPerson model.seat1}, Cmd.none )
 
         GotRandomValues randomValues ->
             let
                 randomStr = List.Extra.getAt randomValues.randomIndex model.person_list
                 randomSeat = List.Extra.getAt randomValues.randomSeat model.seat_list
+
+                seatNHM : Seat -> Seat
+                seatNHM a =
+                    {a | name = "Random_Person.png", hidden = False, modal = False}
             in
             case randomStr of 
                 Just b ->
                     case randomSeat of 
                         Just a -> 
                             if a == "0" then
-                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
+                                    ( { model | seat1 = seatNHM model.seat1, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
                             else if a == "1" then
-                                    ( { model | seat2 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = model.seat2.spokenText, index = model.seat2.index}, randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat2 = seatNHM model.seat2, randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "2" then
-                                    ( { model | seat3 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = model.seat3.spokenText, index = model.seat3.index}, randomString = randomStr, nextSeat = 2, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat3 = seatNHM model.seat3, randomString = randomStr, nextSeat = 2, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "3" then
-                                    ( { model | seat4 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = model.seat4.spokenText, index = model.seat4.index}, randomString = randomStr, nextSeat = 3, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat4 = seatNHM model.seat4, randomString = randomStr, nextSeat = 3, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "4" then
-                                    ( { model | seat5 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = model.seat5.spokenText, index = model.seat5.index}, randomString = randomStr, nextSeat = 4, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat5 = seatNHM model.seat5, randomString = randomStr, nextSeat = 4, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else
-                                    ( { model | seat1 = {name = "Random_Person.png", hidden = False, modal = False, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = model.seat1.spokenText, index = model.seat1.index}, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat1 = seatNHM model.seat1, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                         Nothing ->
                             ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
                 Nothing ->
@@ -302,64 +417,90 @@ update msg model =
                 let
                     newIndex = model.seat1.index + 1
                     newDisplayedText = String.slice 0 newIndex model.seat1.nextText
+
+                    seatSI: Seat -> Seat 
+                    seatSI a = 
+                        {a | spokenText = newDisplayedText, index = newIndex}
                 in
                 if newIndex <= String.length model.seat1.nextText then
-                    ( { model | seat1 = {name = model.seat1.name, hidden = model.seat1.hidden, modal = model.seat1.modal, id = model.seat1.id, nextText = model.seat1.nextText, spokenText = newDisplayedText, index = newIndex}}, Cmd.none)
+                    ( { model | seat1 = seatSI model.seat1}, Cmd.none)
                 else
                     ( model, Cmd.none )
             else if model.seat2.modal == True then
                 let
                     newIndex = model.seat2.index + 1
                     newDisplayedText = String.slice 0 newIndex model.seat2.nextText
+
+                    seatSI: Seat -> Seat 
+                    seatSI a = 
+                        {a | spokenText = newDisplayedText, index = newIndex}
                 in
                 if newIndex <= String.length model.seat2.nextText then
-                    ( { model | seat2 = {name = model.seat2.name, hidden = model.seat2.hidden, modal = model.seat2.modal, id = model.seat2.id, nextText = model.seat2.nextText, spokenText = newDisplayedText, index = newIndex}}, Cmd.none)
+                    ( { model | seat2 = seatSI model.seat2}, Cmd.none)
                 else
                     ( model, Cmd.none )
             else if model.seat3.modal == True then
                 let
                     newIndex = model.seat3.index + 1
                     newDisplayedText = String.slice 0 newIndex model.seat3.nextText
+
+                    seatSI: Seat -> Seat 
+                    seatSI a = 
+                        {a | spokenText = newDisplayedText, index = newIndex}
                 in
                 if newIndex <= String.length model.seat3.nextText then
-                    ( { model | seat3 = {name = model.seat3.name, hidden = model.seat3.hidden, modal = model.seat3.modal, id = model.seat3.id, nextText = model.seat3.nextText, spokenText = newDisplayedText, index = newIndex}}, Cmd.none)
+                    ( { model | seat3 = seatSI model.seat3}, Cmd.none)
                 else
                     ( model, Cmd.none )
             else if model.seat4.modal == True then
                 let
                     newIndex = model.seat4.index + 1
                     newDisplayedText = String.slice 0 newIndex model.seat4.nextText
+
+                    seatSI: Seat -> Seat 
+                    seatSI a = 
+                        {a | spokenText = newDisplayedText, index = newIndex}
                 in
                 if newIndex <= String.length model.seat4.nextText then
-                    ( { model | seat4 = {name = model.seat4.name, hidden = model.seat4.hidden, modal = model.seat4.modal, id = model.seat4.id, nextText = model.seat4.nextText, spokenText = newDisplayedText, index = newIndex}}, Cmd.none)
+                    ( { model | seat4 = seatSI model.seat4}, Cmd.none)
                 else
                     ( model, Cmd.none )
             else if model.seat5.modal == True then
                 let
                     newIndex = model.seat5.index + 1
                     newDisplayedText = String.slice 0 newIndex model.seat5.nextText
+
+                    seatSI: Seat -> Seat 
+                    seatSI a = 
+                        {a | spokenText = newDisplayedText, index = newIndex}
                 in
                 if newIndex <= String.length model.seat5.nextText then
-                    ( { model | seat5 = {name = model.seat5.name, hidden = model.seat5.hidden, modal = model.seat5.modal, id = model.seat5.id, nextText = model.seat5.nextText, spokenText = newDisplayedText, index = newIndex}}, Cmd.none)
+                    ( { model | seat5 = seatSI model.seat5}, Cmd.none)
                 else
                     ( model, Cmd.none )
             else 
                 ( model, Cmd.none )
 
         RemoveNPC seat -> 
+            let 
+                seatClear: Seat -> Seat 
+                seatClear a =
+                    {a | name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}
+
+            in
             case seat.id of 
                         0 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1}, Cmd.none )
                         1 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = {name = "Random_Person.png", hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = seatClear model.seat2}, Cmd.none )
                         2 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = {name = "Random_Person.png", hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = seatClear model.seat3}, Cmd.none )
                         3 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = {name = "Random_Person.png", hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = seatClear model.seat4}, Cmd.none )
                         4 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = {name = "Random_Person.png", hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = seatClear model.seat5}, Cmd.none )
                         _ -> 
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1}, Cmd.none )
         
         GetInput input ->
             ({model | userInput = input}, Cmd.none )
@@ -418,6 +559,13 @@ update msg model =
                         ({ model | timeChoosen = not model.timeChoosen, time = a}, Cmd.none )
                     Nothing ->
                         (model, Cmd.none )
+
+        FetchDialoguesSuccess dialogues ->
+            ( { model | dialogues = Just dialogues }, Cmd.none )
+
+        FetchDialoguesFailure ->
+            ( model, Cmd.none )
+
 
 -- SUBSCRIPTIONS
 
