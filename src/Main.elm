@@ -19,18 +19,22 @@ import Svg.Attributes exposing (..)
 import Array exposing (..)
 import Http
 import Json.Decode as Decode
+import Maybe exposing (withDefault)
 
 
 -- Typ-Deklarationen
 
 type alias Seat = 
     { name : String 
+    , randomString : Maybe String
     , hidden : Bool
     , modal : Bool
     , id : Int
     , nextText : String --Für Dialoge
     , spokenText : String
-    , index : Int -- Für Dialoge
+    , index : Int -- Für Dialoge abspielen
+    , conversation : Int --Punkt der Konversation
+    , active : Bool
     }
 
 type alias RandomValues =
@@ -60,7 +64,6 @@ type alias Model =
     , nextSeat : Int
     , person_list : List String -- Liste an möglichen Gäste
     , seat_list : List String --Liste an Stühlen
-    , randomString : Maybe String -- Next Guest
     , showModal : Bool
     , userInput : String
     , userInput2 : String
@@ -69,6 +72,7 @@ type alias Model =
     , daten : Array Float
     , arbeiten : Array String
     , dialogues : Maybe Dialogues
+    , visitTimes : List Int --Liste mit Daten darüber wie oft die jeweiligen Personen schon da waren 
     }
 
 
@@ -80,15 +84,14 @@ init _ =
     10 
     10 
     True 
-    {name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0} 
-    {name = "Random_Person.png", hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0} 
-    {name = "Random_Person.png", hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0} 
-    {name = "Random_Person.png", hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0} 
-    {name = "Random_Person.png", hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0} 
+    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
     0 
     ["Person1.png","Person2.png","Person3.png","Person4.png"] 
-    ["0","1","2","3","4"] 
-    Nothing 
+    ["0","1","2","3","4"]  
     False
     "..."
     "..."
@@ -97,6 +100,7 @@ init _ =
     (Array.fromList [0])
     (Array.fromList ["Pause"])
     Nothing
+    [0,0,0,0]
     , fetchDialogues )
 
 -- Message Typen
@@ -114,6 +118,7 @@ type Msg
     | SwitchOverlay
     | FetchDialoguesSuccess Dialogues
     | FetchDialoguesFailure
+    | NextDialogue Seat
 
 --Hilfsfunktionen
 
@@ -226,16 +231,17 @@ handleFetchResult result =
         Err _ ->
             FetchDialoguesFailure
 
-getNextText : Model -> Seat -> Int -> String
-getNextText model seat number = 
+getNextText : Model -> Seat -> String
+getNextText model seat = 
     case model.dialogues of 
         Just dialoge ->
             case seat.name of 
                 "Person1.png" ->
                     let 
                         newArray = dialoge.person1
+                        visitAmount = withDefault 0 (get 0 (Array.fromList model.visitTimes))
                     in 
-                    case get number newArray of 
+                    case get seat.conversation newArray of 
                         Just a ->
                             case get 0 a of 
                                 Just b ->
@@ -247,8 +253,9 @@ getNextText model seat number =
                 "Person2.png" ->
                     let 
                         newArray = dialoge.person2
+                        visitAmount = withDefault 0 (get 1 (Array.fromList model.visitTimes))
                     in 
-                    case get number newArray of 
+                    case get seat.conversation newArray of 
                         Just a ->
                             case get 0 a of 
                                 Just b ->
@@ -260,8 +267,9 @@ getNextText model seat number =
                 "Person3.png" ->
                     let 
                         newArray = dialoge.person3
+                        visitAmount = withDefault 0 (get 2 (Array.fromList model.visitTimes))
                     in 
-                    case get number newArray of 
+                    case get seat.conversation newArray of 
                         Just a ->
                             case get 0 a of 
                                 Just b ->
@@ -273,8 +281,9 @@ getNextText model seat number =
                 "Person4.png" ->
                     let 
                         newArray = dialoge.person4
+                        visitAmount = withDefault 0 (get 3 (Array.fromList model.visitTimes))
                     in 
-                    case get number newArray of 
+                    case get seat.conversation newArray of 
                         Just a ->
                             case get 0 a of 
                                 Just b ->
@@ -322,42 +331,42 @@ update msg model =
 
                 talkPerson : Seat -> Seat
                 talkPerson c =
-                    {c | modal = not c.modal, spokenText = "", index = 0, nextText = getNextText model seat 0}
+                    {c | modal = not c.modal, spokenText = "", index = 0, nextText = getNextText model seat}
             in
                 if seat.name == "Random_Person.png" then --Person wird zum enthülle angeklickt
                     case seat.id of 
                         0 ->
-                            case model.randomString of 
+                            case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat1 = makeSeat model.seat1 a }, Cmd.none )
                                 Nothing ->
                                     ( { model | seat1 = makeSeat model.seat1 "Random_Person.png" }, Cmd.none )
                         1 ->
-                            case model.randomString of 
+                            case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat2 = makeSeat model.seat2 a }, Cmd.none )
                                 Nothing ->
                                     ( { model | seat2 = makeSeat model.seat2 "Random_Person.png" }, Cmd.none )
                         2 ->
-                            case model.randomString of 
+                            case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat3 = makeSeat model.seat3 a }, Cmd.none )
                                 Nothing ->
                                     ( { model | seat3 = makeSeat model.seat3 "Random_Person.png" }, Cmd.none )
                         3 ->
-                            case model.randomString of 
+                            case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat4 = makeSeat model.seat4 a }, Cmd.none )
                                 Nothing ->
                                     ( { model | seat4 = makeSeat model.seat4 "Random_Person.png" }, Cmd.none )
                         4 ->
-                            case model.randomString of 
+                            case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat5 = makeSeat model.seat5 a }, Cmd.none )
                                 Nothing ->
                                     ( { model | seat5 = makeSeat model.seat5 "Random_Person.png" }, Cmd.none )
                         _ -> 
-                            case model.randomString of 
+                            case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat1 = makeSeat model.seat1 a }, Cmd.none )
                                 Nothing ->
@@ -389,28 +398,28 @@ update msg model =
 
                 seatNHM : Seat -> Seat
                 seatNHM a =
-                    {a | name = "Random_Person.png", hidden = False, modal = False}
+                    {a | name = "Random_Person.png", hidden = False, modal = False, randomString = randomStr, active = True}
             in
             case randomStr of 
                 Just b ->
                     case randomSeat of 
                         Just a -> 
                             if a == "0" then
-                                    ( { model | seat1 = seatNHM model.seat1, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
+                                    ( { model | seat1 = seatNHM model.seat1, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
                             else if a == "1" then
-                                    ( { model | seat2 = seatNHM model.seat2, randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat2 = seatNHM model.seat2, nextSeat = 1, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "2" then
-                                    ( { model | seat3 = seatNHM model.seat3, randomString = randomStr, nextSeat = 2, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat3 = seatNHM model.seat3, nextSeat = 2, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "3" then
-                                    ( { model | seat4 = seatNHM model.seat4, randomString = randomStr, nextSeat = 3, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat4 = seatNHM model.seat4, nextSeat = 3, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else if a == "4" then
-                                    ( { model | seat5 = seatNHM model.seat5, randomString = randomStr, nextSeat = 4, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat5 = seatNHM model.seat5, nextSeat = 4, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                             else
-                                    ( { model | seat1 = seatNHM model.seat1, randomString = randomStr, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
+                                    ( { model | seat1 = seatNHM model.seat1, nextSeat = 0, person_list = removeWord randomStr model.person_list, seat_list = removeWord randomSeat model.seat_list, timeChoosen = not model.timeChoosen, userInput = "..." }, Cmd.none )
                         Nothing ->
-                            ( { model | randomString = randomStr, nextSeat = 1, person_list = removeWord randomStr model.person_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
+                            ( { model | nextSeat = 1, person_list = removeWord randomStr model.person_list, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
                 Nothing ->
-                    ( { model | randomString = randomStr, nextSeat = 1, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
+                    ( { model | nextSeat = 1, timeChoosen = not model.timeChoosen, userInput = "..."}, Cmd.none )
                     
         Tick newTime ->
             if model.seat1.modal == True then
@@ -566,7 +575,49 @@ update msg model =
         FetchDialoguesFailure ->
             ( model, Cmd.none )
 
+        NextDialogue seat ->
+            let 
+                seatC: Seat -> Seat 
+                seatC b = 
+                    {b | conversation = b.conversation + 1}
 
+                nextDialogue: Seat -> Seat 
+                nextDialogue a =
+                    {a | nextText = getNextText model (seatC seat), spokenText = "", index = 0}
+
+                seatAM: Seat -> Seat 
+                seatAM c = 
+                    {c | active = False, modal = False}
+
+            in
+            if seat.conversation < 2 then
+                case seat.id of 
+                    0 -> 
+                        ({model| seat1 = (nextDialogue (seatC seat))}, Cmd.none)
+                    1 -> 
+                        ({model| seat2 = (nextDialogue (seatC seat))}, Cmd.none)
+                    2 -> 
+                        ({model| seat3 = (nextDialogue (seatC seat))}, Cmd.none)
+                    3 -> 
+                        ({model| seat4 = (nextDialogue (seatC seat))}, Cmd.none)
+                    4 -> 
+                        ({model| seat5 = (nextDialogue (seatC seat))}, Cmd.none)
+                    _ -> 
+                        ({model| seat1 = (nextDialogue (seatC seat))}, Cmd.none)
+            else 
+                 case seat.id of 
+                    0 -> 
+                        ({model| seat1 = (seatAM seat)}, Cmd.none)
+                    1 -> 
+                        ({model| seat2 = (seatAM seat)}, Cmd.none)
+                    2 -> 
+                        ({model| seat3 = (seatAM seat)}, Cmd.none)
+                    3 -> 
+                        ({model| seat4 = (seatAM seat)}, Cmd.none)
+                    4 -> 
+                        ({model| seat5 = (seatAM seat)}, Cmd.none)
+                    _ -> 
+                        ({model| seat1 = (seatAM seat)}, Cmd.none)          
 -- SUBSCRIPTIONS
 
 port windowSize : (List Int -> msg) -> Sub msg
@@ -608,6 +659,7 @@ view model =
             , Html.Attributes.style "padding" "0"
             , Html.Attributes.style "cursor" "pointer"
             , Html.Attributes.style "zIndex" "1"
+            , Html.Attributes.disabled (not model.seat1.active)
             ] 
             [ img 
                 [ src (model.seat1.name)
@@ -679,6 +731,7 @@ view model =
                     [ div [] [ Html.text model.seat1.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat1)
+                        , Html.Attributes.style "position" "absolute"
                         , Html.Attributes.style "width" "50%"
                         , Html.Attributes.style "height" "10%"
                         , Html.Attributes.style "zIndex" "1"
@@ -687,6 +740,25 @@ view model =
                         , Html.Attributes.style "left" "0%"
                         ] 
                         [ Html.text "Gehen sie bitte!" ]
+                    ,button 
+                        [ Html.Events.onClick (NextDialogue model.seat1)
+                        , Html.Attributes.style "position" "absolute"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "right" "0%"
+                        ] 
+                        [   if model.seat1.conversation == 0 then
+                                Html.text "Hello."
+                            else if model.seat1.conversation == 1 then
+                                Html.text "Bestellung kommt sofort"
+                            else if model.seat1.conversation == 2 then
+                                Html.text "Lassen sie es sich schmecken"
+                            else 
+                                Html.text "??"
+                        ]
                     ]
                 ]
                   else
@@ -704,6 +776,7 @@ view model =
             , Html.Attributes.style "padding" "0"
             , Html.Attributes.style "cursor" "pointer"
             , Html.Attributes.style "zIndex" "1"
+            , Html.Attributes.disabled (not model.seat2.active)
             ] 
             [ img 
                 [ src (model.seat2.name)
@@ -775,6 +848,7 @@ view model =
                     [ div [] [ Html.text model.seat2.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat2)
+                        , Html.Attributes.style "position" "absolute"
                         , Html.Attributes.style "width" "50%"
                         , Html.Attributes.style "height" "10%"
                         , Html.Attributes.style "zIndex" "1"
@@ -783,6 +857,25 @@ view model =
                         , Html.Attributes.style "left" "0%"
                         ] 
                         [ Html.text "Gehen sie bitte!" ]
+                    ,button 
+                        [ Html.Events.onClick (NextDialogue model.seat2)
+                        , Html.Attributes.style "position" "absolute"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "right" "0%"
+                        ] 
+                        [   if model.seat2.conversation == 0 then
+                                Html.text "Hello."
+                            else if model.seat2.conversation == 1 then
+                                Html.text "Bestellung kommt sofort"
+                            else if model.seat2.conversation == 2 then
+                                Html.text "Lassen sie es sich schmecken"
+                            else 
+                                Html.text "??"
+                        ]
                     ]
                 ]
                   else
@@ -800,6 +893,7 @@ view model =
             , Html.Attributes.style "padding" "0"
             , Html.Attributes.style "cursor" "pointer"
             , Html.Attributes.style "zIndex" "1"
+            , Html.Attributes.disabled (not model.seat3.active)
             ] 
             [ img 
                 [ src (model.seat3.name)
@@ -871,6 +965,7 @@ view model =
                     [ div [] [ Html.text model.seat3.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat3)
+                        , Html.Attributes.style "position" "absolute"
                         , Html.Attributes.style "width" "50%"
                         , Html.Attributes.style "height" "10%"
                         , Html.Attributes.style "zIndex" "1"
@@ -879,6 +974,25 @@ view model =
                         , Html.Attributes.style "left" "0%"
                         ] 
                         [ Html.text "Gehen sie bitte!" ]
+                    ,button 
+                        [ Html.Events.onClick (NextDialogue model.seat3)
+                        , Html.Attributes.style "position" "absolute"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "right" "0%"
+                        ] 
+                        [   if model.seat3.conversation == 0 then
+                                Html.text "Hello."
+                            else if model.seat3.conversation == 1 then
+                                Html.text "Bestellung kommt sofort"
+                            else if model.seat3.conversation == 2 then
+                                Html.text "Lassen sie es sich schmecken"
+                            else 
+                                Html.text "??"
+                        ]
                     ]
                 ]
                   else
@@ -896,6 +1010,7 @@ view model =
             , Html.Attributes.style "padding" "0"
             , Html.Attributes.style "cursor" "pointer"
             , Html.Attributes.style "zIndex" "1"
+            , Html.Attributes.disabled (not model.seat4.active)
             ] 
             [ img 
                 [ src (model.seat4.name)
@@ -967,6 +1082,7 @@ view model =
                     [ div [] [ Html.text model.seat4.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat4)
+                        , Html.Attributes.style "position" "absolute"
                         , Html.Attributes.style "width" "50%"
                         , Html.Attributes.style "height" "10%"
                         , Html.Attributes.style "zIndex" "1"
@@ -975,6 +1091,25 @@ view model =
                         , Html.Attributes.style "left" "0%"
                         ] 
                         [ Html.text "Gehen sie bitte!" ]
+                    ,button 
+                        [ Html.Events.onClick (NextDialogue model.seat4)
+                        , Html.Attributes.style "position" "absolute"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "right" "0%"
+                        ] 
+                        [   if model.seat4.conversation == 0 then
+                                Html.text "Hello."
+                            else if model.seat4.conversation == 1 then
+                                Html.text "Bestellung kommt sofort"
+                            else if model.seat4.conversation == 2 then
+                                Html.text "Lassen sie es sich schmecken"
+                            else 
+                                Html.text "??"
+                        ]
                     ]
                 ]
                   else
@@ -992,6 +1127,7 @@ view model =
             , Html.Attributes.style "padding" "0"
             , Html.Attributes.style "cursor" "pointer"
             , Html.Attributes.style "zIndex" "1"
+            , Html.Attributes.disabled (not model.seat5.active)
             ] 
             [ img 
                 [ src (model.seat5.name)
@@ -1063,6 +1199,7 @@ view model =
                     [ div [] [ Html.text model.seat5.spokenText ]
                     , button 
                         [ Html.Events.onClick (RemoveNPC model.seat5)
+                        , Html.Attributes.style "position" "absolute"
                         , Html.Attributes.style "width" "50%"
                         , Html.Attributes.style "height" "10%"
                         , Html.Attributes.style "zIndex" "1"
@@ -1071,6 +1208,25 @@ view model =
                         , Html.Attributes.style "left" "0%"
                         ] 
                         [ Html.text "Gehen sie bitte!" ]
+                    ,button 
+                        [ Html.Events.onClick (NextDialogue model.seat5)
+                        , Html.Attributes.style "position" "absolute"
+                        , Html.Attributes.style "width" "50%"
+                        , Html.Attributes.style "height" "10%"
+                        , Html.Attributes.style "zIndex" "1"
+                        , Html.Attributes.style "cursor" "pointer"
+                        , Html.Attributes.style "top" "90%"
+                        , Html.Attributes.style "right" "0%"
+                        ] 
+                        [   if model.seat5.conversation == 0 then
+                                Html.text "Hello."
+                            else if model.seat5.conversation == 1 then
+                                Html.text "Bestellung kommt sofort"
+                            else if model.seat5.conversation == 2 then
+                                Html.text "Lassen sie es sich schmecken"
+                            else 
+                                Html.text "??"
+                        ]
                     ]
                 ]
             else

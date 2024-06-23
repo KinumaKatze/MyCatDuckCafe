@@ -10786,16 +10786,16 @@ var $author$project$Main$Model = function (width) {
 								return function (nextSeat) {
 									return function (person_list) {
 										return function (seat_list) {
-											return function (randomString) {
-												return function (showModal) {
-													return function (userInput) {
-														return function (userInput2) {
-															return function (timeChoosen) {
-																return function (time) {
-																	return function (daten) {
-																		return function (arbeiten) {
-																			return function (dialogues) {
-																				return {arbeiten: arbeiten, daten: daten, dialogues: dialogues, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, randomString: randomString, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, userInput2: userInput2, width: width};
+											return function (showModal) {
+												return function (userInput) {
+													return function (userInput2) {
+														return function (timeChoosen) {
+															return function (time) {
+																return function (daten) {
+																	return function (arbeiten) {
+																		return function (dialogues) {
+																			return function (visitTimes) {
+																				return {arbeiten: arbeiten, daten: daten, dialogues: dialogues, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, userInput2: userInput2, visitTimes: visitTimes, width: width};
 																			};
 																		};
 																	};
@@ -11113,21 +11113,23 @@ var $author$project$Main$fetchDialogues = $elm$http$Http$get(
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$Main$Model(10)(10)(true)(
-			{hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
-			{hidden: true, id: 1, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
-			{hidden: true, id: 2, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
-			{hidden: true, id: 3, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(
-			{hidden: true, id: 4, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''})(0)(
+			{active: true, conversation: 0, hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: ''})(
+			{active: true, conversation: 0, hidden: true, id: 1, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: ''})(
+			{active: true, conversation: 0, hidden: true, id: 2, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: ''})(
+			{active: true, conversation: 0, hidden: true, id: 3, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: ''})(
+			{active: true, conversation: 0, hidden: true, id: 4, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: ''})(0)(
 			_List_fromArray(
 				['Person1.png', 'Person2.png', 'Person3.png', 'Person4.png']))(
 			_List_fromArray(
-				['0', '1', '2', '3', '4']))($elm$core$Maybe$Nothing)(false)('...')('...')(false)(0)(
+				['0', '1', '2', '3', '4']))(false)('...')('...')(false)(0)(
 			$elm$core$Array$fromList(
 				_List_fromArray(
 					[0])))(
 			$elm$core$Array$fromList(
 				_List_fromArray(
-					['Pause'])))($elm$core$Maybe$Nothing),
+					['Pause'])))($elm$core$Maybe$Nothing)(
+			_List_fromArray(
+				[0, 0, 0, 0])),
 		$author$project$Main$fetchDialogues);
 };
 var $author$project$Main$Tick = function (a) {
@@ -11600,16 +11602,23 @@ var $elm_community$list_extra$List$Extra$getAt = F2(
 		return (idx < 0) ? $elm$core$Maybe$Nothing : $elm$core$List$head(
 			A2($elm$core$List$drop, idx, xs));
 	});
-var $author$project$Main$getNextText = F3(
-	function (model, seat, number) {
+var $author$project$Main$getNextText = F2(
+	function (model, seat) {
 		var _v0 = model.dialogues;
 		if (_v0.$ === 'Just') {
 			var dialoge = _v0.a;
 			var _v1 = seat.name;
 			switch (_v1) {
 				case 'Person1.png':
+					var visitAmount = A2(
+						$elm$core$Maybe$withDefault,
+						0,
+						A2(
+							$elm$core$Array$get,
+							0,
+							$elm$core$Array$fromList(model.visitTimes)));
 					var newArray = dialoge.person1;
-					var _v2 = A2($elm$core$Array$get, number, newArray);
+					var _v2 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v2.$ === 'Just') {
 						var a = _v2.a;
 						var _v3 = A2($elm$core$Array$get, 0, a);
@@ -11623,8 +11632,15 @@ var $author$project$Main$getNextText = F3(
 						return '';
 					}
 				case 'Person2.png':
+					var visitAmount = A2(
+						$elm$core$Maybe$withDefault,
+						0,
+						A2(
+							$elm$core$Array$get,
+							1,
+							$elm$core$Array$fromList(model.visitTimes)));
 					var newArray = dialoge.person2;
-					var _v4 = A2($elm$core$Array$get, number, newArray);
+					var _v4 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v4.$ === 'Just') {
 						var a = _v4.a;
 						var _v5 = A2($elm$core$Array$get, 0, a);
@@ -11638,8 +11654,15 @@ var $author$project$Main$getNextText = F3(
 						return '';
 					}
 				case 'Person3.png':
+					var visitAmount = A2(
+						$elm$core$Maybe$withDefault,
+						0,
+						A2(
+							$elm$core$Array$get,
+							2,
+							$elm$core$Array$fromList(model.visitTimes)));
 					var newArray = dialoge.person3;
-					var _v6 = A2($elm$core$Array$get, number, newArray);
+					var _v6 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v6.$ === 'Just') {
 						var a = _v6.a;
 						var _v7 = A2($elm$core$Array$get, 0, a);
@@ -11653,8 +11676,15 @@ var $author$project$Main$getNextText = F3(
 						return '';
 					}
 				case 'Person4.png':
+					var visitAmount = A2(
+						$elm$core$Maybe$withDefault,
+						0,
+						A2(
+							$elm$core$Array$get,
+							3,
+							$elm$core$Array$fromList(model.visitTimes)));
 					var newArray = dialoge.person4;
-					var _v8 = A2($elm$core$Array$get, number, newArray);
+					var _v8 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v8.$ === 'Just') {
 						var a = _v8.a;
 						var _v9 = A2($elm$core$Array$get, 0, a);
@@ -11802,7 +11832,7 @@ var $author$project$Main$update = F2(
 							{
 								index: 0,
 								modal: !c.modal,
-								nextText: A3($author$project$Main$getNextText, model, seat, 0),
+								nextText: A2($author$project$Main$getNextText, model, seat),
 								spokenText: ''
 							});
 					};
@@ -11816,7 +11846,7 @@ var $author$project$Main$update = F2(
 						var _v6 = seat.id;
 						switch (_v6) {
 							case 0:
-								var _v7 = model.randomString;
+								var _v7 = seat.randomString;
 								if (_v7.$ === 'Just') {
 									var a = _v7.a;
 									return _Utils_Tuple2(
@@ -11836,7 +11866,7 @@ var $author$project$Main$update = F2(
 										$elm$core$Platform$Cmd$none);
 								}
 							case 1:
-								var _v8 = model.randomString;
+								var _v8 = seat.randomString;
 								if (_v8.$ === 'Just') {
 									var a = _v8.a;
 									return _Utils_Tuple2(
@@ -11856,7 +11886,7 @@ var $author$project$Main$update = F2(
 										$elm$core$Platform$Cmd$none);
 								}
 							case 2:
-								var _v9 = model.randomString;
+								var _v9 = seat.randomString;
 								if (_v9.$ === 'Just') {
 									var a = _v9.a;
 									return _Utils_Tuple2(
@@ -11876,7 +11906,7 @@ var $author$project$Main$update = F2(
 										$elm$core$Platform$Cmd$none);
 								}
 							case 3:
-								var _v10 = model.randomString;
+								var _v10 = seat.randomString;
 								if (_v10.$ === 'Just') {
 									var a = _v10.a;
 									return _Utils_Tuple2(
@@ -11896,7 +11926,7 @@ var $author$project$Main$update = F2(
 										$elm$core$Platform$Cmd$none);
 								}
 							case 4:
-								var _v11 = model.randomString;
+								var _v11 = seat.randomString;
 								if (_v11.$ === 'Just') {
 									var a = _v11.a;
 									return _Utils_Tuple2(
@@ -11916,7 +11946,7 @@ var $author$project$Main$update = F2(
 										$elm$core$Platform$Cmd$none);
 								}
 							default:
-								var _v12 = model.randomString;
+								var _v12 = seat.randomString;
 								if (_v12.$ === 'Just') {
 									var a = _v12.a;
 									return _Utils_Tuple2(
@@ -11991,12 +12021,12 @@ var $author$project$Main$update = F2(
 					}
 				case 'GotRandomValues':
 					var randomValues = msg.a;
+					var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
 					var seatNHM = function (a) {
 						return _Utils_update(
 							a,
-							{hidden: false, modal: false, name: 'Random_Person.png'});
+							{active: true, hidden: false, modal: false, name: 'Random_Person.png', randomString: randomStr});
 					};
-					var randomStr = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomIndex, model.person_list);
 					var randomSeat = A2($elm_community$list_extra$List$Extra$getAt, randomValues.randomSeat, model.seat_list);
 					if (randomStr.$ === 'Just') {
 						var b = randomStr.a;
@@ -12008,7 +12038,6 @@ var $author$project$Main$update = F2(
 									{
 										nextSeat: 0,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-										randomString: randomStr,
 										seat1: seatNHM(model.seat1),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
@@ -12020,7 +12049,6 @@ var $author$project$Main$update = F2(
 									{
 										nextSeat: 1,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-										randomString: randomStr,
 										seat2: seatNHM(model.seat2),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
@@ -12032,7 +12060,6 @@ var $author$project$Main$update = F2(
 									{
 										nextSeat: 2,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-										randomString: randomStr,
 										seat3: seatNHM(model.seat3),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
@@ -12044,7 +12071,6 @@ var $author$project$Main$update = F2(
 									{
 										nextSeat: 3,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-										randomString: randomStr,
 										seat4: seatNHM(model.seat4),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
@@ -12056,7 +12082,6 @@ var $author$project$Main$update = F2(
 									{
 										nextSeat: 4,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-										randomString: randomStr,
 										seat5: seatNHM(model.seat5),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
@@ -12068,7 +12093,6 @@ var $author$project$Main$update = F2(
 									{
 										nextSeat: 0,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-										randomString: randomStr,
 										seat1: seatNHM(model.seat1),
 										seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
 										timeChoosen: !model.timeChoosen,
@@ -12082,7 +12106,6 @@ var $author$project$Main$update = F2(
 									{
 										nextSeat: 1,
 										person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
-										randomString: randomStr,
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
@@ -12092,7 +12115,7 @@ var $author$project$Main$update = F2(
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
-								{nextSeat: 1, randomString: randomStr, timeChoosen: !model.timeChoosen, userInput: '...'}),
+								{nextSeat: 1, timeChoosen: !model.timeChoosen, userInput: '...'}),
 							$elm$core$Platform$Cmd$none);
 					}
 				case 'Tick':
@@ -12473,8 +12496,143 @@ var $author$project$Main$update = F2(
 								dialogues: $elm$core$Maybe$Just(dialogues)
 							}),
 						$elm$core$Platform$Cmd$none);
-				default:
+				case 'FetchDialoguesFailure':
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				default:
+					var seat = msg.a;
+					var seatC = function (b) {
+						return _Utils_update(
+							b,
+							{conversation: b.conversation + 1});
+					};
+					var seatAM = function (c) {
+						return _Utils_update(
+							c,
+							{active: false, modal: false});
+					};
+					var nextDialogue = function (a) {
+						return _Utils_update(
+							a,
+							{
+								index: 0,
+								nextText: A2(
+									$author$project$Main$getNextText,
+									model,
+									seatC(seat)),
+								spokenText: ''
+							});
+					};
+					if (seat.conversation < 2) {
+						var _v23 = seat.id;
+						switch (_v23) {
+							case 0:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: nextDialogue(
+												seatC(seat))
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 1:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat2: nextDialogue(
+												seatC(seat))
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 2:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat3: nextDialogue(
+												seatC(seat))
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 3:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: nextDialogue(
+												seatC(seat))
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 4:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat5: nextDialogue(
+												seatC(seat))
+										}),
+									$elm$core$Platform$Cmd$none);
+							default:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: nextDialogue(
+												seatC(seat))
+										}),
+									$elm$core$Platform$Cmd$none);
+						}
+					} else {
+						var _v24 = seat.id;
+						switch (_v24) {
+							case 0:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: seatAM(seat)
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 1:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat2: seatAM(seat)
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 2:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat3: seatAM(seat)
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 3:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat4: seatAM(seat)
+										}),
+									$elm$core$Platform$Cmd$none);
+							case 4:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat5: seatAM(seat)
+										}),
+									$elm$core$Platform$Cmd$none);
+							default:
+								return _Utils_Tuple2(
+									_Utils_update(
+										model,
+										{
+											seat1: seatAM(seat)
+										}),
+									$elm$core$Platform$Cmd$none);
+						}
+					}
 			}
 		}
 	});
@@ -12486,6 +12644,9 @@ var $author$project$Main$GetInput2 = function (a) {
 };
 var $author$project$Main$NPCClicked = function (a) {
 	return {$: 'NPCClicked', a: a};
+};
+var $author$project$Main$NextDialogue = function (a) {
+	return {$: 'NextDialogue', a: a};
 };
 var $author$project$Main$RemoveNPC = function (a) {
 	return {$: 'RemoveNPC', a: a};
@@ -12727,7 +12888,8 @@ var $author$project$Main$view = function (model) {
 						A2($elm$html$Html$Attributes$style, 'border', 'none'),
 						A2($elm$html$Html$Attributes$style, 'padding', '0'),
 						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+						$elm$html$Html$Attributes$disabled(!model.seat1.active)
 					]),
 				_List_fromArray(
 					[
@@ -12849,6 +13011,7 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$Events$onClick(
 										$author$project$Main$RemoveNPC(model.seat1)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 										A2($elm$html$Html$Attributes$style, 'width', '50%'),
 										A2($elm$html$Html$Attributes$style, 'height', '10%'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
@@ -12859,6 +13022,24 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Gehen sie bitte!')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$NextDialogue(model.seat1)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'right', '0%')
+									]),
+								_List_fromArray(
+									[
+										(!model.seat1.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat1.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat1.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -12884,7 +13065,8 @@ var $author$project$Main$view = function (model) {
 						A2($elm$html$Html$Attributes$style, 'border', 'none'),
 						A2($elm$html$Html$Attributes$style, 'padding', '0'),
 						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+						$elm$html$Html$Attributes$disabled(!model.seat2.active)
 					]),
 				_List_fromArray(
 					[
@@ -13006,6 +13188,7 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$Events$onClick(
 										$author$project$Main$RemoveNPC(model.seat2)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 										A2($elm$html$Html$Attributes$style, 'width', '50%'),
 										A2($elm$html$Html$Attributes$style, 'height', '10%'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
@@ -13016,6 +13199,24 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Gehen sie bitte!')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$NextDialogue(model.seat2)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'right', '0%')
+									]),
+								_List_fromArray(
+									[
+										(!model.seat2.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat2.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat2.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -13041,7 +13242,8 @@ var $author$project$Main$view = function (model) {
 						A2($elm$html$Html$Attributes$style, 'border', 'none'),
 						A2($elm$html$Html$Attributes$style, 'padding', '0'),
 						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+						$elm$html$Html$Attributes$disabled(!model.seat3.active)
 					]),
 				_List_fromArray(
 					[
@@ -13163,6 +13365,7 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$Events$onClick(
 										$author$project$Main$RemoveNPC(model.seat3)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 										A2($elm$html$Html$Attributes$style, 'width', '50%'),
 										A2($elm$html$Html$Attributes$style, 'height', '10%'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
@@ -13173,6 +13376,24 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Gehen sie bitte!')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$NextDialogue(model.seat3)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'right', '0%')
+									]),
+								_List_fromArray(
+									[
+										(!model.seat3.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat3.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat3.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -13198,7 +13419,8 @@ var $author$project$Main$view = function (model) {
 						A2($elm$html$Html$Attributes$style, 'border', 'none'),
 						A2($elm$html$Html$Attributes$style, 'padding', '0'),
 						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+						$elm$html$Html$Attributes$disabled(!model.seat4.active)
 					]),
 				_List_fromArray(
 					[
@@ -13320,6 +13542,7 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$Events$onClick(
 										$author$project$Main$RemoveNPC(model.seat4)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 										A2($elm$html$Html$Attributes$style, 'width', '50%'),
 										A2($elm$html$Html$Attributes$style, 'height', '10%'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
@@ -13330,6 +13553,24 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Gehen sie bitte!')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$NextDialogue(model.seat4)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'right', '0%')
+									]),
+								_List_fromArray(
+									[
+										(!model.seat4.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat4.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat4.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -13355,7 +13596,8 @@ var $author$project$Main$view = function (model) {
 						A2($elm$html$Html$Attributes$style, 'border', 'none'),
 						A2($elm$html$Html$Attributes$style, 'padding', '0'),
 						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+						$elm$html$Html$Attributes$disabled(!model.seat5.active)
 					]),
 				_List_fromArray(
 					[
@@ -13477,6 +13719,7 @@ var $author$project$Main$view = function (model) {
 									[
 										$elm$html$Html$Events$onClick(
 										$author$project$Main$RemoveNPC(model.seat5)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 										A2($elm$html$Html$Attributes$style, 'width', '50%'),
 										A2($elm$html$Html$Attributes$style, 'height', '10%'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
@@ -13487,6 +13730,24 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Gehen sie bitte!')
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Main$NextDialogue(model.seat5)),
+										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+										A2($elm$html$Html$Attributes$style, 'width', '50%'),
+										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+										A2($elm$html$Html$Attributes$style, 'top', '90%'),
+										A2($elm$html$Html$Attributes$style, 'right', '0%')
+									]),
+								_List_fromArray(
+									[
+										(!model.seat5.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat5.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat5.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
 									]))
 							]))
 					])) : $elm$html$Html$text(''),
@@ -13629,4 +13890,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$element(
 	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Dialogue":{"args":[],"type":"Array.Array (Array.Array String.String)"},"Main.Dialogues":{"args":[],"type":"{ person1 : Main.Dialogue, person2 : Main.Dialogue, person3 : Main.Dialogue, person4 : Main.Dialogue }"},"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int }"},"Array.Tree":{"args":["a"],"type":"Elm.JsArray.JsArray (Array.Node a)"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"GetInput2":["String.String"],"TickMinute":["Time.Posix"],"SwitchOverlay":[],"FetchDialoguesSuccess":["Main.Dialogues"],"FetchDialoguesFailure":[]}},"Array.Array":{"args":["a"],"tags":{"Array_elm_builtin":["Basics.Int","Basics.Int","Array.Tree a","Elm.JsArray.JsArray a"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}},"Elm.JsArray.JsArray":{"args":["a"],"tags":{"JsArray":["a"]}},"Array.Node":{"args":["a"],"tags":{"SubTree":["Array.Tree a"],"Leaf":["Elm.JsArray.JsArray a"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Dialogue":{"args":[],"type":"Array.Array (Array.Array String.String)"},"Main.Dialogues":{"args":[],"type":"{ person1 : Main.Dialogue, person2 : Main.Dialogue, person3 : Main.Dialogue, person4 : Main.Dialogue }"},"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, randomString : Maybe.Maybe String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int, conversation : Basics.Int, active : Basics.Bool }"},"Array.Tree":{"args":["a"],"type":"Elm.JsArray.JsArray (Array.Node a)"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"GetInput2":["String.String"],"TickMinute":["Time.Posix"],"SwitchOverlay":[],"FetchDialoguesSuccess":["Main.Dialogues"],"FetchDialoguesFailure":[],"NextDialogue":["Main.Seat"]}},"Array.Array":{"args":["a"],"tags":{"Array_elm_builtin":["Basics.Int","Basics.Int","Array.Tree a","Elm.JsArray.JsArray a"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}},"Elm.JsArray.JsArray":{"args":["a"],"tags":{"JsArray":["a"]}},"Array.Node":{"args":["a"],"tags":{"SubTree":["Array.Tree a"],"Leaf":["Elm.JsArray.JsArray a"]}}}}})}});}(this));
