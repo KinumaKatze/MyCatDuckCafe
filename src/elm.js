@@ -11621,7 +11621,7 @@ var $author$project$Main$getNextText = F2(
 					var _v2 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v2.$ === 'Just') {
 						var a = _v2.a;
-						var _v3 = A2($elm$core$Array$get, 0, a);
+						var _v3 = A2($elm$core$Array$get, visitAmount, a);
 						if (_v3.$ === 'Just') {
 							var b = _v3.a;
 							return b;
@@ -11643,7 +11643,7 @@ var $author$project$Main$getNextText = F2(
 					var _v4 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v4.$ === 'Just') {
 						var a = _v4.a;
-						var _v5 = A2($elm$core$Array$get, 0, a);
+						var _v5 = A2($elm$core$Array$get, visitAmount, a);
 						if (_v5.$ === 'Just') {
 							var b = _v5.a;
 							return b;
@@ -11665,7 +11665,7 @@ var $author$project$Main$getNextText = F2(
 					var _v6 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v6.$ === 'Just') {
 						var a = _v6.a;
-						var _v7 = A2($elm$core$Array$get, 0, a);
+						var _v7 = A2($elm$core$Array$get, visitAmount, a);
 						if (_v7.$ === 'Just') {
 							var b = _v7.a;
 							return b;
@@ -11687,7 +11687,7 @@ var $author$project$Main$getNextText = F2(
 					var _v8 = A2($elm$core$Array$get, seat.conversation, newArray);
 					if (_v8.$ === 'Just') {
 						var a = _v8.a;
-						var _v9 = A2($elm$core$Array$get, 0, a);
+						var _v9 = A2($elm$core$Array$get, visitAmount, a);
 						if (_v9.$ === 'Just') {
 							var b = _v9.a;
 							return b;
@@ -11702,6 +11702,206 @@ var $author$project$Main$getNextText = F2(
 			}
 		} else {
 			return '';
+		}
+	});
+var $author$project$Main$getVistorList = F2(
+	function (model, seat) {
+		if (seat.conversation === 3) {
+			var _v0 = seat.name;
+			switch (_v0) {
+				case 'Person1.png':
+					return _List_fromArray(
+						[
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								0,
+								$elm$core$Array$fromList(model.visitTimes))) + 1,
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								1,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								2,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								3,
+								$elm$core$Array$fromList(model.visitTimes)))
+						]);
+				case 'Person2.png':
+					return _List_fromArray(
+						[
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								0,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								1,
+								$elm$core$Array$fromList(model.visitTimes))) + 1,
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								2,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								3,
+								$elm$core$Array$fromList(model.visitTimes)))
+						]);
+				case 'Person3.png':
+					return _List_fromArray(
+						[
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								0,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								1,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								2,
+								$elm$core$Array$fromList(model.visitTimes))) + 1,
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								3,
+								$elm$core$Array$fromList(model.visitTimes)))
+						]);
+				case 'Person4.png':
+					return _List_fromArray(
+						[
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								0,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								1,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								2,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								3,
+								$elm$core$Array$fromList(model.visitTimes))) + 1
+						]);
+				default:
+					return _List_fromArray(
+						[
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								0,
+								$elm$core$Array$fromList(model.visitTimes))) + 1,
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								1,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								2,
+								$elm$core$Array$fromList(model.visitTimes))),
+							A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							A2(
+								$elm$core$Array$get,
+								3,
+								$elm$core$Array$fromList(model.visitTimes)))
+						]);
+			}
+		} else {
+			return _List_fromArray(
+				[
+					A2(
+					$elm$core$Maybe$withDefault,
+					0,
+					A2(
+						$elm$core$Array$get,
+						0,
+						$elm$core$Array$fromList(model.visitTimes))),
+					A2(
+					$elm$core$Maybe$withDefault,
+					0,
+					A2(
+						$elm$core$Array$get,
+						1,
+						$elm$core$Array$fromList(model.visitTimes))),
+					A2(
+					$elm$core$Maybe$withDefault,
+					0,
+					A2(
+						$elm$core$Array$get,
+						2,
+						$elm$core$Array$fromList(model.visitTimes))),
+					A2(
+					$elm$core$Maybe$withDefault,
+					0,
+					A2(
+						$elm$core$Array$get,
+						3,
+						$elm$core$Array$fromList(model.visitTimes)))
+				]);
 		}
 	});
 var $elm$core$List$filter = F2(
@@ -12221,7 +12421,7 @@ var $author$project$Main$update = F2(
 					var seatClear = function (a) {
 						return _Utils_update(
 							a,
-							{hidden: true, id: 0, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''});
+							{conversation: 0, hidden: true, index: 0, modal: false, name: 'Random_Person.png', nextText: 'Next Text', spokenText: ''});
 					};
 					var _v16 = seat.id;
 					switch (_v16) {
@@ -12242,7 +12442,8 @@ var $author$project$Main$update = F2(
 											_List_fromArray(
 												[
 													$elm$core$String$fromInt(seat.id)
-												]))
+												])),
+										visitTimes: A2($author$project$Main$getVistorList, model, model.seat1)
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 1:
@@ -12262,7 +12463,8 @@ var $author$project$Main$update = F2(
 											_List_fromArray(
 												[
 													$elm$core$String$fromInt(seat.id)
-												]))
+												])),
+										visitTimes: A2($author$project$Main$getVistorList, model, model.seat2)
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 2:
@@ -12282,7 +12484,8 @@ var $author$project$Main$update = F2(
 											_List_fromArray(
 												[
 													$elm$core$String$fromInt(seat.id)
-												]))
+												])),
+										visitTimes: A2($author$project$Main$getVistorList, model, model.seat3)
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 3:
@@ -12302,7 +12505,8 @@ var $author$project$Main$update = F2(
 											_List_fromArray(
 												[
 													$elm$core$String$fromInt(seat.id)
-												]))
+												])),
+										visitTimes: A2($author$project$Main$getVistorList, model, model.seat4)
 									}),
 								$elm$core$Platform$Cmd$none);
 						case 4:
@@ -12322,7 +12526,8 @@ var $author$project$Main$update = F2(
 											_List_fromArray(
 												[
 													$elm$core$String$fromInt(seat.id)
-												]))
+												])),
+										visitTimes: A2($author$project$Main$getVistorList, model, model.seat5)
 									}),
 								$elm$core$Platform$Cmd$none);
 						default:
@@ -12342,7 +12547,8 @@ var $author$project$Main$update = F2(
 											_List_fromArray(
 												[
 													$elm$core$String$fromInt(seat.id)
-												]))
+												])),
+										visitTimes: A2($author$project$Main$getVistorList, model, model.seat1)
 									}),
 								$elm$core$Platform$Cmd$none);
 					}
@@ -12505,10 +12711,10 @@ var $author$project$Main$update = F2(
 							b,
 							{conversation: b.conversation + 1});
 					};
-					var seatAM = function (c) {
+					var seatAMC = function (c) {
 						return _Utils_update(
 							c,
-							{active: false, modal: false});
+							{active: false, conversation: c.conversation + 1, modal: false});
 					};
 					var nextDialogue = function (a) {
 						return _Utils_update(
@@ -12588,7 +12794,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: seatAM(seat)
+											seat1: seatAMC(seat)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 1:
@@ -12596,7 +12802,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat2: seatAM(seat)
+											seat2: seatAMC(seat)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 2:
@@ -12604,7 +12810,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat3: seatAM(seat)
+											seat3: seatAMC(seat)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 3:
@@ -12612,7 +12818,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat4: seatAM(seat)
+											seat4: seatAMC(seat)
 										}),
 									$elm$core$Platform$Cmd$none);
 							case 4:
@@ -12620,7 +12826,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat5: seatAM(seat)
+											seat5: seatAMC(seat)
 										}),
 									$elm$core$Platform$Cmd$none);
 							default:
@@ -12628,7 +12834,7 @@ var $author$project$Main$update = F2(
 									_Utils_update(
 										model,
 										{
-											seat1: seatAM(seat)
+											seat1: seatAMC(seat)
 										}),
 									$elm$core$Platform$Cmd$none);
 						}

@@ -243,7 +243,7 @@ getNextText model seat =
                     in 
                     case get seat.conversation newArray of 
                         Just a ->
-                            case get 0 a of 
+                            case get visitAmount a of 
                                 Just b ->
                                     b
                                 Nothing ->
@@ -257,7 +257,7 @@ getNextText model seat =
                     in 
                     case get seat.conversation newArray of 
                         Just a ->
-                            case get 0 a of 
+                            case get visitAmount a of 
                                 Just b ->
                                     b
                                 Nothing ->
@@ -271,7 +271,7 @@ getNextText model seat =
                     in 
                     case get seat.conversation newArray of 
                         Just a ->
-                            case get 0 a of 
+                            case get visitAmount a of 
                                 Just b ->
                                     b
                                 Nothing ->
@@ -285,7 +285,7 @@ getNextText model seat =
                     in 
                     case get seat.conversation newArray of 
                         Just a ->
-                            case get 0 a of 
+                            case get visitAmount a of 
                                 Just b ->
                                     b
                                 Nothing ->
@@ -296,6 +296,27 @@ getNextText model seat =
                    ""
         Nothing ->
             ""
+
+getVistorList: Model -> Seat -> List Int --Make new List for mode.visitTimes
+getVistorList model seat = 
+
+
+    if seat.conversation == 3 then 
+                case seat.name of 
+                    "Person1.png" -> 
+                        [withDefault 0 (get 0 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 1 (Array.fromList model.visitTimes)), withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
+                    "Person2.png" ->
+                        [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0 (get 1 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
+                    "Person3.png" -> 
+                        [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0(get 1 (Array.fromList model.visitTimes)), withDefault 0(get 2 (Array.fromList model.visitTimes)) + 1, withDefault 0(get 3 (Array.fromList model.visitTimes))]
+                    "Person4.png" ->
+                        [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0(get 1 (Array.fromList model.visitTimes)), withDefault 0(get 2 (Array.fromList model.visitTimes)), withDefault 0(get 3 (Array.fromList model.visitTimes)) + 1]
+                    _ -> 
+                        [withDefault 0 (get 0 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 1 (Array.fromList model.visitTimes)), withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
+            else 
+                [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0 (get 1 (Array.fromList model.visitTimes)), withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
+    
+
 
     
 --Update Funktionen
@@ -494,22 +515,21 @@ update msg model =
             let 
                 seatClear: Seat -> Seat 
                 seatClear a =
-                    {a | name = "Random_Person.png", hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0}
-
+                    {a | name = "Random_Person.png", hidden = True, modal = False, nextText = "Next Text", spokenText = "", index = 0, conversation = 0}
             in
             case seat.id of 
                         0 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1}, Cmd.none )
                         1 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = seatClear model.seat2}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = seatClear model.seat2, visitTimes = getVistorList model model.seat2}, Cmd.none )
                         2 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = seatClear model.seat3}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = seatClear model.seat3, visitTimes = getVistorList model model.seat3}, Cmd.none )
                         3 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = seatClear model.seat4}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = seatClear model.seat4, visitTimes = getVistorList model model.seat4}, Cmd.none )
                         4 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = seatClear model.seat5}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = seatClear model.seat5, visitTimes = getVistorList model model.seat5}, Cmd.none )
                         _ -> 
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1}, Cmd.none )
+                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1}, Cmd.none )
         
         GetInput input ->
             ({model | userInput = input}, Cmd.none )
@@ -585,9 +605,9 @@ update msg model =
                 nextDialogue a =
                     {a | nextText = getNextText model (seatC seat), spokenText = "", index = 0}
 
-                seatAM: Seat -> Seat 
-                seatAM c = 
-                    {c | active = False, modal = False}
+                seatAMC: Seat -> Seat 
+                seatAMC c = 
+                    {c | active = False, modal = False, conversation = c.conversation + 1}
 
             in
             if seat.conversation < 2 then
@@ -607,17 +627,17 @@ update msg model =
             else 
                  case seat.id of 
                     0 -> 
-                        ({model| seat1 = (seatAM seat)}, Cmd.none)
+                        ({model| seat1 = (seatAMC seat)}, Cmd.none)
                     1 -> 
-                        ({model| seat2 = (seatAM seat)}, Cmd.none)
+                        ({model| seat2 = (seatAMC seat)}, Cmd.none)
                     2 -> 
-                        ({model| seat3 = (seatAM seat)}, Cmd.none)
+                        ({model| seat3 = (seatAMC seat)}, Cmd.none)
                     3 -> 
-                        ({model| seat4 = (seatAM seat)}, Cmd.none)
+                        ({model| seat4 = (seatAMC seat)}, Cmd.none)
                     4 -> 
-                        ({model| seat5 = (seatAM seat)}, Cmd.none)
+                        ({model| seat5 = (seatAMC seat)}, Cmd.none)
                     _ -> 
-                        ({model| seat1 = (seatAM seat)}, Cmd.none)          
+                        ({model| seat1 = (seatAMC seat)}, Cmd.none)          
 -- SUBSCRIPTIONS
 
 port windowSize : (List Int -> msg) -> Sub msg
