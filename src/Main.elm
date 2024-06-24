@@ -84,13 +84,13 @@ init _ =
     10 
     10 
     True 
-    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
     0 
-    ["Person1.png","Person2.png","Person3.png","Person4.png"] 
+    ["/public/images/Person1.png","/public/images/Person2.png","/public/images/Person3.png","/public/images/Person4.png"] 
     ["0","1","2","3","4"]  
     False
     "..."
@@ -207,7 +207,7 @@ findIndex target arr =
 fetchDialogues : Cmd Msg
 fetchDialogues =
     Http.get
-        { url = "dialogues.json"
+        { url = "/public/data/dialogues.json"
         , expect = Http.expectJson handleFetchResult dialoguesDecoder
         }
 
@@ -236,7 +236,7 @@ getNextText model seat =
     case model.dialogues of 
         Just dialoge ->
             case seat.name of 
-                "Person1.png" ->
+                "/public/images/Person1.png" ->
                     let 
                         newArray = dialoge.person1
                         visitAmount = withDefault 0 (get 0 (Array.fromList model.visitTimes))
@@ -250,7 +250,7 @@ getNextText model seat =
                                     ""
                         Nothing ->
                             ""
-                "Person2.png" ->
+                "/public/images/Person2.png" ->
                     let 
                         newArray = dialoge.person2
                         visitAmount = withDefault 0 (get 1 (Array.fromList model.visitTimes))
@@ -264,7 +264,7 @@ getNextText model seat =
                                     ""
                         Nothing ->
                             ""
-                "Person3.png" ->
+                "/public/images/Person3.png" ->
                     let 
                         newArray = dialoge.person3
                         visitAmount = withDefault 0 (get 2 (Array.fromList model.visitTimes))
@@ -278,7 +278,7 @@ getNextText model seat =
                                     ""
                         Nothing ->
                             ""
-                "Person4.png" ->
+                "/public/images/Person4.png" ->
                     let 
                         newArray = dialoge.person4
                         visitAmount = withDefault 0 (get 3 (Array.fromList model.visitTimes))
@@ -303,13 +303,13 @@ getVistorList model seat =
 
     if seat.conversation == 3 then 
                 case seat.name of 
-                    "Person1.png" -> 
+                    "/public/images/Person1.png" -> 
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 1 (Array.fromList model.visitTimes)), withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
-                    "Person2.png" ->
+                    "/public/images/Person2.png" ->
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0 (get 1 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
-                    "Person3.png" -> 
+                    "/public/images/Person3.png" -> 
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0(get 1 (Array.fromList model.visitTimes)), withDefault 0(get 2 (Array.fromList model.visitTimes)) + 1, withDefault 0(get 3 (Array.fromList model.visitTimes))]
-                    "Person4.png" ->
+                    "/public/images/Person4.png" ->
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0(get 1 (Array.fromList model.visitTimes)), withDefault 0(get 2 (Array.fromList model.visitTimes)), withDefault 0(get 3 (Array.fromList model.visitTimes)) + 1]
                     _ -> 
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 1 (Array.fromList model.visitTimes)), withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
@@ -354,44 +354,44 @@ update msg model =
                 talkPerson c =
                     {c | modal = not c.modal, spokenText = "", index = 0, nextText = getNextText model seat}
             in
-                if seat.name == "Random_Person.png" then --Person wird zum enthülle angeklickt
+                if seat.name == "/public/images/Random_Person.png" then --Person wird zum enthülle angeklickt
                     case seat.id of 
                         0 ->
                             case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat1 = makeSeat model.seat1 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat1 = makeSeat model.seat1 "Random_Person.png" }, Cmd.none )
+                                    ( { model | seat1 = makeSeat model.seat1 "/public/images/Random_Person.png" }, Cmd.none )
                         1 ->
                             case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat2 = makeSeat model.seat2 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat2 = makeSeat model.seat2 "Random_Person.png" }, Cmd.none )
+                                    ( { model | seat2 = makeSeat model.seat2 "/public/images/Random_Person.png" }, Cmd.none )
                         2 ->
                             case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat3 = makeSeat model.seat3 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat3 = makeSeat model.seat3 "Random_Person.png" }, Cmd.none )
+                                    ( { model | seat3 = makeSeat model.seat3 "/public/images/Random_Person.png" }, Cmd.none )
                         3 ->
                             case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat4 = makeSeat model.seat4 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat4 = makeSeat model.seat4 "Random_Person.png" }, Cmd.none )
+                                    ( { model | seat4 = makeSeat model.seat4 "/public/images/Random_Person.png" }, Cmd.none )
                         4 ->
                             case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat5 = makeSeat model.seat5 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat5 = makeSeat model.seat5 "Random_Person.png" }, Cmd.none )
+                                    ( { model | seat5 = makeSeat model.seat5 "/public/images/Random_Person.png" }, Cmd.none )
                         _ -> 
                             case seat.randomString of 
                                 Just a -> 
                                     ( { model | seat1 = makeSeat model.seat1 a }, Cmd.none )
                                 Nothing ->
-                                    ( { model | seat1 = makeSeat model.seat1 "Random_Person.png" }, Cmd.none )
+                                    ( { model | seat1 = makeSeat model.seat1 "/public/images/Random_Person.png" }, Cmd.none )
 
                     else --Person wird zum sprechen angeklickt
 
@@ -419,7 +419,7 @@ update msg model =
 
                 seatNHM : Seat -> Seat
                 seatNHM a =
-                    {a | name = "Random_Person.png", hidden = False, modal = False, randomString = randomStr, active = True}
+                    {a | name = "/public/images/Random_Person.png", hidden = False, modal = False, randomString = randomStr, active = True}
             in
             case randomStr of 
                 Just b ->
@@ -515,7 +515,7 @@ update msg model =
             let 
                 seatClear: Seat -> Seat 
                 seatClear a =
-                    {a | name = "Random_Person.png", hidden = True, modal = False, nextText = "Next Text", spokenText = "", index = 0, conversation = 0}
+                    {a | name = "/public/images/Random_Person.png", hidden = True, modal = False, nextText = "Next Text", spokenText = "", index = 0, conversation = 0}
             in
             case seat.id of 
                         0 ->
@@ -661,7 +661,7 @@ view model =
         , Html.Attributes.style "height" "100%"
         ]
         [ img
-            [ src "Theke.gif"
+            [ src "/public/images/Theke.gif"
             , Html.Attributes.style "height" <| String.fromInt model.height ++ "px" 
             , Html.Attributes.style "width" <| String.fromInt model.width ++ "px" 
             ]
