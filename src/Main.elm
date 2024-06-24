@@ -35,6 +35,7 @@ type alias Seat =
     , index : Int -- Für Dialoge abspielen
     , conversation : Int --Punkt der Konversation
     , active : Bool
+    , waiting : Int
     }
 
 type alias RandomValues =
@@ -84,11 +85,11 @@ init _ =
     10 
     10 
     True 
-    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
-    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 0, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True, waiting = 0} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 1, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True, waiting = 0} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 2, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True, waiting = 0} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True, waiting = 0} 
+    {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True, waiting = 0} 
     0 
     ["/public/images/Person1.png","/public/images/Person2.png","/public/images/Person3.png","/public/images/Person4.png"] 
     ["0","1","2","3","4"]  
@@ -115,6 +116,7 @@ type Msg
     | GetInput String
     | GetInput2 String
     | TickMinute Posix
+    | TickWaiting Posix
     | SwitchOverlay
     | FetchDialoguesSuccess Dialogues
     | FetchDialoguesFailure
@@ -515,7 +517,7 @@ update msg model =
             let 
                 seatClear: Seat -> Seat 
                 seatClear a =
-                    {a | name = "/public/images/Random_Person.png", hidden = True, modal = False, nextText = "Next Text", spokenText = "", index = 0, conversation = 0}
+                    {a | name = "/public/images/Random_Person.png", hidden = True, modal = False, nextText = "Next Text", spokenText = "", index = 0, conversation = 0, active = True}
             in
             case seat.id of 
                         0 ->
@@ -544,7 +546,7 @@ update msg model =
                     raw = String.toInt model.userInput
                     targetTime =  Maybe.withDefault 0 raw
                     timeWorked = targetTime - model.time
-                    index = findIndex model.userInput2 model.arbeiten
+                    index = findIndex model.userInput2 model.arbeiten           
             in
             if model.timeChoosen && newTime /= 0 then
                 ({ model | time = model.time - 1 }, Cmd.none )
@@ -564,6 +566,32 @@ update msg model =
                         ({ model | daten = Array.set 0 (a + 1) model.daten }, Cmd.none )
                     Nothing ->
                         (model, Cmd.none)
+
+        TickWaiting _ -> 
+            let 
+                newTime1 = Basics.max -30 (model.seat1.waiting - 1)
+                newTime2 = Basics.max -30 (model.seat2.waiting - 1)
+                newTime3 = Basics.max -30 (model.seat3.waiting - 1)
+                newTime4 = Basics.max -30 (model.seat4.waiting - 1)
+                newTime5 = Basics.max -30 (model.seat5.waiting - 1)
+
+                updateTime: Seat -> Int -> Seat 
+                updateTime seat time = 
+                    {seat | waiting = time}
+            in 
+            if newTime1 == 0 && model.seat1.active == False then 
+                update (RemoveNPC model.seat1) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+            else if newTime2 == 0 && model.seat2.active == False then 
+                update (RemoveNPC model.seat2) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+            else if newTime3 == 0 && model.seat3.active == False then 
+                update (RemoveNPC model.seat3) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+            else if newTime4 == 0 && model.seat4.active == False then 
+                update (RemoveNPC model.seat4) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+            else if newTime5 == 0 && model.seat5.active == False then 
+                update (RemoveNPC model.seat5) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+            else 
+                ({model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}, Cmd.none)
+                
 
         SwitchOverlay ->
             if model.timeChoosen then
@@ -605,9 +633,9 @@ update msg model =
                 nextDialogue a =
                     {a | nextText = getNextText model (seatC seat), spokenText = "", index = 0}
 
-                seatAMC: Seat -> Seat 
-                seatAMC c = 
-                    {c | active = False, modal = False, conversation = c.conversation + 1}
+                seatAMCT: Seat -> Seat 
+                seatAMCT c = 
+                    {c | active = False, modal = False, conversation = c.conversation + 1, waiting = 30}
 
             in
             if seat.conversation < 2 then
@@ -627,17 +655,17 @@ update msg model =
             else 
                  case seat.id of 
                     0 -> 
-                        ({model| seat1 = (seatAMC seat)}, Cmd.none)
+                        ({model| seat1 = (seatAMCT seat)}, Cmd.none)
                     1 -> 
-                        ({model| seat2 = (seatAMC seat)}, Cmd.none)
+                        ({model| seat2 = (seatAMCT seat)}, Cmd.none)
                     2 -> 
-                        ({model| seat3 = (seatAMC seat)}, Cmd.none)
+                        ({model| seat3 = (seatAMCT seat)}, Cmd.none)
                     3 -> 
-                        ({model| seat4 = (seatAMC seat)}, Cmd.none)
+                        ({model| seat4 = (seatAMCT seat)}, Cmd.none)
                     4 -> 
-                        ({model| seat5 = (seatAMC seat)}, Cmd.none)
+                        ({model| seat5 = (seatAMCT seat)}, Cmd.none)
                     _ -> 
-                        ({model| seat1 = (seatAMC seat)}, Cmd.none)          
+                        ({model| seat1 = (seatAMCT seat)}, Cmd.none)          
 -- SUBSCRIPTIONS
 
 port windowSize : (List Int -> msg) -> Sub msg
@@ -647,6 +675,7 @@ subscriptions model =
     Sub.batch
     [Time.every 50 Tick --Gespräche
     ,Time.every (60 * 1000) TickMinute --Minuten Timer
+    ,Time.every (60 * 1000) TickWaiting --Waiting Timer Update
     ,windowSize WindowResized --Bildschirmgröße
     ]
 
