@@ -1,35 +1,53 @@
 {
     "person1": [
         [
-            "Hello darling! What a lovely little cafe you have here. I live right down the road, so your little cafe here was right on my way back home. I have to say, today really drained me, between my job and family there is very little me time. "
+            "Hello darling! What a lovely little cafe you have here. I live right down the road, so your little cafe here was right on my way back home. I have to say, today really drained me, between my job and family there is very little me time. ",
+            "Hello darling! I really enjoyed your little cafe last time. And since you're on my way back home i thought i might pay you another visit. Last time really helped me to relax between my job and my family.",
+            "Hello darling! My boss made me take my vacation next week. So i thought i might pay you another visit to 'celebrate' the start of my vacation. Oh dear. What am i supposed to do without my work?"
         ],
         [
-            "Do you happen to have some tea for me? Not the gossip kind, this time around *chuckles*. You wouldn't believe how much gossip i listen to at work. Sorry, back to the order. May i have some green tea, with a little bit of milk?"
+            "Do you happen to have some tea for me? Not the gossip kind, this time around *chuckles*. You wouldn't believe how much gossip i listen to at work. Sorry, back to the order. May i have some green tea, with a little bit of milk?",
+            "I really liked your green tea the other day. My coworker babbled about how one should always look for new adventures today. All. Day. Long. I just can't anymore. But i guess it means that i should try something new today. So... let's return to my order. Do you happen to have black tea? I would take that with a little bit of milk.",
+            "I think me taking my vacation is enough new things to try. I enjoyed your black tea the most. Bring me one of that please. I can't take any more today. And remember my splash of milk please!"
         ],
         [
-            "Thank you darling. This will replenish my soul, it smells very nice!"
+            "Thank you darling. This will replenish my soul, it smells very nice!",
+            "Thank you darling. I think this is just what i needed!",
+            "Thank you darling. Now i can think about what i am supposed to do next week."
         ]
     ],
     "person2": [
         [
-            "*incomprehensible mumbling* ah could i have ... a ... hello first ... good day to you ... sorry i am a bit tired."
+            "*incomprehensible mumbling* ah could i have ... a ... hello first ... good day to you ... sorry i am a bit tired.",
+            "*startled noise* sorry ... i didn't notice you there ... uhm hello ... i guess i should have expected you coming here to take my order.",
+            "yawning* hey ... i am more awake today than the ... last days ... that's good, right?"
         ],
         [
-            "Do you make some good black coffee? I am kinda picky about it ... just lots of caffein would be nice ..."
+            "Do you make some good black coffee? I am kinda picky about it ... just lots of caffein would be nice ...",
+            "I think i need lots of espresso today ... can you make that? I need ... lots of caffein ...",
+            "Considering my 'awakeness' today i think i'll order ... a cappuccino ... yes that should do it ..."
         ],
         [
-            "Thanks a lot. It actually looks quite nice ... smells nice ... sorry i am still kinda beyond myself."
+            "Thanks a lot. It actually looks quite nice ... smells nice ... sorry i am still kinda beyond myself.",
+            "Thank you ... it smells really good ... i might need a second one though ... thanks.",
+            "Thanks ... but i'm getting tired ... maybe i should've ordered a black coffee ... but still, thanks."
         ]
     ],
     "person3": [
         [
-            "Meow? *coughts* Hello, i might not look like it but i am part of a pirat crew! And this crew is scouting this city for the best cafe around! I put high hopes into you!"
+            "Meow? *coughs* Hello, i might not look like it but i am part of a pirat crew! And this crew is scouting this city for the best cafe around! I put high hopes into you!",
+            "Hello buddy! Today i am here to annouce you got to the next round! The crew really enjoyed your last coffe! Meow!",
+            "There is my favorite almost-pirate again. I'm back so you definetly made last round. Some of my pirates already bet on you winning! Meow included!"
         ],
         [
-            "As Part of my first test, i would like to try the most basic brew you can make! With LOTS of MILK!"
+            "As Part of my first test, i would like to try the most basic brew you can make! With LOTS of MILK!",
+            "You will now take part in the second test. I would like to try one of your more advanced brews! And remember: LOTS OF MILK!",
+            "The third test isn't an easy one! I want to order a cappuccino with milk art on top! Something that screams pirate! And LOTS of milk!"
         ],
         [
-            "Meow meow! You might have a chance. This brew souds very calm and full of energy! Just what a pirat needs!"
+            "Meow meow! You might have a chance. This brew sounds very calm and full of energy! Just what a pirat needs!",
+            "Oh meow! That's good! I have a meowing you'll get to the next round! I'm sure i'll board your cafe again!",
+            "Thats fabulous! I need to show that to my other pirates. Let's just hope it also tastes good. Meow you!"
         ]
     ],
     "person4": [
