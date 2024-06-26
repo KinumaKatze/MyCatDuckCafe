@@ -5174,6 +5174,12 @@ function _Time_getZoneName()
 		callback(_Scheduler_succeed(name));
 	});
 }
+var $author$project$Main$Empty = function (a) {
+	return {$: 'Empty', a: a};
+};
+var $author$project$Main$UrlChanged = function (a) {
+	return {$: 'UrlChanged', a: a};
+};
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
@@ -10774,48 +10780,7 @@ var $elm$core$Basics$never = function (_v0) {
 		continue never;
 	}
 };
-var $elm$browser$Browser$element = _Browser_element;
-var $author$project$Main$Model = function (width) {
-	return function (height) {
-		return function (hidden) {
-			return function (seat1) {
-				return function (seat2) {
-					return function (seat3) {
-						return function (seat4) {
-							return function (seat5) {
-								return function (nextSeat) {
-									return function (person_list) {
-										return function (seat_list) {
-											return function (showModal) {
-												return function (userInput) {
-													return function (userInput2) {
-														return function (timeChoosen) {
-															return function (time) {
-																return function (daten) {
-																	return function (arbeiten) {
-																		return function (dialogues) {
-																			return function (visitTimes) {
-																				return {arbeiten: arbeiten, daten: daten, dialogues: dialogues, height: height, hidden: hidden, nextSeat: nextSeat, person_list: person_list, seat1: seat1, seat2: seat2, seat3: seat3, seat4: seat4, seat5: seat5, seat_list: seat_list, showModal: showModal, time: time, timeChoosen: timeChoosen, userInput: userInput, userInput2: userInput2, visitTimes: visitTimes, width: width};
-																			};
-																		};
-																	};
-																};
-															};
-														};
-													};
-												};
-											};
-										};
-									};
-								};
-							};
-						};
-					};
-				};
-			};
-		};
-	};
-};
+var $elm$browser$Browser$application = _Browser_application;
 var $author$project$Main$Dialogues = F4(
 	function (person1, person2, person3, person4) {
 		return {person1: person1, person2: person2, person3: person3, person4: person4};
@@ -11110,28 +11075,101 @@ var $author$project$Main$fetchDialogues = $elm$http$Http$get(
 		expect: A2($elm$http$Http$expectJson, $author$project$Main$handleFetchResult, $author$project$Main$dialoguesDecoder),
 		url: '/public/data/dialogues.json'
 	});
-var $author$project$Main$init = function (_v0) {
-	return _Utils_Tuple2(
-		$author$project$Main$Model(10)(10)(true)(
-			{active: true, conversation: 0, hidden: true, id: 0, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0})(
-			{active: true, conversation: 0, hidden: true, id: 1, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0})(
-			{active: true, conversation: 0, hidden: true, id: 2, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0})(
-			{active: true, conversation: 0, hidden: true, id: 3, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0})(
-			{active: true, conversation: 0, hidden: true, id: 4, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0})(0)(
-			_List_fromArray(
-				['/public/images/Person1.png', '/public/images/Person2.png', '/public/images/Person3.png', '/public/images/Person4.png']))(
-			_List_fromArray(
-				['0', '1', '2', '3', '4']))(false)('...')('...')(false)(0)(
-			$elm$core$Array$fromList(
-				_List_fromArray(
-					[0])))(
-			$elm$core$Array$fromList(
-				_List_fromArray(
-					['Pause'])))($elm$core$Maybe$Nothing)(
-			_List_fromArray(
-				[0, 0, 0, 0])),
-		$author$project$Main$fetchDialogues);
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
 };
+var $elm$core$String$toFloat = _String_toFloat;
+var $author$project$Main$init = F3(
+	function (flags, url, key) {
+		var defaultModel = {
+			arbeiten: $elm$core$Array$fromList(
+				_List_fromArray(
+					['Pause'])),
+			daten: $elm$core$Array$fromList(
+				_List_fromArray(
+					[0])),
+			dialogues: $elm$core$Maybe$Nothing,
+			height: 10,
+			hidden: true,
+			key: key,
+			nextSeat: 0,
+			person_list: _List_fromArray(
+				['/public/images/Person1.png', '/public/images/Person2.png', '/public/images/Person3.png', '/public/images/Person4.png']),
+			seat1: {active: true, conversation: 0, hidden: true, id: 0, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
+			seat2: {active: true, conversation: 0, hidden: true, id: 1, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
+			seat3: {active: true, conversation: 0, hidden: true, id: 2, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
+			seat4: {active: true, conversation: 0, hidden: true, id: 3, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
+			seat5: {active: true, conversation: 0, hidden: true, id: 4, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
+			seat_list: _List_fromArray(
+				['0', '1', '2', '3', '4']),
+			showModal: false,
+			time: 0,
+			timeChoosen: false,
+			userInput: '...',
+			userInput2: '...',
+			visitTimes: _List_fromArray(
+				[0, 0, 0, 0]),
+			width: 10
+		};
+		var model = function () {
+			var _v0 = url.fragment;
+			if (_v0.$ === 'Just') {
+				var fragment = _v0.a;
+				var fragments = A2($elm$core$String$split, '#', fragment);
+				var subjects = A2(
+					$elm$core$String$split,
+					'-',
+					A2(
+						$elm$core$Maybe$withDefault,
+						'',
+						$elm$core$List$head(fragments)));
+				var times = A2(
+					$elm$core$List$filterMap,
+					$elm$core$Basics$identity,
+					A2(
+						$elm$core$List$map,
+						$elm$core$String$toFloat,
+						A2(
+							$elm$core$String$split,
+							'-',
+							A2(
+								$elm$core$Maybe$withDefault,
+								'',
+								$elm$core$List$head(
+									A2($elm$core$List$drop, 1, fragments))))));
+				var visitorTimes = A2(
+					$elm$core$List$filterMap,
+					$elm$core$Basics$identity,
+					A2(
+						$elm$core$List$map,
+						$elm$core$String$toInt,
+						A2(
+							$elm$core$String$split,
+							'-',
+							A2(
+								$elm$core$Maybe$withDefault,
+								'',
+								$elm$core$List$head(
+									A2($elm$core$List$drop, 2, fragments))))));
+				return _Utils_update(
+					defaultModel,
+					{
+						arbeiten: $elm$core$Array$fromList(subjects),
+						daten: $elm$core$Array$fromList(times),
+						visitTimes: visitorTimes
+					});
+			} else {
+				return defaultModel;
+			}
+		}();
+		return _Utils_Tuple2(model, $author$project$Main$fetchDialogues);
+	});
 var $author$project$Main$Tick = function (a) {
 	return {$: 'Tick', a: a};
 };
@@ -11424,15 +11462,6 @@ var $elm$core$Array$append = F2(
 						bTree)));
 		}
 	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $author$project$Main$findIndex = F2(
 	function (target, arr) {
 		return $elm$core$List$head(
@@ -11976,6 +12005,30 @@ var $elm$core$Array$set = F3(
 			A4($elm$core$Array$setHelp, startShift, index, value, tree),
 			tail));
 	});
+var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $author$project$Main$updateUrl = function (model) {
+	var visitorTimesFragment = A2(
+		$elm$core$String$join,
+		'-',
+		A2($elm$core$List$map, $elm$core$String$fromInt, model.visitTimes));
+	var timesFragment = A2(
+		$elm$core$String$join,
+		'-',
+		A2(
+			$elm$core$List$map,
+			$elm$core$String$fromFloat,
+			$elm$core$Array$toList(model.daten)));
+	var subjectsFragment = A2(
+		$elm$core$String$join,
+		'-',
+		$elm$core$Array$toList(model.arbeiten));
+	var fragment = A2(
+		$elm$core$String$join,
+		'#',
+		_List_fromArray(
+			[subjectsFragment, timesFragment, visitorTimesFragment]));
+	return A2($elm$browser$Browser$Navigation$pushUrl, model.key, '/#' + fragment);
+};
 var $author$project$Main$update = F2(
 	function (msg, model) {
 		update:
@@ -12250,7 +12303,17 @@ var $author$project$Main$update = F2(
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
-								$elm$core$Platform$Cmd$none) : ((a === '1') ? _Utils_Tuple2(
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											nextSeat: 0,
+											person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+											seat1: seatNHM(model.seat1),
+											seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
+											timeChoosen: !model.timeChoosen,
+											userInput: '...'
+										}))) : ((a === '1') ? _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
@@ -12261,7 +12324,17 @@ var $author$project$Main$update = F2(
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
-								$elm$core$Platform$Cmd$none) : ((a === '2') ? _Utils_Tuple2(
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											nextSeat: 1,
+											person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+											seat2: seatNHM(model.seat2),
+											seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
+											timeChoosen: !model.timeChoosen,
+											userInput: '...'
+										}))) : ((a === '2') ? _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
@@ -12272,7 +12345,17 @@ var $author$project$Main$update = F2(
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
-								$elm$core$Platform$Cmd$none) : ((a === '3') ? _Utils_Tuple2(
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											nextSeat: 2,
+											person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+											seat3: seatNHM(model.seat3),
+											seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
+											timeChoosen: !model.timeChoosen,
+											userInput: '...'
+										}))) : ((a === '3') ? _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
@@ -12283,7 +12366,17 @@ var $author$project$Main$update = F2(
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
-								$elm$core$Platform$Cmd$none) : ((a === '4') ? _Utils_Tuple2(
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											nextSeat: 3,
+											person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+											seat4: seatNHM(model.seat4),
+											seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
+											timeChoosen: !model.timeChoosen,
+											userInput: '...'
+										}))) : ((a === '4') ? _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
@@ -12294,7 +12387,17 @@ var $author$project$Main$update = F2(
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
-								$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											nextSeat: 4,
+											person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+											seat5: seatNHM(model.seat5),
+											seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
+											timeChoosen: !model.timeChoosen,
+											userInput: '...'
+										}))) : _Utils_Tuple2(
 								_Utils_update(
 									model,
 									{
@@ -12305,7 +12408,17 @@ var $author$project$Main$update = F2(
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
-								$elm$core$Platform$Cmd$none)))));
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											nextSeat: 0,
+											person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+											seat1: seatNHM(model.seat1),
+											seat_list: A2($author$project$Main$removeWord, randomSeat, model.seat_list),
+											timeChoosen: !model.timeChoosen,
+											userInput: '...'
+										})))))));
 						} else {
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -12316,14 +12429,25 @@ var $author$project$Main$update = F2(
 										timeChoosen: !model.timeChoosen,
 										userInput: '...'
 									}),
-								$elm$core$Platform$Cmd$none);
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											nextSeat: 1,
+											person_list: A2($author$project$Main$removeWord, randomStr, model.person_list),
+											timeChoosen: !model.timeChoosen,
+											userInput: '...'
+										})));
 						}
 					} else {
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{nextSeat: 1, timeChoosen: !model.timeChoosen, userInput: '...'}),
-							$elm$core$Platform$Cmd$none);
+							$author$project$Main$updateUrl(
+								_Utils_update(
+									model,
+									{nextSeat: 1, timeChoosen: !model.timeChoosen, userInput: '...'})));
 					}
 				case 'Tick':
 					var newTime = msg.a;
@@ -12452,7 +12576,25 @@ var $author$project$Main$update = F2(
 												])),
 										visitTimes: A2($author$project$Main$getVistorList, model, model.seat1)
 									}),
-								$elm$core$Platform$Cmd$none);
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											person_list: A2(
+												$elm$core$List$append,
+												model.person_list,
+												_List_fromArray(
+													[seat.name])),
+											seat1: seatClear(model.seat1),
+											seat_list: A2(
+												$elm$core$List$append,
+												model.seat_list,
+												_List_fromArray(
+													[
+														$elm$core$String$fromInt(seat.id)
+													])),
+											visitTimes: A2($author$project$Main$getVistorList, model, model.seat1)
+										})));
 						case 1:
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -12473,7 +12615,25 @@ var $author$project$Main$update = F2(
 												])),
 										visitTimes: A2($author$project$Main$getVistorList, model, model.seat2)
 									}),
-								$elm$core$Platform$Cmd$none);
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											person_list: A2(
+												$elm$core$List$append,
+												model.person_list,
+												_List_fromArray(
+													[seat.name])),
+											seat2: seatClear(model.seat2),
+											seat_list: A2(
+												$elm$core$List$append,
+												model.seat_list,
+												_List_fromArray(
+													[
+														$elm$core$String$fromInt(seat.id)
+													])),
+											visitTimes: A2($author$project$Main$getVistorList, model, model.seat2)
+										})));
 						case 2:
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -12494,7 +12654,25 @@ var $author$project$Main$update = F2(
 												])),
 										visitTimes: A2($author$project$Main$getVistorList, model, model.seat3)
 									}),
-								$elm$core$Platform$Cmd$none);
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											person_list: A2(
+												$elm$core$List$append,
+												model.person_list,
+												_List_fromArray(
+													[seat.name])),
+											seat3: seatClear(model.seat3),
+											seat_list: A2(
+												$elm$core$List$append,
+												model.seat_list,
+												_List_fromArray(
+													[
+														$elm$core$String$fromInt(seat.id)
+													])),
+											visitTimes: A2($author$project$Main$getVistorList, model, model.seat3)
+										})));
 						case 3:
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -12515,7 +12693,25 @@ var $author$project$Main$update = F2(
 												])),
 										visitTimes: A2($author$project$Main$getVistorList, model, model.seat4)
 									}),
-								$elm$core$Platform$Cmd$none);
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											person_list: A2(
+												$elm$core$List$append,
+												model.person_list,
+												_List_fromArray(
+													[seat.name])),
+											seat4: seatClear(model.seat4),
+											seat_list: A2(
+												$elm$core$List$append,
+												model.seat_list,
+												_List_fromArray(
+													[
+														$elm$core$String$fromInt(seat.id)
+													])),
+											visitTimes: A2($author$project$Main$getVistorList, model, model.seat4)
+										})));
 						case 4:
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -12536,7 +12732,25 @@ var $author$project$Main$update = F2(
 												])),
 										visitTimes: A2($author$project$Main$getVistorList, model, model.seat5)
 									}),
-								$elm$core$Platform$Cmd$none);
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											person_list: A2(
+												$elm$core$List$append,
+												model.person_list,
+												_List_fromArray(
+													[seat.name])),
+											seat5: seatClear(model.seat5),
+											seat_list: A2(
+												$elm$core$List$append,
+												model.seat_list,
+												_List_fromArray(
+													[
+														$elm$core$String$fromInt(seat.id)
+													])),
+											visitTimes: A2($author$project$Main$getVistorList, model, model.seat5)
+										})));
 						default:
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -12557,7 +12771,25 @@ var $author$project$Main$update = F2(
 												])),
 										visitTimes: A2($author$project$Main$getVistorList, model, model.seat1)
 									}),
-								$elm$core$Platform$Cmd$none);
+								$author$project$Main$updateUrl(
+									_Utils_update(
+										model,
+										{
+											person_list: A2(
+												$elm$core$List$append,
+												model.person_list,
+												_List_fromArray(
+													[seat.name])),
+											seat1: seatClear(model.seat1),
+											seat_list: A2(
+												$elm$core$List$append,
+												model.seat_list,
+												_List_fromArray(
+													[
+														$elm$core$String$fromInt(seat.id)
+													])),
+											visitTimes: A2($author$project$Main$getVistorList, model, model.seat1)
+										})));
 					}
 				case 'GetInput':
 					var input = msg.a;
@@ -12636,7 +12868,12 @@ var $author$project$Main$update = F2(
 										{
 											daten: A3($elm$core$Array$set, 0, a + 1, model.daten)
 										}),
-									$elm$core$Platform$Cmd$none);
+									$author$project$Main$updateUrl(
+										_Utils_update(
+											model,
+											{
+												daten: A3($elm$core$Array$set, 0, a + 1, model.daten)
+											})));
 							} else {
 								return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 							}
@@ -12814,7 +13051,7 @@ var $author$project$Main$update = F2(
 						$elm$core$Platform$Cmd$none);
 				case 'FetchDialoguesFailure':
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
-				default:
+				case 'NextDialogue':
 					var seat = msg.a;
 					var seatC = function (b) {
 						return _Utils_update(
@@ -12949,6 +13186,63 @@ var $author$project$Main$update = F2(
 									$elm$core$Platform$Cmd$none);
 						}
 					}
+				case 'UrlChanged':
+					var url = msg.a;
+					var modelNew = function () {
+						var _v25 = url.fragment;
+						if (_v25.$ === 'Just') {
+							var fragment = _v25.a;
+							var fragments = A2($elm$core$String$split, '#', fragment);
+							var subjects = A2(
+								$elm$core$String$split,
+								'-',
+								A2(
+									$elm$core$Maybe$withDefault,
+									'',
+									$elm$core$List$head(fragments)));
+							var times = A2(
+								$elm$core$List$filterMap,
+								$elm$core$Basics$identity,
+								A2(
+									$elm$core$List$map,
+									$elm$core$String$toFloat,
+									A2(
+										$elm$core$String$split,
+										'-',
+										A2(
+											$elm$core$Maybe$withDefault,
+											'',
+											$elm$core$List$head(
+												A2($elm$core$List$drop, 1, fragments))))));
+							var visitorTimes = A2(
+								$elm$core$List$filterMap,
+								$elm$core$Basics$identity,
+								A2(
+									$elm$core$List$map,
+									$elm$core$String$toInt,
+									A2(
+										$elm$core$String$split,
+										'-',
+										A2(
+											$elm$core$Maybe$withDefault,
+											'',
+											$elm$core$List$head(
+												A2($elm$core$List$drop, 2, fragments))))));
+							return _Utils_update(
+								model,
+								{
+									arbeiten: $elm$core$Array$fromList(subjects),
+									daten: $elm$core$Array$fromList(times),
+									visitTimes: visitorTimes
+								});
+						} else {
+							return model;
+						}
+					}();
+					return _Utils_Tuple2(modelNew, $elm$core$Platform$Cmd$none);
+				default:
+					var p = msg.a;
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 			}
 		}
 	});
@@ -13152,57 +13446,18 @@ var $elm$html$Html$Attributes$src = function (url) {
 var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
 var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
 var $author$project$Main$view = function (model) {
-	return A2(
-		$elm$html$Html$div,
-		_List_fromArray(
-			[
-				A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
-				A2($elm$html$Html$Attributes$style, 'top', '0'),
-				A2($elm$html$Html$Attributes$style, 'left', '0'),
-				A2($elm$html$Html$Attributes$style, 'width', '100%'),
-				A2($elm$html$Html$Attributes$style, 'height', '100%')
-			]),
-		_List_fromArray(
+	return {
+		body: _List_fromArray(
 			[
 				A2(
-				$elm$html$Html$img,
+				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$src('/public/images/Theke.gif'),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'height',
-						$elm$core$String$fromInt(model.height) + 'px'),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'width',
-						$elm$core$String$fromInt(model.width) + 'px')
-					]),
-				_List_Nil),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(model.seat1)),
-						model.seat1.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'width',
-						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'height',
-						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-						A2($elm$html$Html$Attributes$style, 'left', '1.4%'),
-						A2($elm$html$Html$Attributes$style, 'background', 'none'),
-						A2($elm$html$Html$Attributes$style, 'border', 'none'),
-						A2($elm$html$Html$Attributes$style, 'padding', '0'),
-						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-						$elm$html$Html$Attributes$disabled(!model.seat1.active)
+						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+						A2($elm$html$Html$Attributes$style, 'top', '0'),
+						A2($elm$html$Html$Attributes$style, 'left', '0'),
+						A2($elm$html$Html$Attributes$style, 'width', '100%'),
+						A2($elm$html$Html$Attributes$style, 'height', '100%')
 					]),
 				_List_fromArray(
 					[
@@ -13210,34 +13465,24 @@ var $author$project$Main$view = function (model) {
 						$elm$html$Html$img,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(model.seat1.name),
+								$elm$html$Html$Attributes$src('/public/images/Theke.gif'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'height',
+								$elm$core$String$fromInt(model.height) + 'px'),
+								A2(
+								$elm$html$Html$Attributes$style,
+								'width',
+								$elm$core$String$fromInt(model.width) + 'px')
+							]),
+						_List_Nil),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onClick(
+								$author$project$Main$NPCClicked(model.seat1)),
 								model.seat1.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
-								A2($elm$html$Html$Attributes$style, 'width', '100%'),
-								A2($elm$html$Html$Attributes$style, 'height', '100%')
-							]),
-						_List_Nil)
-					])),
-				model.seat1.modal ? A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0'),
-						A2($elm$html$Html$Attributes$style, 'width', '100%'),
-						A2($elm$html$Html$Attributes$style, 'height', '100%'),
-						A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-						A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '2')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
 								A2(
 								$elm$html$Html$Attributes$style,
 								'width',
@@ -13249,172 +13494,172 @@ var $author$project$Main$view = function (model) {
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
 								A2($elm$html$Html$Attributes$style, 'left', '1.4%'),
-								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
+								A2($elm$html$Html$Attributes$style, 'background', 'none'),
+								A2($elm$html$Html$Attributes$style, 'border', 'none'),
+								A2($elm$html$Html$Attributes$style, 'padding', '0'),
+								A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								$elm$html$Html$Attributes$disabled(!model.seat1.active)
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$img,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NPCClicked(model.seat1)),
+										$elm$html$Html$Attributes$src(model.seat1.name),
+										model.seat1.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 										A2($elm$html$Html$Attributes$style, 'width', '100%'),
-										A2($elm$html$Html$Attributes$style, 'height', '100%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'background', 'none'),
-										A2($elm$html$Html$Attributes$style, 'border', 'none'),
-										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'position', 'relative')
+										A2($elm$html$Html$Attributes$style, 'height', '100%')
 									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$img,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$src(model.seat1.name),
-												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%'),
-												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
-											]),
-										_List_Nil)
-									]))
+								_List_Nil)
 							])),
-						A2(
+						model.seat1.modal ? A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'width',
-								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'height',
-								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
-								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
-								A2($elm$html$Html$Attributes$style, 'left', '1.4%'),
-								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+								A2($elm$html$Html$Attributes$style, 'top', '0'),
+								A2($elm$html$Html$Attributes$style, 'left', '0'),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%'),
 								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
-								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
 								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '2')
 							]),
 						_List_fromArray(
 							[
 								A2(
 								$elm$html$Html$div,
-								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(model.seat1.spokenText)
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$RemoveNPC(model.seat1)),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'left', '0%')
+										A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
+										A2($elm$html$Html$Attributes$style, 'left', '1.4%'),
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+										A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Gehen sie bitte!')
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NPCClicked(model.seat1)),
+												A2($elm$html$Html$Attributes$style, 'width', '100%'),
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'background', 'none'),
+												A2($elm$html$Html$Attributes$style, 'border', 'none'),
+												A2($elm$html$Html$Attributes$style, 'padding', '0'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'position', 'relative')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$img,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$src(model.seat1.name),
+														A2($elm$html$Html$Attributes$style, 'width', '100%'),
+														A2($elm$html$Html$Attributes$style, 'height', '100%'),
+														A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+													]),
+												_List_Nil)
+											]))
 									])),
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NextDialogue(model.seat1)),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+										A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+										A2($elm$html$Html$Attributes$style, 'left', '1.4%'),
+										A2($elm$html$Html$Attributes$style, 'color', 'white'),
+										A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+										A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+										A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'right', '0%')
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
 									]),
 								_List_fromArray(
 									[
-										(!model.seat1.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat1.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat1.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(model.seat1.spokenText)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$RemoveNPC(model.seat1)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'left', '0%')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Gehen sie bitte!')
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NextDialogue(model.seat1)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'right', '0%')
+											]),
+										_List_fromArray(
+											[
+												(!model.seat1.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat1.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat1.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+											]))
 									]))
-							]))
-					])) : $elm$html$Html$text(''),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(model.seat2)),
-						model.seat2.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+							])) : $elm$html$Html$text(''),
 						A2(
-						$elm$html$Html$Attributes$style,
-						'width',
-						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'height',
-						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-						A2($elm$html$Html$Attributes$style, 'left', '21.5%'),
-						A2($elm$html$Html$Attributes$style, 'background', 'none'),
-						A2($elm$html$Html$Attributes$style, 'border', 'none'),
-						A2($elm$html$Html$Attributes$style, 'padding', '0'),
-						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-						$elm$html$Html$Attributes$disabled(!model.seat2.active)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$img,
+						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(model.seat2.name),
+								$elm$html$Html$Events$onClick(
+								$author$project$Main$NPCClicked(model.seat2)),
 								model.seat2.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
-								A2($elm$html$Html$Attributes$style, 'width', '100%'),
-								A2($elm$html$Html$Attributes$style, 'height', '100%')
-							]),
-						_List_Nil)
-					])),
-				model.seat2.modal ? A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0'),
-						A2($elm$html$Html$Attributes$style, 'width', '100%'),
-						A2($elm$html$Html$Attributes$style, 'height', '100%'),
-						A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-						A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '2')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
 								A2(
 								$elm$html$Html$Attributes$style,
 								'width',
@@ -13426,172 +13671,172 @@ var $author$project$Main$view = function (model) {
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
 								A2($elm$html$Html$Attributes$style, 'left', '21.5%'),
-								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
+								A2($elm$html$Html$Attributes$style, 'background', 'none'),
+								A2($elm$html$Html$Attributes$style, 'border', 'none'),
+								A2($elm$html$Html$Attributes$style, 'padding', '0'),
+								A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								$elm$html$Html$Attributes$disabled(!model.seat2.active)
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$img,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NPCClicked(model.seat2)),
+										$elm$html$Html$Attributes$src(model.seat2.name),
+										model.seat2.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 										A2($elm$html$Html$Attributes$style, 'width', '100%'),
-										A2($elm$html$Html$Attributes$style, 'height', '100%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'background', 'none'),
-										A2($elm$html$Html$Attributes$style, 'border', 'none'),
-										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'position', 'relative')
+										A2($elm$html$Html$Attributes$style, 'height', '100%')
 									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$img,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$src(model.seat2.name),
-												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%'),
-												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
-											]),
-										_List_Nil)
-									]))
+								_List_Nil)
 							])),
-						A2(
+						model.seat2.modal ? A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'width',
-								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'height',
-								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
-								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
-								A2($elm$html$Html$Attributes$style, 'left', '21.5%'),
-								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+								A2($elm$html$Html$Attributes$style, 'top', '0'),
+								A2($elm$html$Html$Attributes$style, 'left', '0'),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%'),
 								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
-								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
 								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '2')
 							]),
 						_List_fromArray(
 							[
 								A2(
 								$elm$html$Html$div,
-								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(model.seat2.spokenText)
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$RemoveNPC(model.seat2)),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'left', '0%')
+										A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
+										A2($elm$html$Html$Attributes$style, 'left', '21.5%'),
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+										A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Gehen sie bitte!')
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NPCClicked(model.seat2)),
+												A2($elm$html$Html$Attributes$style, 'width', '100%'),
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'background', 'none'),
+												A2($elm$html$Html$Attributes$style, 'border', 'none'),
+												A2($elm$html$Html$Attributes$style, 'padding', '0'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'position', 'relative')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$img,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$src(model.seat2.name),
+														A2($elm$html$Html$Attributes$style, 'width', '100%'),
+														A2($elm$html$Html$Attributes$style, 'height', '100%'),
+														A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+													]),
+												_List_Nil)
+											]))
 									])),
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NextDialogue(model.seat2)),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+										A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+										A2($elm$html$Html$Attributes$style, 'left', '21.5%'),
+										A2($elm$html$Html$Attributes$style, 'color', 'white'),
+										A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+										A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+										A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'right', '0%')
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
 									]),
 								_List_fromArray(
 									[
-										(!model.seat2.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat2.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat2.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(model.seat2.spokenText)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$RemoveNPC(model.seat2)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'left', '0%')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Gehen sie bitte!')
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NextDialogue(model.seat2)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'right', '0%')
+											]),
+										_List_fromArray(
+											[
+												(!model.seat2.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat2.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat2.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+											]))
 									]))
-							]))
-					])) : $elm$html$Html$text(''),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(model.seat3)),
-						model.seat3.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+							])) : $elm$html$Html$text(''),
 						A2(
-						$elm$html$Html$Attributes$style,
-						'width',
-						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'height',
-						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-						A2($elm$html$Html$Attributes$style, 'right', '41.5%'),
-						A2($elm$html$Html$Attributes$style, 'background', 'none'),
-						A2($elm$html$Html$Attributes$style, 'border', 'none'),
-						A2($elm$html$Html$Attributes$style, 'padding', '0'),
-						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-						$elm$html$Html$Attributes$disabled(!model.seat3.active)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$img,
+						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(model.seat3.name),
+								$elm$html$Html$Events$onClick(
+								$author$project$Main$NPCClicked(model.seat3)),
 								model.seat3.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
-								A2($elm$html$Html$Attributes$style, 'width', '100%'),
-								A2($elm$html$Html$Attributes$style, 'height', '100%')
-							]),
-						_List_Nil)
-					])),
-				model.seat3.modal ? A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0'),
-						A2($elm$html$Html$Attributes$style, 'width', '100%'),
-						A2($elm$html$Html$Attributes$style, 'height', '100%'),
-						A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-						A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '2')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
 								A2(
 								$elm$html$Html$Attributes$style,
 								'width',
@@ -13603,172 +13848,172 @@ var $author$project$Main$view = function (model) {
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
 								A2($elm$html$Html$Attributes$style, 'right', '41.5%'),
-								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
+								A2($elm$html$Html$Attributes$style, 'background', 'none'),
+								A2($elm$html$Html$Attributes$style, 'border', 'none'),
+								A2($elm$html$Html$Attributes$style, 'padding', '0'),
+								A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								$elm$html$Html$Attributes$disabled(!model.seat3.active)
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$img,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NPCClicked(model.seat3)),
+										$elm$html$Html$Attributes$src(model.seat3.name),
+										model.seat3.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 										A2($elm$html$Html$Attributes$style, 'width', '100%'),
-										A2($elm$html$Html$Attributes$style, 'height', '100%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'background', 'none'),
-										A2($elm$html$Html$Attributes$style, 'border', 'none'),
-										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'position', 'relative')
+										A2($elm$html$Html$Attributes$style, 'height', '100%')
 									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$img,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$src(model.seat3.name),
-												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%'),
-												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
-											]),
-										_List_Nil)
-									]))
+								_List_Nil)
 							])),
-						A2(
+						model.seat3.modal ? A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'width',
-								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'height',
-								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
-								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
-								A2($elm$html$Html$Attributes$style, 'right', '41.5%'),
-								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+								A2($elm$html$Html$Attributes$style, 'top', '0'),
+								A2($elm$html$Html$Attributes$style, 'left', '0'),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%'),
 								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
-								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
 								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '2')
 							]),
 						_List_fromArray(
 							[
 								A2(
 								$elm$html$Html$div,
-								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(model.seat3.spokenText)
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$RemoveNPC(model.seat3)),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'left', '0%')
+										A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
+										A2($elm$html$Html$Attributes$style, 'right', '41.5%'),
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+										A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Gehen sie bitte!')
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NPCClicked(model.seat3)),
+												A2($elm$html$Html$Attributes$style, 'width', '100%'),
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'background', 'none'),
+												A2($elm$html$Html$Attributes$style, 'border', 'none'),
+												A2($elm$html$Html$Attributes$style, 'padding', '0'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'position', 'relative')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$img,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$src(model.seat3.name),
+														A2($elm$html$Html$Attributes$style, 'width', '100%'),
+														A2($elm$html$Html$Attributes$style, 'height', '100%'),
+														A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+													]),
+												_List_Nil)
+											]))
 									])),
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NextDialogue(model.seat3)),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+										A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+										A2($elm$html$Html$Attributes$style, 'right', '41.5%'),
+										A2($elm$html$Html$Attributes$style, 'color', 'white'),
+										A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+										A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+										A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'right', '0%')
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
 									]),
 								_List_fromArray(
 									[
-										(!model.seat3.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat3.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat3.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(model.seat3.spokenText)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$RemoveNPC(model.seat3)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'left', '0%')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Gehen sie bitte!')
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NextDialogue(model.seat3)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'right', '0%')
+											]),
+										_List_fromArray(
+											[
+												(!model.seat3.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat3.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat3.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+											]))
 									]))
-							]))
-					])) : $elm$html$Html$text(''),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(model.seat4)),
-						model.seat4.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+							])) : $elm$html$Html$text(''),
 						A2(
-						$elm$html$Html$Attributes$style,
-						'width',
-						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'height',
-						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-						A2($elm$html$Html$Attributes$style, 'right', '21.5%'),
-						A2($elm$html$Html$Attributes$style, 'background', 'none'),
-						A2($elm$html$Html$Attributes$style, 'border', 'none'),
-						A2($elm$html$Html$Attributes$style, 'padding', '0'),
-						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-						$elm$html$Html$Attributes$disabled(!model.seat4.active)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$img,
+						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(model.seat4.name),
+								$elm$html$Html$Events$onClick(
+								$author$project$Main$NPCClicked(model.seat4)),
 								model.seat4.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
-								A2($elm$html$Html$Attributes$style, 'width', '100%'),
-								A2($elm$html$Html$Attributes$style, 'height', '100%')
-							]),
-						_List_Nil)
-					])),
-				model.seat4.modal ? A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0'),
-						A2($elm$html$Html$Attributes$style, 'width', '100%'),
-						A2($elm$html$Html$Attributes$style, 'height', '100%'),
-						A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-						A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '2')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
 								A2(
 								$elm$html$Html$Attributes$style,
 								'width',
@@ -13780,172 +14025,172 @@ var $author$project$Main$view = function (model) {
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
 								A2($elm$html$Html$Attributes$style, 'right', '21.5%'),
-								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
+								A2($elm$html$Html$Attributes$style, 'background', 'none'),
+								A2($elm$html$Html$Attributes$style, 'border', 'none'),
+								A2($elm$html$Html$Attributes$style, 'padding', '0'),
+								A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								$elm$html$Html$Attributes$disabled(!model.seat4.active)
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$img,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NPCClicked(model.seat4)),
+										$elm$html$Html$Attributes$src(model.seat4.name),
+										model.seat4.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 										A2($elm$html$Html$Attributes$style, 'width', '100%'),
-										A2($elm$html$Html$Attributes$style, 'height', '100%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'background', 'none'),
-										A2($elm$html$Html$Attributes$style, 'border', 'none'),
-										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'position', 'relative')
+										A2($elm$html$Html$Attributes$style, 'height', '100%')
 									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$img,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$src(model.seat4.name),
-												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%'),
-												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
-											]),
-										_List_Nil)
-									]))
+								_List_Nil)
 							])),
-						A2(
+						model.seat4.modal ? A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'width',
-								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'height',
-								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
-								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
-								A2($elm$html$Html$Attributes$style, 'right', '21.5%'),
-								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+								A2($elm$html$Html$Attributes$style, 'top', '0'),
+								A2($elm$html$Html$Attributes$style, 'left', '0'),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%'),
 								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
-								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
 								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '2')
 							]),
 						_List_fromArray(
 							[
 								A2(
 								$elm$html$Html$div,
-								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(model.seat4.spokenText)
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$RemoveNPC(model.seat4)),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'left', '0%')
+										A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
+										A2($elm$html$Html$Attributes$style, 'right', '21.5%'),
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+										A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Gehen sie bitte!')
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NPCClicked(model.seat4)),
+												A2($elm$html$Html$Attributes$style, 'width', '100%'),
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'background', 'none'),
+												A2($elm$html$Html$Attributes$style, 'border', 'none'),
+												A2($elm$html$Html$Attributes$style, 'padding', '0'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'position', 'relative')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$img,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$src(model.seat4.name),
+														A2($elm$html$Html$Attributes$style, 'width', '100%'),
+														A2($elm$html$Html$Attributes$style, 'height', '100%'),
+														A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+													]),
+												_List_Nil)
+											]))
 									])),
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NextDialogue(model.seat4)),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+										A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+										A2($elm$html$Html$Attributes$style, 'right', '21.5%'),
+										A2($elm$html$Html$Attributes$style, 'color', 'white'),
+										A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+										A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+										A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'right', '0%')
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
 									]),
 								_List_fromArray(
 									[
-										(!model.seat4.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat4.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat4.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(model.seat4.spokenText)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$RemoveNPC(model.seat4)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'left', '0%')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Gehen sie bitte!')
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NextDialogue(model.seat4)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'right', '0%')
+											]),
+										_List_fromArray(
+											[
+												(!model.seat4.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat4.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat4.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+											]))
 									]))
-							]))
-					])) : $elm$html$Html$text(''),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$NPCClicked(model.seat5)),
-						model.seat5.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
+							])) : $elm$html$Html$text(''),
 						A2(
-						$elm$html$Html$Attributes$style,
-						'width',
-						$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-						A2(
-						$elm$html$Html$Attributes$style,
-						'height',
-						$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
-						A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-						A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
-						A2($elm$html$Html$Attributes$style, 'right', '1.4%'),
-						A2($elm$html$Html$Attributes$style, 'background', 'none'),
-						A2($elm$html$Html$Attributes$style, 'border', 'none'),
-						A2($elm$html$Html$Attributes$style, 'padding', '0'),
-						A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-						$elm$html$Html$Attributes$disabled(!model.seat5.active)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$img,
+						$elm$html$Html$button,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$src(model.seat5.name),
+								$elm$html$Html$Events$onClick(
+								$author$project$Main$NPCClicked(model.seat5)),
 								model.seat5.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
-								A2($elm$html$Html$Attributes$style, 'width', '100%'),
-								A2($elm$html$Html$Attributes$style, 'height', '100%')
-							]),
-						_List_Nil)
-					])),
-				model.seat5.modal ? A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
-						A2($elm$html$Html$Attributes$style, 'top', '0'),
-						A2($elm$html$Html$Attributes$style, 'left', '0'),
-						A2($elm$html$Html$Attributes$style, 'width', '100%'),
-						A2($elm$html$Html$Attributes$style, 'height', '100%'),
-						A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-						A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-						A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-						A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-						A2($elm$html$Html$Attributes$style, 'zIndex', '2')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
 								A2(
 								$elm$html$Html$Attributes$style,
 								'width',
@@ -13957,250 +14202,305 @@ var $author$project$Main$view = function (model) {
 								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
 								A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
 								A2($elm$html$Html$Attributes$style, 'right', '1.4%'),
-								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
-								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '3')
+								A2($elm$html$Html$Attributes$style, 'background', 'none'),
+								A2($elm$html$Html$Attributes$style, 'border', 'none'),
+								A2($elm$html$Html$Attributes$style, 'padding', '0'),
+								A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+								$elm$html$Html$Attributes$disabled(!model.seat5.active)
 							]),
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$img,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NPCClicked(model.seat5)),
+										$elm$html$Html$Attributes$src(model.seat5.name),
+										model.seat5.hidden ? $elm$html$Html$Attributes$hidden(true) : $elm$html$Html$Attributes$hidden(false),
 										A2($elm$html$Html$Attributes$style, 'width', '100%'),
-										A2($elm$html$Html$Attributes$style, 'height', '100%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'background', 'none'),
-										A2($elm$html$Html$Attributes$style, 'border', 'none'),
-										A2($elm$html$Html$Attributes$style, 'padding', '0'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'position', 'relative')
+										A2($elm$html$Html$Attributes$style, 'height', '100%')
 									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$img,
-										_List_fromArray(
-											[
-												$elm$html$Html$Attributes$src(model.seat5.name),
-												A2($elm$html$Html$Attributes$style, 'width', '100%'),
-												A2($elm$html$Html$Attributes$style, 'height', '100%'),
-												A2($elm$html$Html$Attributes$style, 'zIndex', '1')
-											]),
-										_List_Nil)
-									]))
+								_List_Nil)
 							])),
-						A2(
+						model.seat5.modal ? A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'width',
-								$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
-								A2(
-								$elm$html$Html$Attributes$style,
-								'height',
-								$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
-								A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
-								A2($elm$html$Html$Attributes$style, 'right', '1.4%'),
-								A2($elm$html$Html$Attributes$style, 'color', 'white'),
+								A2($elm$html$Html$Attributes$style, 'position', 'fixed'),
+								A2($elm$html$Html$Attributes$style, 'top', '0'),
+								A2($elm$html$Html$Attributes$style, 'left', '0'),
+								A2($elm$html$Html$Attributes$style, 'width', '100%'),
+								A2($elm$html$Html$Attributes$style, 'height', '100%'),
 								A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
-								A2($elm$html$Html$Attributes$style, 'padding', '10px'),
-								A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
-								A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
 								A2($elm$html$Html$Attributes$style, 'display', 'flex'),
-								A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
-								A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
+								A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+								A2($elm$html$Html$Attributes$style, 'zIndex', '2')
 							]),
 						_List_fromArray(
 							[
 								A2(
 								$elm$html$Html$div,
-								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(model.seat5.spokenText)
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$RemoveNPC(model.seat5)),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat(model.height * 0.3) + 'px'),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
-										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'left', '0%')
+										A2($elm$html$Html$Attributes$style, 'bottom', '13.8%'),
+										A2($elm$html$Html$Attributes$style, 'right', '1.4%'),
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'center'),
+										A2($elm$html$Html$Attributes$style, 'align-items', 'center'),
+										A2($elm$html$Html$Attributes$style, 'zIndex', '3')
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Gehen sie bitte!')
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NPCClicked(model.seat5)),
+												A2($elm$html$Html$Attributes$style, 'width', '100%'),
+												A2($elm$html$Html$Attributes$style, 'height', '100%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'background', 'none'),
+												A2($elm$html$Html$Attributes$style, 'border', 'none'),
+												A2($elm$html$Html$Attributes$style, 'padding', '0'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'position', 'relative')
+											]),
+										_List_fromArray(
+											[
+												A2(
+												$elm$html$Html$img,
+												_List_fromArray(
+													[
+														$elm$html$Html$Attributes$src(model.seat5.name),
+														A2($elm$html$Html$Attributes$style, 'width', '100%'),
+														A2($elm$html$Html$Attributes$style, 'height', '100%'),
+														A2($elm$html$Html$Attributes$style, 'zIndex', '1')
+													]),
+												_List_Nil)
+											]))
 									])),
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$div,
 								_List_fromArray(
 									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$NextDialogue(model.seat5)),
 										A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
-										A2($elm$html$Html$Attributes$style, 'width', '50%'),
-										A2($elm$html$Html$Attributes$style, 'height', '10%'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'width',
+										$elm$core$String$fromFloat(model.width * 0.17) + 'px'),
+										A2(
+										$elm$html$Html$Attributes$style,
+										'height',
+										$elm$core$String$fromFloat((model.height * 0.3) + 100.0) + 'px'),
+										A2($elm$html$Html$Attributes$style, 'bottom', '50%'),
+										A2($elm$html$Html$Attributes$style, 'right', '1.4%'),
+										A2($elm$html$Html$Attributes$style, 'color', 'white'),
+										A2($elm$html$Html$Attributes$style, 'background-color', 'rgba(0, 0, 0, 0.5)'),
+										A2($elm$html$Html$Attributes$style, 'padding', '10px'),
+										A2($elm$html$Html$Attributes$style, 'border-radius', '5px'),
 										A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
-										A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
-										A2($elm$html$Html$Attributes$style, 'top', '90%'),
-										A2($elm$html$Html$Attributes$style, 'right', '0%')
+										A2($elm$html$Html$Attributes$style, 'display', 'flex'),
+										A2($elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+										A2($elm$html$Html$Attributes$style, 'justify-content', 'space-between')
 									]),
 								_List_fromArray(
 									[
-										(!model.seat5.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat5.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat5.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+										A2(
+										$elm$html$Html$div,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$elm$html$Html$text(model.seat5.spokenText)
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$RemoveNPC(model.seat5)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'left', '0%')
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text('Gehen sie bitte!')
+											])),
+										A2(
+										$elm$html$Html$button,
+										_List_fromArray(
+											[
+												$elm$html$Html$Events$onClick(
+												$author$project$Main$NextDialogue(model.seat5)),
+												A2($elm$html$Html$Attributes$style, 'position', 'absolute'),
+												A2($elm$html$Html$Attributes$style, 'width', '50%'),
+												A2($elm$html$Html$Attributes$style, 'height', '10%'),
+												A2($elm$html$Html$Attributes$style, 'zIndex', '1'),
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												A2($elm$html$Html$Attributes$style, 'top', '90%'),
+												A2($elm$html$Html$Attributes$style, 'right', '0%')
+											]),
+										_List_fromArray(
+											[
+												(!model.seat5.conversation) ? $elm$html$Html$text('Hello.') : ((model.seat5.conversation === 1) ? $elm$html$Html$text('Bestellung kommt sofort') : ((model.seat5.conversation === 2) ? $elm$html$Html$text('Lassen sie es sich schmecken') : $elm$html$Html$text('??')))
+											]))
 									]))
-							]))
-					])) : $elm$html$Html$text(''),
-				(!model.timeChoosen) ? A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('overlay')
-					]),
-				_List_fromArray(
-					[
-						A2(
+							])) : $elm$html$Html$text(''),
+						(!model.timeChoosen) ? A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('display-text')
+								$elm$html$Html$Attributes$class('overlay')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Wie lange möchten sie lernen?')
-							])),
-						A2(
-						$elm$html$Html$input,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$placeholder('Bitte geben sie an wie lange sie lernen wollen.'),
-								$elm$html$Html$Attributes$value(model.userInput),
-								$elm$html$Html$Events$onInput($author$project$Main$GetInput),
-								$elm$html$Html$Attributes$class('input-field')
-							]),
-						_List_Nil),
-						A2(
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('display-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Wie lange möchten sie lernen?')
+									])),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$placeholder('Bitte geben sie an wie lange sie lernen wollen.'),
+										$elm$html$Html$Attributes$value(model.userInput),
+										$elm$html$Html$Events$onInput($author$project$Main$GetInput),
+										$elm$html$Html$Attributes$class('input-field')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('display-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Was möchten sie heute lernen?')
+									])),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$placeholder('Bitte geben sie an was sie lernen wollen.'),
+										$elm$html$Html$Attributes$value(model.userInput2),
+										$elm$html$Html$Events$onInput($author$project$Main$GetInput2),
+										$elm$html$Html$Attributes$class('input-field')
+									]),
+								_List_Nil),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('display-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ich möchte für ' + (model.userInput + (' Minuten ' + (model.userInput2 + ' lernen'))))
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('confirm-button'),
+										$elm$html$Html$Events$onClick($author$project$Main$SwitchOverlay),
+										$author$project$Main$checkForInt(model.userInput) ? A2($elm$html$Html$Attributes$style, 'background-color', 'rgb(0, 255, 0)') : A2($elm$html$Html$Attributes$style, 'background-color', 'rgb(255, 0, 0)'),
+										$elm$html$Html$Attributes$disabled(
+										!$author$project$Main$checkForInt(model.userInput))
+									]),
+								_List_fromArray(
+									[
+										$author$project$Main$checkForInt(model.userInput) ? $elm$html$Html$text('Confirm') : $elm$html$Html$text('Bitte richtig eingeben!')
+									]))
+							])) : A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('display-text')
+								$elm$html$Html$Attributes$class('overlay')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Was möchten sie heute lernen?')
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('display-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										'Sie haben noch ' + ($elm$core$String$fromInt(model.time) + ' Minuten bis zum ersten Besuch'))
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('confirm-button'),
+										$elm$html$Html$Events$onClick($author$project$Main$SwitchOverlay)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ich brauche eine Pause.')
+									]))
 							])),
-						A2(
-						$elm$html$Html$input,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$placeholder('Bitte geben sie an was sie lernen wollen.'),
-								$elm$html$Html$Attributes$value(model.userInput2),
-								$elm$html$Html$Events$onInput($author$project$Main$GetInput2),
-								$elm$html$Html$Attributes$class('input-field')
-							]),
-						_List_Nil),
-						A2(
+						($elm$core$Array$length(model.daten) >= 2) ? A2(
 						$elm$html$Html$div,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$class('display-text')
+								$elm$html$Html$Attributes$class('overlay2')
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Ich möchte für ' + (model.userInput + (' Minuten ' + (model.userInput2 + ' lernen'))))
-							])),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('confirm-button'),
-								$elm$html$Html$Events$onClick($author$project$Main$SwitchOverlay),
-								$author$project$Main$checkForInt(model.userInput) ? A2($elm$html$Html$Attributes$style, 'background-color', 'rgb(0, 255, 0)') : A2($elm$html$Html$Attributes$style, 'background-color', 'rgb(255, 0, 0)'),
-								$elm$html$Html$Attributes$disabled(
-								!$author$project$Main$checkForInt(model.userInput))
-							]),
-						_List_fromArray(
-							[
-								$author$project$Main$checkForInt(model.userInput) ? $elm$html$Html$text('Confirm') : $elm$html$Html$text('Bitte richtig eingeben!')
-							]))
-					])) : A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('overlay')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('display-text')
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text(
-								'Sie haben noch ' + ($elm$core$String$fromInt(model.time) + ' Minuten bis zum ersten Besuch'))
-							])),
-						A2(
-						$elm$html$Html$button,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('confirm-button'),
-								$elm$html$Html$Events$onClick($author$project$Main$SwitchOverlay)
-							]),
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Ich brauche eine Pause.')
-							]))
-					])),
-				($elm$core$Array$length(model.daten) >= 2) ? A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('overlay2')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$svg$Svg$svg,
-						_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$width(
-								$elm$core$String$fromInt(
-									($elm$core$Array$length(model.daten) * 60) + 100) + 'px'),
-								$elm$svg$Svg$Attributes$height('100%'),
-								$elm$svg$Svg$Attributes$viewBox(
-								'0 0 ' + ($elm$core$String$fromInt(
-									($elm$core$Array$length(model.daten) * 60) + 20) + (' ' + $elm$core$String$fromFloat(
-									A2(
-										$elm$core$Maybe$withDefault,
-										0,
-										$elm$core$List$maximum(
-											$elm$core$Array$toList(model.daten))) + 60))))
-							]),
-						A3(
-							$author$project$Main$drawBars,
-							model.daten,
-							$elm$core$Array$toList(model.arbeiten),
-							model))
-					])) : $elm$html$Html$text('')
-			]));
+								A2(
+								$elm$svg$Svg$svg,
+								_List_fromArray(
+									[
+										$elm$svg$Svg$Attributes$width(
+										$elm$core$String$fromInt(
+											($elm$core$Array$length(model.daten) * 60) + 100) + 'px'),
+										$elm$svg$Svg$Attributes$height('100%'),
+										$elm$svg$Svg$Attributes$viewBox(
+										'0 0 ' + ($elm$core$String$fromInt(
+											($elm$core$Array$length(model.daten) * 60) + 20) + (' ' + $elm$core$String$fromFloat(
+											A2(
+												$elm$core$Maybe$withDefault,
+												0,
+												$elm$core$List$maximum(
+													$elm$core$Array$toList(model.daten))) + 60))))
+									]),
+								A3(
+									$author$project$Main$drawBars,
+									model.daten,
+									$elm$core$Array$toList(model.arbeiten),
+									model))
+							])) : $elm$html$Html$text('')
+					]))
+			]),
+		title: 'Lernzeit'
+	};
 };
-var $author$project$Main$main = $elm$browser$Browser$element(
-	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
+var $author$project$Main$main = $elm$browser$Browser$application(
+	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$Empty, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Dialogue":{"args":[],"type":"Array.Array (Array.Array String.String)"},"Main.Dialogues":{"args":[],"type":"{ person1 : Main.Dialogue, person2 : Main.Dialogue, person3 : Main.Dialogue, person4 : Main.Dialogue }"},"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, randomString : Maybe.Maybe String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int, conversation : Basics.Int, active : Basics.Bool, waiting : Basics.Int }"},"Array.Tree":{"args":["a"],"type":"Elm.JsArray.JsArray (Array.Node a)"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"GetInput2":["String.String"],"TickMinute":["Time.Posix"],"TickWaiting":["Time.Posix"],"SwitchOverlay":[],"FetchDialoguesSuccess":["Main.Dialogues"],"FetchDialoguesFailure":[],"NextDialogue":["Main.Seat"]}},"Array.Array":{"args":["a"],"tags":{"Array_elm_builtin":["Basics.Int","Basics.Int","Array.Tree a","Elm.JsArray.JsArray a"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"String.String":{"args":[],"tags":{"String":[]}},"Elm.JsArray.JsArray":{"args":["a"],"tags":{"JsArray":["a"]}},"Array.Node":{"args":["a"],"tags":{"SubTree":["Array.Tree a"],"Leaf":["Elm.JsArray.JsArray a"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Main.Dialogue":{"args":[],"type":"Array.Array (Array.Array String.String)"},"Main.Dialogues":{"args":[],"type":"{ person1 : Main.Dialogue, person2 : Main.Dialogue, person3 : Main.Dialogue, person4 : Main.Dialogue }"},"Main.RandomValues":{"args":[],"type":"{ randomIndex : Basics.Int, randomSeat : Basics.Int }"},"Main.Seat":{"args":[],"type":"{ name : String.String, randomString : Maybe.Maybe String.String, hidden : Basics.Bool, modal : Basics.Bool, id : Basics.Int, nextText : String.String, spokenText : String.String, index : Basics.Int, conversation : Basics.Int, active : Basics.Bool, waiting : Basics.Int }"},"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Array.Tree":{"args":["a"],"type":"Elm.JsArray.JsArray (Array.Node a)"}},"unions":{"Main.Msg":{"args":[],"tags":{"WindowResized":["List.List Basics.Int"],"PrepNextNPC":[],"NPCClicked":["Main.Seat"],"GotRandomValues":["Main.RandomValues"],"Tick":["Time.Posix"],"RemoveNPC":["Main.Seat"],"GetInput":["String.String"],"GetInput2":["String.String"],"TickMinute":["Time.Posix"],"TickWaiting":["Time.Posix"],"SwitchOverlay":[],"FetchDialoguesSuccess":["Main.Dialogues"],"FetchDialoguesFailure":[],"NextDialogue":["Main.Seat"],"UrlChanged":["Url.Url"],"Empty":["Browser.UrlRequest"]}},"Array.Array":{"args":["a"],"tags":{"Array_elm_builtin":["Basics.Int","Basics.Int","Array.Tree a","Elm.JsArray.JsArray a"]}},"Basics.Bool":{"args":[],"tags":{"True":[],"False":[]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"List.List":{"args":["a"],"tags":{}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Time.Posix":{"args":[],"tags":{"Posix":["Basics.Int"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Elm.JsArray.JsArray":{"args":["a"],"tags":{"JsArray":["a"]}},"Array.Node":{"args":["a"],"tags":{"SubTree":["Array.Tree a"],"Leaf":["Elm.JsArray.JsArray a"]}}}}})}});}(this));
