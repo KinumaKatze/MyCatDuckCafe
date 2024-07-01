@@ -19,7 +19,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Array exposing (..)
 import Http
-import Json.Decode as Decode
+import Json.Decode
 import Maybe exposing (withDefault)
 import Url exposing (..)
 import Url.Parser exposing (..)
@@ -78,6 +78,7 @@ type alias Model =
     , dialogues : Maybe Dialogues
     , visitTimes : List Int --Liste mit Daten darüber wie oft die jeweiligen Personen schon da waren 
     , key : Browser.Navigation.Key
+    , money: Int
     }
 
 
@@ -96,7 +97,7 @@ init flags url key=
                         ,seat4 = {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 3, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True, waiting = 0} 
                         ,seat5 = {name = "/public/images/Random_Person.png", randomString = Nothing, hidden = True, modal = False, id = 4, nextText = "Next Text", spokenText = "", index = 0, conversation = 0,active = True, waiting = 0} 
                         ,nextSeat = 0 
-                        ,person_list = ["/public/images/Person1.png","/public/images/Person2.png","/public/images/Person3.png","/public/images/Person4.png"] 
+                        ,person_list = ["/public/images/Person1Idle.gif","/public/images/Person2Idle.gif","/public/images/Person3Idle.gif","/public/images/Person4Idle.gif"] 
                         ,seat_list = ["0","1","2","3","4"]  
                         ,showModal = False
                         ,userInput = "..."
@@ -107,7 +108,8 @@ init flags url key=
                         ,arbeiten = (Array.fromList ["Pause"])
                         ,dialogues = Nothing
                         ,visitTimes = [0,0,0,0]
-                        ,key = key }
+                        ,key = key
+                        ,money = 0}
         model =
             case url.fragment of
                 Just fragment ->
@@ -238,11 +240,11 @@ fetchDialogues =
 -- Define a JSON decoder for your dialogues
 dialoguesDecoder : Decode.Decoder Dialogues
 dialoguesDecoder =
-    Decode.map4 Dialogues
-        (Decode.field "person1" (Decode.array (Decode.array Decode.string)))
-        (Decode.field "person2" (Decode.array (Decode.array Decode.string)))
-        (Decode.field "person3" (Decode.array (Decode.array Decode.string)))
-        (Decode.field "person4" (Decode.array (Decode.array Decode.string)))
+    Json.Decode.map4 Dialogues
+        (Json.Decode.field "person1" <| Json.Decode.array (Json.Decode.array Json.Decode.string))
+        (Json.Decode.field "person2" <| Json.Decode.array (Json.Decode.array Json.Decode.string))
+        (Json.Decode.field "person3" <| Json.Decode.array (Json.Decode.array Json.Decode.string))
+        (Json.Decode.field "person4" <| Json.Decode.array (Json.Decode.array Json.Decode.string))
 
 
 -- Handle the result of the HTTP request
@@ -260,7 +262,7 @@ getNextText model seat =
     case model.dialogues of 
         Just dialoge ->
             case seat.name of 
-                "/public/images/Person1.png" ->
+                "/public/images/Person1Idle.gif" ->
                     let 
                         newArray = dialoge.person1
                         visitAmount = withDefault 0 (get 0 (Array.fromList model.visitTimes))
@@ -274,7 +276,7 @@ getNextText model seat =
                                     ""
                         Nothing ->
                             ""
-                "/public/images/Person2.png" ->
+                "/public/images/Person2Idle.gif" ->
                     let 
                         newArray = dialoge.person2
                         visitAmount = withDefault 0 (get 1 (Array.fromList model.visitTimes))
@@ -288,7 +290,7 @@ getNextText model seat =
                                     ""
                         Nothing ->
                             ""
-                "/public/images/Person3.png" ->
+                "/public/images/Person3Idle.gif" ->
                     let 
                         newArray = dialoge.person3
                         visitAmount = withDefault 0 (get 2 (Array.fromList model.visitTimes))
@@ -302,7 +304,7 @@ getNextText model seat =
                                     ""
                         Nothing ->
                             ""
-                "/public/images/Person4.png" ->
+                "/public/images/Person4Idle.gif" ->
                     let 
                         newArray = dialoge.person4
                         visitAmount = withDefault 0 (get 3 (Array.fromList model.visitTimes))
@@ -326,14 +328,14 @@ getVistorList model seat =
 
 
     if seat.conversation == 3 then 
-                case seat.name of 
-                    "/public/images/Person1.png" -> 
+                case Maybe.withDefault "" seat.randomString of 
+                    "/public/images/Person1Idle.gif" -> 
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 1 (Array.fromList model.visitTimes)), withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
-                    "/public/images/Person2.png" ->
+                    "/public/images/Person2Idle.gif" ->
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0 (get 1 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
-                    "/public/images/Person3.png" -> 
+                    "/public/images/Person3Idle.gif" -> 
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0(get 1 (Array.fromList model.visitTimes)), withDefault 0(get 2 (Array.fromList model.visitTimes)) + 1, withDefault 0(get 3 (Array.fromList model.visitTimes))]
-                    "/public/images/Person4.png" ->
+                    "/public/images/Person4Idle.gif" ->
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)), withDefault 0(get 1 (Array.fromList model.visitTimes)), withDefault 0(get 2 (Array.fromList model.visitTimes)), withDefault 0(get 3 (Array.fromList model.visitTimes)) + 1]
                     _ -> 
                         [withDefault 0 (get 0 (Array.fromList model.visitTimes)) + 1, withDefault 0 (get 1 (Array.fromList model.visitTimes)), withDefault 0 (get 2 (Array.fromList model.visitTimes)), withDefault 0 (get 3 (Array.fromList model.visitTimes))]
@@ -426,6 +428,20 @@ update msg model =
                                 Nothing ->
                                     ( { model | seat1 = makeSeat model.seat1 "/public/images/Random_Person.png" }, Cmd.none )
 
+                    else if seat.name == "/public/images/Money.png" then --Person verlässt Caffee und hinterlässt Geld 
+                        case seat.id of 
+                        0 ->
+                            update (RemoveNPC model.seat1) {model | money = model.money + 20}
+                        1 ->
+                            update (RemoveNPC model.seat2) {model | money = model.money + 20}
+                        2 ->
+                            update (RemoveNPC model.seat3) {model | money = model.money + 20}
+                        3 ->
+                            update (RemoveNPC model.seat4) {model | money = model.money + 20}
+                        4 ->
+                            update (RemoveNPC model.seat5) {model | money = model.money + 20}
+                        _ -> 
+                            update (RemoveNPC model.seat1) {model | money = model.money + 20}
                     else --Person wird zum sprechen angeklickt
 
                          case seat.id of 
@@ -552,17 +568,17 @@ update msg model =
             in
             case seat.id of 
                         0 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1})
+                                ( { model | person_list = List.append model.person_list ([Maybe.withDefault "" seat.randomString]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1})
                         1 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = seatClear model.seat2, visitTimes = getVistorList model model.seat2}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = seatClear model.seat2, visitTimes = getVistorList model model.seat2})
+                                ( { model | person_list = List.append model.person_list ([Maybe.withDefault "" seat.randomString]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = seatClear model.seat2, visitTimes = getVistorList model model.seat2}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat2 = seatClear model.seat2, visitTimes = getVistorList model model.seat2})
                         2 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = seatClear model.seat3, visitTimes = getVistorList model model.seat3}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = seatClear model.seat3, visitTimes = getVistorList model model.seat3})
+                                ( { model | person_list = List.append model.person_list ([Maybe.withDefault "" seat.randomString]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = seatClear model.seat3, visitTimes = getVistorList model model.seat3}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat3 = seatClear model.seat3, visitTimes = getVistorList model model.seat3})
                         3 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = seatClear model.seat4, visitTimes = getVistorList model model.seat4}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = seatClear model.seat4, visitTimes = getVistorList model model.seat4})
+                                ( { model | person_list = List.append model.person_list ([Maybe.withDefault "" seat.randomString]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = seatClear model.seat4, visitTimes = getVistorList model model.seat4}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat4 = seatClear model.seat4, visitTimes = getVistorList model model.seat4})
                         4 ->
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = seatClear model.seat5, visitTimes = getVistorList model model.seat5}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = seatClear model.seat5, visitTimes = getVistorList model model.seat5} )
+                                ( { model | person_list = List.append model.person_list ([Maybe.withDefault "" seat.randomString]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = seatClear model.seat5, visitTimes = getVistorList model model.seat5}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat5 = seatClear model.seat5, visitTimes = getVistorList model model.seat5} )
                         _ -> 
-                                ( { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1})
+                                ( { model | person_list = List.append model.person_list ([Maybe.withDefault "" seat.randomString]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1}, updateUrl { model | person_list = List.append model.person_list ([seat.name]),seat_list = List.append model.seat_list ([String.fromInt seat.id]),seat1 = seatClear model.seat1, visitTimes = getVistorList model model.seat1})
         
         GetInput input ->
             ({model | userInput = input}, Cmd.none )
@@ -609,17 +625,21 @@ update msg model =
                 updateTime: Seat -> Int -> Seat 
                 updateTime seat time = 
                     {seat | waiting = time}
+
+                updateTimeName: Seat -> Int -> Seat 
+                updateTimeName seat time= 
+                    {seat | name = "/public/images/Money.png", waiting = time, active = True}
             in 
             if newTime1 == 0 && model.seat1.active == False then 
-                update (RemoveNPC model.seat1) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+                 ({model | seat1 = updateTimeName model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}, Cmd.none)
             else if newTime2 == 0 && model.seat2.active == False then 
-                update (RemoveNPC model.seat2) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+                 ({model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTimeName model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}, Cmd.none)
             else if newTime3 == 0 && model.seat3.active == False then 
-                update (RemoveNPC model.seat3) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+                 ({model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTimeName model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}, Cmd.none)
             else if newTime4 == 0 && model.seat4.active == False then 
-                update (RemoveNPC model.seat4) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+                 ({model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTimeName model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}, Cmd.none)
             else if newTime5 == 0 && model.seat5.active == False then 
-                update (RemoveNPC model.seat5) {model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}
+                 ({model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTimeName model.seat5 newTime5}, Cmd.none)
             else 
                 ({model | seat1 = updateTime model.seat1 newTime1, seat2 = updateTime model.seat2 newTime2, seat3 = updateTime model.seat3 newTime3, seat4 = updateTime model.seat4 newTime4, seat5 = updateTime model.seat5 newTime5}, Cmd.none)
                 
@@ -656,6 +676,10 @@ update msg model =
 
         NextDialogue seat ->
             let 
+                makeDrink: String -> String 
+                makeDrink a =
+                    (String.left 22 a) ++ ("Drinking.gif")
+
                 seatC: Seat -> Seat 
                 seatC b = 
                     {b | conversation = b.conversation + 1}
@@ -666,7 +690,7 @@ update msg model =
 
                 seatAMCT: Seat -> Seat 
                 seatAMCT c = 
-                    {c | active = False, modal = False, conversation = c.conversation + 1, waiting = 1}
+                    {c | active = False, modal = False, conversation = c.conversation + 1, waiting = 1, name = makeDrink c.name}
 
             in
             if seat.conversation < 2 then
@@ -1360,6 +1384,8 @@ view model =
                         , disabled (not (checkForInt model.userInput))
                         ] 
                         [ if checkForInt model.userInput then Html.text "Confirm" else Html.text "Bitte richtig eingeben!" ]
+            , div [Html.Attributes.class "display-text"] 
+                [ Html.text ("Eingenommenes Geld: " ++ String.fromInt model.money ++" €") ]
             ]
         else
             div 
@@ -1370,6 +1396,8 @@ view model =
                         , Html.Events.onClick SwitchOverlay 
                         ] 
                         [ Html.text "Ich brauche eine Pause." ]
+            , div [Html.Attributes.class "display-text"] 
+                [ Html.text ("Eingenommenes Geld: " ++ String.fromInt model.money ++" €") ]
             ]
         ,if Array.length model.daten >= 2 then
             div [ Html.Attributes.class "overlay2" ]

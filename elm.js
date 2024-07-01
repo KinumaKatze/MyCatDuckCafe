@@ -11098,9 +11098,10 @@ var $author$project$Main$init = F3(
 			height: 10,
 			hidden: true,
 			key: key,
+			money: 0,
 			nextSeat: 0,
 			person_list: _List_fromArray(
-				['/public/images/Person1.png', '/public/images/Person2.png', '/public/images/Person3.png', '/public/images/Person4.png']),
+				['/public/images/Person1Idle.gif', '/public/images/Person2Idle.gif', '/public/images/Person3Idle.gif', '/public/images/Person4Idle.gif']),
 			seat1: {active: true, conversation: 0, hidden: true, id: 0, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
 			seat2: {active: true, conversation: 0, hidden: true, id: 1, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
 			seat3: {active: true, conversation: 0, hidden: true, id: 2, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', randomString: $elm$core$Maybe$Nothing, spokenText: '', waiting: 0},
@@ -11645,7 +11646,7 @@ var $author$project$Main$getNextText = F2(
 			var dialoge = _v0.a;
 			var _v1 = seat.name;
 			switch (_v1) {
-				case '/public/images/Person1.png':
+				case '/public/images/Person1Idle.gif':
 					var visitAmount = A2(
 						$elm$core$Maybe$withDefault,
 						0,
@@ -11667,7 +11668,7 @@ var $author$project$Main$getNextText = F2(
 					} else {
 						return '';
 					}
-				case '/public/images/Person2.png':
+				case '/public/images/Person2Idle.gif':
 					var visitAmount = A2(
 						$elm$core$Maybe$withDefault,
 						0,
@@ -11689,7 +11690,7 @@ var $author$project$Main$getNextText = F2(
 					} else {
 						return '';
 					}
-				case '/public/images/Person3.png':
+				case '/public/images/Person3Idle.gif':
 					var visitAmount = A2(
 						$elm$core$Maybe$withDefault,
 						0,
@@ -11711,7 +11712,7 @@ var $author$project$Main$getNextText = F2(
 					} else {
 						return '';
 					}
-				case '/public/images/Person4.png':
+				case '/public/images/Person4Idle.gif':
 					var visitAmount = A2(
 						$elm$core$Maybe$withDefault,
 						0,
@@ -11743,9 +11744,9 @@ var $author$project$Main$getNextText = F2(
 var $author$project$Main$getVistorList = F2(
 	function (model, seat) {
 		if (seat.conversation === 3) {
-			var _v0 = seat.name;
+			var _v0 = A2($elm$core$Maybe$withDefault, '', seat.randomString);
 			switch (_v0) {
-				case '/public/images/Person1.png':
+				case '/public/images/Person1Idle.gif':
 					return _List_fromArray(
 						[
 							A2(
@@ -11777,7 +11778,7 @@ var $author$project$Main$getVistorList = F2(
 								3,
 								$elm$core$Array$fromList(model.visitTimes)))
 						]);
-				case '/public/images/Person2.png':
+				case '/public/images/Person2Idle.gif':
 					return _List_fromArray(
 						[
 							A2(
@@ -11809,7 +11810,7 @@ var $author$project$Main$getVistorList = F2(
 								3,
 								$elm$core$Array$fromList(model.visitTimes)))
 						]);
-				case '/public/images/Person3.png':
+				case '/public/images/Person3Idle.gif':
 					return _List_fromArray(
 						[
 							A2(
@@ -11841,7 +11842,7 @@ var $author$project$Main$getVistorList = F2(
 								3,
 								$elm$core$Array$fromList(model.visitTimes)))
 						]);
-				case '/public/images/Person4.png':
+				case '/public/images/Person4Idle.gif':
 					return _List_fromArray(
 						[
 							A2(
@@ -12227,56 +12228,110 @@ var $author$project$Main$update = F2(
 								}
 						}
 					} else {
-						var _v13 = seat.id;
-						switch (_v13) {
-							case 0:
-								return _Utils_Tuple2(
-									_Utils_update(
+						if (seat.name === '/public/images/Money.png') {
+							var _v13 = seat.id;
+							switch (_v13) {
+								case 0:
+									var $temp$msg = $author$project$Main$RemoveNPC(model.seat1),
+										$temp$model = _Utils_update(
 										model,
-										{
-											seat1: talkPerson(model.seat1)
-										}),
-									$elm$core$Platform$Cmd$none);
-							case 1:
-								return _Utils_Tuple2(
-									_Utils_update(
+										{money: model.money + 20});
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								case 1:
+									var $temp$msg = $author$project$Main$RemoveNPC(model.seat2),
+										$temp$model = _Utils_update(
 										model,
-										{
-											seat2: talkPerson(model.seat2)
-										}),
-									$elm$core$Platform$Cmd$none);
-							case 2:
-								return _Utils_Tuple2(
-									_Utils_update(
+										{money: model.money + 20});
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								case 2:
+									var $temp$msg = $author$project$Main$RemoveNPC(model.seat3),
+										$temp$model = _Utils_update(
 										model,
-										{
-											seat3: talkPerson(model.seat3)
-										}),
-									$elm$core$Platform$Cmd$none);
-							case 3:
-								return _Utils_Tuple2(
-									_Utils_update(
+										{money: model.money + 20});
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								case 3:
+									var $temp$msg = $author$project$Main$RemoveNPC(model.seat4),
+										$temp$model = _Utils_update(
 										model,
-										{
-											seat4: talkPerson(model.seat4)
-										}),
-									$elm$core$Platform$Cmd$none);
-							case 4:
-								return _Utils_Tuple2(
-									_Utils_update(
+										{money: model.money + 20});
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								case 4:
+									var $temp$msg = $author$project$Main$RemoveNPC(model.seat5),
+										$temp$model = _Utils_update(
 										model,
-										{
-											seat5: talkPerson(model.seat5)
-										}),
-									$elm$core$Platform$Cmd$none);
-							default:
-								return _Utils_Tuple2(
-									_Utils_update(
+										{money: model.money + 20});
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+								default:
+									var $temp$msg = $author$project$Main$RemoveNPC(model.seat1),
+										$temp$model = _Utils_update(
 										model,
-										{
-											seat1: talkPerson(model.seat1)
-										}),
-									$elm$core$Platform$Cmd$none);
+										{money: model.money + 20});
+									msg = $temp$msg;
+									model = $temp$model;
+									continue update;
+							}
+						} else {
+							var _v14 = seat.id;
+							switch (_v14) {
+								case 0:
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat1: talkPerson(model.seat1)
+											}),
+										$elm$core$Platform$Cmd$none);
+								case 1:
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat2: talkPerson(model.seat2)
+											}),
+										$elm$core$Platform$Cmd$none);
+								case 2:
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat3: talkPerson(model.seat3)
+											}),
+										$elm$core$Platform$Cmd$none);
+								case 3:
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat4: talkPerson(model.seat4)
+											}),
+										$elm$core$Platform$Cmd$none);
+								case 4:
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat5: talkPerson(model.seat5)
+											}),
+										$elm$core$Platform$Cmd$none);
+								default:
+									return _Utils_Tuple2(
+										_Utils_update(
+											model,
+											{
+												seat1: talkPerson(model.seat1)
+											}),
+										$elm$core$Platform$Cmd$none);
+							}
 						}
 					}
 				case 'GotRandomValues':
@@ -12554,8 +12609,8 @@ var $author$project$Main$update = F2(
 							a,
 							{active: true, conversation: 0, hidden: true, index: 0, modal: false, name: '/public/images/Random_Person.png', nextText: 'Next Text', spokenText: ''});
 					};
-					var _v16 = seat.id;
-					switch (_v16) {
+					var _v17 = seat.id;
+					switch (_v17) {
 						case 0:
 							return _Utils_Tuple2(
 								_Utils_update(
@@ -12565,7 +12620,9 @@ var $author$project$Main$update = F2(
 											$elm$core$List$append,
 											model.person_list,
 											_List_fromArray(
-												[seat.name])),
+												[
+													A2($elm$core$Maybe$withDefault, '', seat.randomString)
+												])),
 										seat1: seatClear(model.seat1),
 										seat_list: A2(
 											$elm$core$List$append,
@@ -12604,7 +12661,9 @@ var $author$project$Main$update = F2(
 											$elm$core$List$append,
 											model.person_list,
 											_List_fromArray(
-												[seat.name])),
+												[
+													A2($elm$core$Maybe$withDefault, '', seat.randomString)
+												])),
 										seat2: seatClear(model.seat2),
 										seat_list: A2(
 											$elm$core$List$append,
@@ -12643,7 +12702,9 @@ var $author$project$Main$update = F2(
 											$elm$core$List$append,
 											model.person_list,
 											_List_fromArray(
-												[seat.name])),
+												[
+													A2($elm$core$Maybe$withDefault, '', seat.randomString)
+												])),
 										seat3: seatClear(model.seat3),
 										seat_list: A2(
 											$elm$core$List$append,
@@ -12682,7 +12743,9 @@ var $author$project$Main$update = F2(
 											$elm$core$List$append,
 											model.person_list,
 											_List_fromArray(
-												[seat.name])),
+												[
+													A2($elm$core$Maybe$withDefault, '', seat.randomString)
+												])),
 										seat4: seatClear(model.seat4),
 										seat_list: A2(
 											$elm$core$List$append,
@@ -12721,7 +12784,9 @@ var $author$project$Main$update = F2(
 											$elm$core$List$append,
 											model.person_list,
 											_List_fromArray(
-												[seat.name])),
+												[
+													A2($elm$core$Maybe$withDefault, '', seat.randomString)
+												])),
 										seat5: seatClear(model.seat5),
 										seat_list: A2(
 											$elm$core$List$append,
@@ -12760,7 +12825,9 @@ var $author$project$Main$update = F2(
 											$elm$core$List$append,
 											model.person_list,
 											_List_fromArray(
-												[seat.name])),
+												[
+													A2($elm$core$Maybe$withDefault, '', seat.randomString)
+												])),
 										seat1: seatClear(model.seat1),
 										seat_list: A2(
 											$elm$core$List$append,
@@ -12822,9 +12889,9 @@ var $author$project$Main$update = F2(
 						if (model.timeChoosen && (!newTime)) {
 							if (index.$ === 'Just') {
 								var b = index.a;
-								var _v18 = A2($elm$core$Array$get, b, model.daten);
-								if (_v18.$ === 'Just') {
-									var c = _v18.a;
+								var _v19 = A2($elm$core$Array$get, b, model.daten);
+								if (_v19.$ === 'Just') {
+									var c = _v19.a;
 									var $temp$msg = $author$project$Main$PrepNextNPC,
 										$temp$model = _Utils_update(
 										model,
@@ -12880,6 +12947,12 @@ var $author$project$Main$update = F2(
 						}
 					}
 				case 'TickWaiting':
+					var updateTimeName = F2(
+						function (seat, time) {
+							return _Utils_update(
+								seat,
+								{active: true, name: '/public/images/Money.png', waiting: time});
+						});
 					var updateTime = F2(
 						function (seat, time) {
 							return _Utils_update(
@@ -12891,9 +12964,58 @@ var $author$project$Main$update = F2(
 					var newTime3 = A2($elm$core$Basics$max, -30, model.seat3.waiting - 1);
 					var newTime2 = A2($elm$core$Basics$max, -30, model.seat2.waiting - 1);
 					var newTime1 = A2($elm$core$Basics$max, -30, model.seat1.waiting - 1);
-					if ((!newTime1) && (!model.seat1.active)) {
-						var $temp$msg = $author$project$Main$RemoveNPC(model.seat1),
-							$temp$model = _Utils_update(
+					return ((!newTime1) && (!model.seat1.active)) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								seat1: A2(updateTimeName, model.seat1, newTime1),
+								seat2: A2(updateTime, model.seat2, newTime2),
+								seat3: A2(updateTime, model.seat3, newTime3),
+								seat4: A2(updateTime, model.seat4, newTime4),
+								seat5: A2(updateTime, model.seat5, newTime5)
+							}),
+						$elm$core$Platform$Cmd$none) : (((!newTime2) && (!model.seat2.active)) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								seat1: A2(updateTime, model.seat1, newTime1),
+								seat2: A2(updateTimeName, model.seat2, newTime2),
+								seat3: A2(updateTime, model.seat3, newTime3),
+								seat4: A2(updateTime, model.seat4, newTime4),
+								seat5: A2(updateTime, model.seat5, newTime5)
+							}),
+						$elm$core$Platform$Cmd$none) : (((!newTime3) && (!model.seat3.active)) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								seat1: A2(updateTime, model.seat1, newTime1),
+								seat2: A2(updateTime, model.seat2, newTime2),
+								seat3: A2(updateTimeName, model.seat3, newTime3),
+								seat4: A2(updateTime, model.seat4, newTime4),
+								seat5: A2(updateTime, model.seat5, newTime5)
+							}),
+						$elm$core$Platform$Cmd$none) : (((!newTime4) && (!model.seat4.active)) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								seat1: A2(updateTime, model.seat1, newTime1),
+								seat2: A2(updateTime, model.seat2, newTime2),
+								seat3: A2(updateTime, model.seat3, newTime3),
+								seat4: A2(updateTimeName, model.seat4, newTime4),
+								seat5: A2(updateTime, model.seat5, newTime5)
+							}),
+						$elm$core$Platform$Cmd$none) : (((!newTime5) && (!model.seat5.active)) ? _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								seat1: A2(updateTime, model.seat1, newTime1),
+								seat2: A2(updateTime, model.seat2, newTime2),
+								seat3: A2(updateTime, model.seat3, newTime3),
+								seat4: A2(updateTime, model.seat4, newTime4),
+								seat5: A2(updateTimeName, model.seat5, newTime5)
+							}),
+						$elm$core$Platform$Cmd$none) : _Utils_Tuple2(
+						_Utils_update(
 							model,
 							{
 								seat1: A2(updateTime, model.seat1, newTime1),
@@ -12901,87 +13023,8 @@ var $author$project$Main$update = F2(
 								seat3: A2(updateTime, model.seat3, newTime3),
 								seat4: A2(updateTime, model.seat4, newTime4),
 								seat5: A2(updateTime, model.seat5, newTime5)
-							});
-						msg = $temp$msg;
-						model = $temp$model;
-						continue update;
-					} else {
-						if ((!newTime2) && (!model.seat2.active)) {
-							var $temp$msg = $author$project$Main$RemoveNPC(model.seat2),
-								$temp$model = _Utils_update(
-								model,
-								{
-									seat1: A2(updateTime, model.seat1, newTime1),
-									seat2: A2(updateTime, model.seat2, newTime2),
-									seat3: A2(updateTime, model.seat3, newTime3),
-									seat4: A2(updateTime, model.seat4, newTime4),
-									seat5: A2(updateTime, model.seat5, newTime5)
-								});
-							msg = $temp$msg;
-							model = $temp$model;
-							continue update;
-						} else {
-							if ((!newTime3) && (!model.seat3.active)) {
-								var $temp$msg = $author$project$Main$RemoveNPC(model.seat3),
-									$temp$model = _Utils_update(
-									model,
-									{
-										seat1: A2(updateTime, model.seat1, newTime1),
-										seat2: A2(updateTime, model.seat2, newTime2),
-										seat3: A2(updateTime, model.seat3, newTime3),
-										seat4: A2(updateTime, model.seat4, newTime4),
-										seat5: A2(updateTime, model.seat5, newTime5)
-									});
-								msg = $temp$msg;
-								model = $temp$model;
-								continue update;
-							} else {
-								if ((!newTime4) && (!model.seat4.active)) {
-									var $temp$msg = $author$project$Main$RemoveNPC(model.seat4),
-										$temp$model = _Utils_update(
-										model,
-										{
-											seat1: A2(updateTime, model.seat1, newTime1),
-											seat2: A2(updateTime, model.seat2, newTime2),
-											seat3: A2(updateTime, model.seat3, newTime3),
-											seat4: A2(updateTime, model.seat4, newTime4),
-											seat5: A2(updateTime, model.seat5, newTime5)
-										});
-									msg = $temp$msg;
-									model = $temp$model;
-									continue update;
-								} else {
-									if ((!newTime5) && (!model.seat5.active)) {
-										var $temp$msg = $author$project$Main$RemoveNPC(model.seat5),
-											$temp$model = _Utils_update(
-											model,
-											{
-												seat1: A2(updateTime, model.seat1, newTime1),
-												seat2: A2(updateTime, model.seat2, newTime2),
-												seat3: A2(updateTime, model.seat3, newTime3),
-												seat4: A2(updateTime, model.seat4, newTime4),
-												seat5: A2(updateTime, model.seat5, newTime5)
-											});
-										msg = $temp$msg;
-										model = $temp$model;
-										continue update;
-									} else {
-										return _Utils_Tuple2(
-											_Utils_update(
-												model,
-												{
-													seat1: A2(updateTime, model.seat1, newTime1),
-													seat2: A2(updateTime, model.seat2, newTime2),
-													seat3: A2(updateTime, model.seat3, newTime3),
-													seat4: A2(updateTime, model.seat4, newTime4),
-													seat5: A2(updateTime, model.seat5, newTime5)
-												}),
-											$elm$core$Platform$Cmd$none);
-									}
-								}
-							}
-						}
-					}
+							}),
+						$elm$core$Platform$Cmd$none)))));
 				case 'SwitchOverlay':
 					if (model.timeChoosen) {
 						var raw = $elm$core$String$toInt(model.userInput);
@@ -12990,9 +13033,9 @@ var $author$project$Main$update = F2(
 						var index = A2($author$project$Main$findIndex, model.userInput2, model.arbeiten);
 						if (index.$ === 'Just') {
 							var b = index.a;
-							var _v21 = A2($elm$core$Array$get, b, model.daten);
-							if (_v21.$ === 'Just') {
-								var c = _v21.a;
+							var _v22 = A2($elm$core$Array$get, b, model.daten);
+							if (_v22.$ === 'Just') {
+								var c = _v22.a;
 								var $temp$msg = $author$project$Main$PrepNextNPC,
 									$temp$model = _Utils_update(
 									model,
@@ -13028,9 +13071,9 @@ var $author$project$Main$update = F2(
 							continue update;
 						}
 					} else {
-						var _v22 = $elm$core$String$toInt(model.userInput);
-						if (_v22.$ === 'Just') {
-							var a = _v22.a;
+						var _v23 = $elm$core$String$toInt(model.userInput);
+						if (_v23.$ === 'Just') {
+							var a = _v23.a;
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
@@ -13058,11 +13101,6 @@ var $author$project$Main$update = F2(
 							b,
 							{conversation: b.conversation + 1});
 					};
-					var seatAMCT = function (c) {
-						return _Utils_update(
-							c,
-							{active: false, conversation: c.conversation + 1, modal: false, waiting: 1});
-					};
 					var nextDialogue = function (a) {
 						return _Utils_update(
 							a,
@@ -13075,9 +13113,23 @@ var $author$project$Main$update = F2(
 								spokenText: ''
 							});
 					};
+					var makeDrink = function (a) {
+						return A2($elm$core$String$left, 22, a) + 'Drinking.gif';
+					};
+					var seatAMCT = function (c) {
+						return _Utils_update(
+							c,
+							{
+								active: false,
+								conversation: c.conversation + 1,
+								modal: false,
+								name: makeDrink(c.name),
+								waiting: 1
+							});
+					};
 					if (seat.conversation < 2) {
-						var _v23 = seat.id;
-						switch (_v23) {
+						var _v24 = seat.id;
+						switch (_v24) {
 							case 0:
 								return _Utils_Tuple2(
 									_Utils_update(
@@ -13134,8 +13186,8 @@ var $author$project$Main$update = F2(
 									$elm$core$Platform$Cmd$none);
 						}
 					} else {
-						var _v24 = seat.id;
-						switch (_v24) {
+						var _v25 = seat.id;
+						switch (_v25) {
 							case 0:
 								return _Utils_Tuple2(
 									_Utils_update(
@@ -13189,9 +13241,9 @@ var $author$project$Main$update = F2(
 				case 'UrlChanged':
 					var url = msg.a;
 					var modelNew = function () {
-						var _v25 = url.fragment;
-						if (_v25.$ === 'Just') {
-							var fragment = _v25.a;
+						var _v26 = url.fragment;
+						if (_v26.$ === 'Just') {
+							var fragment = _v26.a;
 							var fragments = A2($elm$core$String$split, '#', fragment);
 							var subjects = A2(
 								$elm$core$String$split,
@@ -14432,6 +14484,17 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$author$project$Main$checkForInt(model.userInput) ? $elm$html$Html$text('Confirm') : $elm$html$Html$text('Bitte richtig eingeben!')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('display-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										'Eingenommenes Geld: ' + ($elm$core$String$fromInt(model.money) + ' €'))
 									]))
 							])) : A2(
 						$elm$html$Html$div,
@@ -14462,6 +14525,17 @@ var $author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Ich brauche eine Pause.')
+									])),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('display-text')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(
+										'Eingenommenes Geld: ' + ($elm$core$String$fromInt(model.money) + ' €'))
 									]))
 							])),
 						($elm$core$Array$length(model.daten) >= 2) ? A2(
