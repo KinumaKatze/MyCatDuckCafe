@@ -52,13 +52,19 @@
     ],
     "person4": [
         [
-            "He he he. Greetings! This quite a nice place, it would be a shame if something happens to it ... I can of course help you! i can block black magic, but for that i need something in return!"
+            "He he he. Greetings! This quite a nice place, it would be a shame if something happens to it ... I can of course help you! i can block black magic, but for that i need something in return!",
+            "Greetings again! He he he. I think it's time again to do something to ... save this place. Don't you think so?",
+            "And this is how we meet again. Greetings! Glad to see that nothing has happend ... so far. We don't want this to change, do we?"
         ],
         [
-            "What do you think i want? Give me something that you believe to really show the core of your cafe. "
+            "What do you think i want? Give me something that you believe to really show the core of your cafe. ",
+            "You know how this works, don't you? What do you think i want? Give me something that shows how much you care about the safety of your cafe!",
+            "You really need to do better than the last times. Why do you think i'm back? Keeping your cafe save is not coming from nothing. Give me somethink to drink. Something perfect!"
         ],
         [
-            "He he he. That looks good! I can feel the source of this cafe's soul leaking into this cup, this will be enough for a chance of survival."
+            "He he he. That looks good! I can feel the source of this cafe's soul leaking into this cup, this will be enough for a chance of survival.",
+            "Hmmm ... He he he ... i think this will be fine. For now. I have a feeling we'll meet again.",
+            "That is ... quite good. I think i'll keep your cafe safe ... for another while."
         ]
     ]
 }
